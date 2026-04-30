@@ -48,6 +48,13 @@
       "elo": 1000,
       "games": 0,
       "total": 0
+    },
+    {
+      "id": "p_1777533316368",
+      "name": "Janek",
+      "elo": 1000,
+      "games": 0,
+      "total": 0
     }
   ],
   "days": []
