@@ -62,6 +62,13 @@
       "elo": 1000,
       "games": 0,
       "total": 0
+    },
+    {
+      "id": "p_1777533352238",
+      "name": "Reiko",
+      "elo": 1000,
+      "games": 0,
+      "total": 0
     }
   ],
   "days": []
