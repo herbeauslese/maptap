@@ -4,198 +4,259 @@
 <meta charset="UTF-8">
 <title>Maptap Leaderboard</title>
 <style>
-  body { font-family: Arial, sans-serif; font-size: 13px; background: #fff; color: #000; max-width: 750px; margin: 16px auto; padding: 0 10px; overflow-x: hidden; }
-  h1 { font-size: 18px; margin: 0 0 2px; }
-  p.sub { margin: 0 0 4px; font-size: 11px; color: #444; }
-  hr { border: none; border-top: 1px solid #ccc; margin: 10px 0; }
+* { box-sizing: border-box; }
+body {
+  font-family: Arial, sans-serif; font-size: 12px; background: #fff; color: #000;
+  margin: 0; padding: 6px 10px; overflow-x: hidden;
+}
+h1 { font-size: 16px; margin: 0 0 1px; display: inline; }
+.sub { font-size: 10px; color: #555; margin-left: 8px; }
+#statusbar { font-size: 10px; color: #555; font-style: italic; display: inline; margin-left: 8px; }
+#statusbar.err { color: #900; font-style: normal; font-weight: bold; }
 
-  table { border-collapse: collapse; width: 100%; font-size: 12px; table-layout: fixed; }
-  th { background: #336; color: #fff; padding: 3px 7px; text-align: left; border: 1px solid #224; white-space: nowrap; overflow: hidden; }
-  th a { color: #ff6; font-size: 10px; cursor: pointer; text-decoration: underline; margin-left: 3px; }
-  td { padding: 2px 7px; border: 1px solid #ccc; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  tr:nth-child(even) td { background: #f0f0f8; }
-  tr:hover td { background: #ffc; }
+/* ── GRID ── */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto auto auto;
+  gap: 6px;
+  margin-top: 6px;
+}
+.box {
+  border: 1px solid #aaa;
+  padding: 5px 7px;
+  overflow: hidden;
+}
+.box-title {
+  font-weight: bold; font-size: 11px; border-bottom: 1px solid #ddd;
+  margin-bottom: 4px; padding-bottom: 2px; display: flex; justify-content: space-between; align-items: center;
+}
+.box-title a { font-size: 10px; font-weight: normal; cursor: pointer; color: #00c; text-decoration: underline; }
 
-  input[type=text], input[type=number], input[type=date], input[type=password] {
-    font-size: 12px; padding: 2px 4px; border: 1px solid #888; background: #fff; font-family: Arial, sans-serif;
-  }
-  button { font-size: 12px; padding: 2px 8px; background: #eee; border: 1px solid #888; cursor: pointer; font-family: Arial, sans-serif; }
-  button:hover { background: #dde; }
-  button.danger { color: #900; }
-  textarea { font-family: monospace; font-size: 11px; width: 100%; height: 120px; border: 1px solid #888; padding: 3px; box-sizing: border-box; margin-top: 3px; }
+/* span full width */
+.full { grid-column: 1 / -1; }
 
-  .prow { border: 1px solid #ccc; padding: 3px 7px; margin: 2px 0; background: #f8f8f8; display: flex; align-items: center; gap: 10px; font-size: 12px; flex-wrap: wrap; }
-  .prow b { min-width: 80px; }
+/* ── TABLES ── */
+table { border-collapse: collapse; width: 100%; font-size: 11px; }
+th { background: #336; color: #fff; padding: 2px 5px; text-align: left; border: 1px solid #224; white-space: nowrap; }
+th a { color: #ff6; font-size: 10px; cursor: pointer; text-decoration: underline; margin-left: 2px; }
+td { padding: 2px 5px; border: 1px solid #ddd; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+tr:nth-child(even) td { background: #f0f0f8; }
+tr:hover td { background: #ffc; }
 
-  .pos { color: green; font-weight: bold; }
-  .neg { color: #900; font-weight: bold; }
-  .dim { color: #666; font-size: 11px; }
-  .chip { display: inline-block; border: 1px solid #999; padding: 1px 5px; margin: 2px; font-size: 12px; background: #f0f0f0; }
-  .chip button { padding: 0 3px; font-size: 11px; background: #fdd; border: 1px solid #aaa; margin-left: 3px; }
-  .row { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; margin: 4px 0; }
-  .sec-head { font-weight: bold; font-size: 12px; border-bottom: 1px solid #ccc; margin: 10px 0 4px; padding-bottom: 2px; }
-  .lockbar { border: 1px solid #aaa; background: #f5f5f5; padding: 4px 7px; margin-top: 10px; font-size: 12px; }
-  .infobox { border: 1px solid #aaa; background: #fffde7; padding: 5px 8px; font-size: 11px; margin-top: 4px; line-height: 1.5; }
-  #statusbar { font-size: 11px; color: #555; font-style: italic; margin-bottom: 4px; }
-  #statusbar.err { color: #900; font-style: normal; font-weight: bold; }
+/* ── INPUTS ── */
+input[type=text], input[type=number], input[type=date], input[type=password],
+select {
+  font-size: 11px; padding: 2px 3px; border: 1px solid #888;
+  background: #fff; font-family: Arial, sans-serif;
+}
+button {
+  font-size: 11px; padding: 2px 7px; background: #eee;
+  border: 1px solid #888; cursor: pointer; font-family: Arial, sans-serif;
+}
+button:hover { background: #dde; }
+button.danger { color: #900; }
+textarea { font-family: monospace; font-size: 10px; width: 100%; height: 100px; border: 1px solid #888; padding: 3px; }
 
-  #elo-chart { width: 100%; height: 200px; display: block; border: 1px solid #aaa; background: #fff; cursor: crosshair; margin-top: 4px; }
-  #elo-legend { margin-top: 3px; font-size: 11px; display: flex; flex-wrap: wrap; gap: 8px; }
+/* ── ENTRY FORM ── */
+.entry-player-row { border: 1px solid #ccc; padding: 3px 5px; margin: 2px 0; background: #fafafa; }
+.entry-player-name { font-weight: bold; margin-bottom: 2px; font-size: 11px; }
+.rounds-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px; }
+.round-cell { display: flex; flex-direction: column; gap: 2px; }
+.round-cell label { font-size: 10px; color: #555; }
+.round-cell select { width: 100%; font-size: 10px; }
+.round-cell input { width: 100%; text-align: center; }
+.prow-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 
-  /* VERLAUF */
-  .day-block { margin: 3px 0; border: 1px solid #ccc; }
-  .day-header {
-    background: #eef; padding: 3px 8px; cursor: pointer; font-size: 12px;
-    display: flex; justify-content: space-between; align-items: center;
-    border-bottom: 1px solid #ccc; user-select: none;
-  }
-  .day-header:hover { background: #ddf; }
-  .day-body { display: none; }
-  .day-body.open { display: block; }
+/* ── VERLAUF ── */
+.day-block { margin: 2px 0; border: 1px solid #ccc; font-size: 11px; }
+.day-header { background: #eef; padding: 2px 6px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ccc; user-select: none; }
+.day-header:hover { background: #ddf; }
+.day-body { display: none; }
+.day-body.open { display: block; }
+.player-summary { padding: 2px 6px; display: flex; gap: 8px; align-items: center; cursor: pointer; flex-wrap: wrap; border-bottom: 1px solid #eee; }
+.player-summary:hover { background: #fffde7; }
+.player-detail { display: none; padding: 4px 6px; background: #f8f8f8; border-top: 1px solid #eee; font-size: 10px; }
+.player-detail.open { display: block; }
+.duel-table { width: 100%; border-collapse: collapse; font-size: 10px; margin-top: 3px; }
+.duel-table th { background: #ddd; color: #000; padding: 2px 4px; border: 1px solid #bbb; }
+.duel-table td { padding: 2px 4px; border: 1px solid #ddd; }
 
-  .player-result-row { border-bottom: 1px solid #eee; }
-  .player-result-row:last-child { border-bottom: none; }
-  .player-summary {
-    padding: 2px 8px; display: flex; gap: 10px; align-items: center;
-    font-size: 12px; cursor: pointer; background: #fff; flex-wrap: wrap;
-  }
-  .player-summary:hover { background: #fffde7; }
-  .player-detail { display: none; background: #f8f8f8; border-top: 1px solid #eee; padding: 5px 8px; font-size: 11px; }
-  .player-detail.open { display: block; }
+/* ── CANVAS ── */
+canvas { display: block; width: 100%; background: #fff; }
 
-  .duel-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 4px; }
-  .duel-table th { background: #ddd; color: #000; padding: 2px 5px; border: 1px solid #bbb; font-weight: bold; }
-  .duel-table td { padding: 2px 5px; border: 1px solid #ddd; }
+/* ── MISC ── */
+.pos { color: green; font-weight: bold; }
+.neg { color: #900; font-weight: bold; }
+.dim { color: #666; font-size: 10px; }
+.chip { display: inline-block; border: 1px solid #999; padding: 1px 4px; margin: 2px; background: #f0f0f0; }
+.chip button { padding: 0 3px; font-size: 10px; background: #fdd; border: 1px solid #aaa; margin-left: 2px; }
+.row { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; margin: 3px 0; }
+.lockbar { border: 1px solid #aaa; background: #f5f5f5; padding: 3px 6px; font-size: 11px; margin-top: 4px; }
+.admin-sec { border: 1px solid #ccc; margin-top: 4px; }
+.admin-sec-head { background: #eee; padding: 2px 7px; cursor: pointer; font-size: 11px; font-weight: bold; border-bottom: 1px solid #ccc; user-select: none; }
+.admin-sec-head:hover { background: #dde; }
+.admin-sec-body { display: none; padding: 5px 7px; }
+.admin-sec-body.open { display: block; }
+.infobox { border: 1px solid #aaa; background: #fffde7; padding: 4px 7px; font-size: 10px; margin-top: 3px; line-height: 1.5; }
+#toast { position: fixed; bottom: 10px; right: 10px; background: #336; color: #fff; padding: 3px 10px; font-size: 11px; display: none; border: 1px solid #224; z-index: 999; }
 
-  /* ADMIN */
-  .admin-section { border: 1px solid #ccc; margin-top: 8px; }
-  .admin-section-head { background: #eee; padding: 3px 8px; cursor: pointer; font-size: 12px; font-weight: bold; border-bottom: 1px solid #ccc; user-select: none; }
-  .admin-section-head:hover { background: #dde; }
-  .admin-section-body { display: none; padding: 6px 8px; }
-  .admin-section-body.open { display: block; }
-
-  #toast { position: fixed; bottom: 10px; right: 10px; background: #336; color: #fff; padding: 4px 10px; font-size: 12px; display: none; border: 1px solid #224; z-index: 100; }
+/* continent badge colors */
+.c-EU { background: #d0e8ff; }
+.c-AS { background: #ffe8c0; }
+.c-AF { background: #ffd0d0; }
+.c-NA { background: #d0ffd8; }
+.c-SA { background: #f0d0ff; }
+.c-OC { background: #fff8c0; }
+.c-AN { background: #e8e8e8; }
 </style>
 </head>
 <body>
 
-<h1>Maptap &mdash; Leaderboard</h1>
-<p class="sub">Geografie-Quiz &middot; Glicko-2-Ratingsystem</p>
-<div id="statusbar">Lade Daten&hellip;</div>
-<hr>
+<h1>Maptap</h1>
+<span class="sub">Geografie-Quiz &middot; Glicko-2</span>
+<span id="statusbar">Lade&hellip;</span>
 
-<!-- ═══ RANGLISTE ════════════════════════════════════════════════════════════ -->
-<div class="sec-head">Rangliste</div>
-<table>
-  <colgroup>
-    <col style="width:30px"><col style="width:auto"><col style="width:70px">
-    <col style="width:55px"><col style="width:65px"><col style="width:50px">
-  </colgroup>
-  <thead><tr>
-    <th>#</th>
-    <th>Name</th>
-    <th>Rating <a onclick="sortBy('rating')">&#9660;</a></th>
-    <th>RD</th>
-    <th>&Oslash; Score <a onclick="sortBy('avg')">&#9660;</a></th>
-    <th>Spiele</th>
-  </tr></thead>
-  <tbody id="lb-body"></tbody>
-</table>
+<div class="grid">
 
-<!-- ═══ CHART ════════════════════════════════════════════════════════════════ -->
-<div class="sec-head" style="margin-top:10px;">Rating-Verlauf</div>
-<canvas id="elo-chart"></canvas>
-<div id="elo-legend"></div>
+  <!-- ── RANGLISTE ── -->
+  <div class="box">
+    <div class="box-title">
+      Rangliste
+      <span>
+        <a onclick="sortBy('rating')">Rating &#9660;</a> &nbsp;
+        <a onclick="sortBy('avg')">Score &#9660;</a>
+      </span>
+    </div>
+    <table>
+      <thead><tr><th>#</th><th>Name</th><th>Rating</th><th>RD</th><th>&Oslash;</th><th>Spiele</th></tr></thead>
+      <tbody id="lb-body"></tbody>
+    </table>
+  </div>
 
-<p style="margin:5px 0 2px;font-size:12px;">
-  <a href="#" onclick="toggleInfo();return false;" id="info-toggle">&#9658; Wie funktioniert Glicko-2?</a>
-</p>
-<div id="info-box" style="display:none" class="infobox">
-  Jeder Spieler hat drei Werte: <b>Rating</b> (Startwert 1500, h&ouml;her = besser),
-  <b>RD</b> (Rating Deviation &ndash; Unsicherheit, Start 350, sinkt mit mehr Spielen),
-  <b>Volatility</b> (Schwankungsneigung). Nach jedem Spieltag: jeder gegen jeden (h&ouml;herer Score = Sieg).
-  Wer gegen starke Spieler gewinnt steigt mehr. <b>DNP</b> = RD steigt leicht, Rating bleibt.
-</div>
+  <!-- ── RATING VERLAUF CHART ── -->
+  <div class="box">
+    <div class="box-title">Rating-Verlauf</div>
+    <canvas id="chart-rating" height="140"></canvas>
+    <div id="chart-rating-legend" style="margin-top:2px;font-size:10px;display:flex;flex-wrap:wrap;gap:6px;"></div>
+  </div>
 
-<hr>
+  <!-- ── KONTINENT CHART ── -->
+  <div class="box">
+    <div class="box-title">
+      Ø Score nach Kontinent
+      <select id="konti-player-select" onchange="renderKontinentChart()" style="font-size:10px;">
+        <option value="all">Alle Spieler</option>
+      </select>
+    </div>
+    <canvas id="chart-kontinent" height="130"></canvas>
+  </div>
 
-<!-- ═══ VERLAUF ══════════════════════════════════════════════════════════════ -->
-<div class="sec-head">Verlauf</div>
-<div id="verlauf-body"><span class="dim">Noch keine Spieltage.</span></div>
+  <!-- ── SCORE VERTEILUNG ── -->
+  <div class="box">
+    <div class="box-title">Score-Verteilung &amp; Konstistenz</div>
+    <canvas id="chart-score" height="130"></canvas>
+    <div id="chart-score-legend" style="margin-top:2px;font-size:10px;display:flex;flex-wrap:wrap;gap:6px;"></div>
+  </div>
 
-<hr>
+  <!-- ── LÄNDER BESTENLISTE ── -->
+  <div class="box full">
+    <div class="box-title">
+      Top-Länder (Ø Score)
+      <select id="laender-player-select" onchange="renderLaenderTable()" style="font-size:10px;">
+        <option value="all">Alle Spieler</option>
+      </select>
+    </div>
+    <div id="laender-table-wrap" style="overflow-x:auto;"></div>
+  </div>
 
-<!-- ═══ ADMIN ════════════════════════════════════════════════════════════════ -->
-<div class="lockbar">
-  <span id="admin-status">&#128274; Admin:</span>&nbsp;
-  <span id="admin-login-form">
-    <input type="password" id="pw-input" placeholder="Passwort" style="width:110px"
-      onkeydown="if(event.key==='Enter')checkPassword()">
-    <button onclick="checkPassword()">Weiter</button>
-  </span>
-  <span id="admin-token-form" style="display:none">
-    <input type="password" id="token-input" placeholder="GitHub Token" style="width:180px"
-      onkeydown="if(event.key==='Enter')tryLogin()">
-    <button onclick="tryLogin()">Anmelden</button>
-  </span>
-  <span id="admin-logout-form" style="display:none">
-    <button onclick="doLogout()">Abmelden</button>
-  </span>
-</div>
+  <!-- ── VERLAUF ── -->
+  <div class="box full">
+    <div class="box-title">
+      Verlauf
+      <a onclick="toggleInfo();" id="info-toggle">&#9658; Glicko-2 erkl&auml;rt</a>
+    </div>
+    <div id="info-box" style="display:none" class="infobox">
+      <b>Rating</b> (Start 1500), <b>RD</b> (Unsicherheit, Start 350, sinkt mit Spielen), <b>Volatility</b>.
+      Jeder gegen jeden pro Tag. Wer gegen starke Spieler gewinnt steigt mehr.
+      DNP = RD steigt leicht, Rating bleibt. Je niedriger RD, desto verl&auml;sslicher das Rating.
+    </div>
+    <div id="verlauf-body" style="margin-top:4px;max-height:220px;overflow-y:auto;"><span class="dim">Noch keine Spieltage.</span></div>
+  </div>
 
-<div id="admin-panel" style="display:none">
+  <!-- ── ADMIN ── -->
+  <div class="box full">
+    <div class="box-title">Admin</div>
+    <div class="lockbar">
+      <span id="admin-status">&#128274;</span>&nbsp;
+      <span id="admin-login-form">
+        <input type="password" id="pw-input" placeholder="Passwort" style="width:100px" onkeydown="if(event.key==='Enter')checkPassword()">
+        <button onclick="checkPassword()">Weiter</button>
+      </span>
+      <span id="admin-token-form" style="display:none">
+        <input type="password" id="token-input" placeholder="GitHub Token" style="width:170px" onkeydown="if(event.key==='Enter')tryLogin()">
+        <button onclick="tryLogin()">Anmelden</button>
+      </span>
+      <span id="admin-logout-form" style="display:none">
+        <button onclick="doLogout()">Abmelden</button>
+      </span>
+    </div>
+    <div id="admin-panel" style="display:none">
 
-  <div class="admin-section">
-    <div class="admin-section-head" onclick="toggleAdminSec(this)">&#9658; Tag eintragen</div>
-    <div class="admin-section-body">
-      <div class="row">
-        <label>Datum: <input type="date" id="e-date" style="width:135px"></label>
-        <label>Tag #: <input type="number" id="e-tag" style="width:50px" min="1"></label>
+      <div class="admin-sec">
+        <div class="admin-sec-head" onclick="toggleAdminSec(this)">&#9658; Tag eintragen</div>
+        <div class="admin-sec-body">
+          <div class="row">
+            <label>Datum: <input type="date" id="e-date" style="width:125px"></label>
+            <label>Tag #: <input type="number" id="e-tag" style="width:45px" min="1"></label>
+          </div>
+          <div id="e-rounds" style="margin:4px 0;"></div>
+          <div id="e-players"></div>
+          <div class="row" style="margin-top:4px;">
+            <button onclick="submitDay()">Speichern</button>
+            <button onclick="renderEntryForm()">Zur&uuml;cksetzen</button>
+          </div>
+        </div>
       </div>
-      <div id="e-players" style="margin-top:4px;"></div>
-      <div class="row" style="margin-top:5px;">
-        <button onclick="submitDay()">Speichern</button>
-        <button onclick="renderEntryForm()">Formular zur&uuml;cksetzen</button>
+
+      <div class="admin-sec">
+        <div class="admin-sec-head" onclick="toggleAdminSec(this)">&#9658; Spieler verwalten</div>
+        <div class="admin-sec-body">
+          <div class="row">
+            <input type="text" id="new-name" placeholder="Name" style="width:140px" onkeydown="if(event.key==='Enter')addPlayer()">
+            <button onclick="addPlayer()">+ Hinzuf&uuml;gen</button>
+          </div>
+          <div id="player-list" style="margin-top:4px;"></div>
+        </div>
       </div>
+
+      <div class="admin-sec">
+        <div class="admin-sec-head" onclick="toggleAdminSec(this)">&#9658; Mattermost-Export</div>
+        <div class="admin-sec-body">
+          <div class="row">
+            <button onclick="genExport('current')">Rangliste</button>
+            <button onclick="genExport('lastday')">Letzter Tag</button>
+            <button onclick="copyExport()">Kopieren</button>
+          </div>
+          <textarea id="mm-out" readonly></textarea>
+        </div>
+      </div>
+
+      <div class="admin-sec">
+        <div class="admin-sec-head" onclick="toggleAdminSec(this)">&#9658; Gef&auml;hrliche Zone</div>
+        <div class="admin-sec-body">
+          <div class="row">
+            <button class="danger" onclick="undoLastDay()">&larr; Letzten Tag r&uuml;ckg&auml;ngig</button>
+            <button class="danger" onclick="resetAll()">Rating-Reset</button>
+            <button class="danger" onclick="clearAll()">Alle Daten l&ouml;schen</button>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 
-  <div class="admin-section">
-    <div class="admin-section-head" onclick="toggleAdminSec(this)">&#9658; Spieler verwalten</div>
-    <div class="admin-section-body">
-      <div class="row">
-        <input type="text" id="new-name" placeholder="Name" style="width:150px" onkeydown="if(event.key==='Enter')addPlayer()">
-        <button onclick="addPlayer()">+ Hinzuf&uuml;gen</button>
-      </div>
-      <div id="player-list" style="margin-top:4px;"></div>
-    </div>
-  </div>
-
-  <div class="admin-section">
-    <div class="admin-section-head" onclick="toggleAdminSec(this)">&#9658; Mattermost-Export</div>
-    <div class="admin-section-body">
-      <div class="row">
-        <button onclick="genExport('current')">Rangliste</button>
-        <button onclick="genExport('lastday')">Letzter Tag</button>
-        <button onclick="genExport('full')">Vollst&auml;ndig</button>
-        <button onclick="copyExport()">Kopieren</button>
-      </div>
-      <textarea id="mm-out" readonly></textarea>
-    </div>
-  </div>
-
-  <div class="admin-section">
-    <div class="admin-section-head" onclick="toggleAdminSec(this)">&#9658; Gef&auml;hrliche Zone</div>
-    <div class="admin-section-body">
-      <div class="row">
-        <button class="danger" onclick="undoLastDay()">&larr; Letzten Tag r&uuml;ckg&auml;ngig</button>
-        <button class="danger" onclick="resetAll()">Rating-Reset</button>
-        <button class="danger" onclick="clearAll()">Alle Daten l&ouml;schen</button>
-      </div>
-    </div>
-  </div>
-
-</div>
+</div><!-- /grid -->
 
 <div id="toast"></div>
 
@@ -206,150 +267,204 @@ const GH_REPO = 'maptap';
 const GH_FILE = 'data.json';
 // ─────────────────────────────────────────────────────────────────────────────
 
-const G2_R0 = 1500, G2_RD0 = 350, G2_VOL0 = 0.06, G2_TAU = 0.5, G2_SCALE = 173.7178;
-let loggedIn = false, sortMode = 'rating';
-let ghSha = null, GH_TOKEN = '';
-let STATE = { players: [], days: [] };
-const GH_API = `https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/${GH_FILE}`;
+// ─── COUNTRIES ────────────────────────────────────────────────────────────────
+const COUNTRIES = [
+  ["Afghanistan","AS"],["Albania","EU"],["Algeria","AF"],["Angola","AF"],
+  ["Argentina","SA"],["Armenia","AS"],["Australia","OC"],["Austria","EU"],
+  ["Azerbaijan","AS"],["Bangladesh","AS"],["Belarus","EU"],["Belgium","EU"],
+  ["Benin","AF"],["Bolivia","SA"],["Bosnia and Herzegovina","EU"],["Botswana","AF"],
+  ["Brazil","SA"],["Bulgaria","EU"],["Burkina Faso","AF"],["Burundi","AF"],
+  ["Cambodia","AS"],["Cameroon","AF"],["Canada","NA"],["Central African Republic","AF"],
+  ["Chad","AF"],["Chile","SA"],["China","AS"],["Colombia","SA"],
+  ["Congo","AF"],["Costa Rica","NA"],["Croatia","EU"],["Cuba","NA"],
+  ["Czech Republic","EU"],["Denmark","EU"],["Dominican Republic","NA"],["DR Congo","AF"],
+  ["Ecuador","SA"],["Egypt","AF"],["El Salvador","NA"],["Estonia","EU"],
+  ["Ethiopia","AF"],["Finland","EU"],["France","EU"],["Gabon","AF"],
+  ["Georgia","AS"],["Germany","EU"],["Ghana","AF"],["Greece","EU"],
+  ["Guatemala","NA"],["Guinea","AF"],["Haiti","NA"],["Honduras","NA"],
+  ["Hungary","EU"],["Iceland","EU"],["India","AS"],["Indonesia","AS"],
+  ["Iran","AS"],["Iraq","AS"],["Ireland","EU"],["Israel","AS"],
+  ["Italy","EU"],["Ivory Coast","AF"],["Jamaica","NA"],["Japan","AS"],
+  ["Jordan","AS"],["Kazakhstan","AS"],["Kenya","AF"],["Kosovo","EU"],
+  ["Kuwait","AS"],["Kyrgyzstan","AS"],["Laos","AS"],["Latvia","EU"],
+  ["Lebanon","AS"],["Libya","AF"],["Lithuania","EU"],["Luxembourg","EU"],
+  ["Madagascar","AF"],["Malawi","AF"],["Malaysia","AS"],["Mali","AF"],
+  ["Mauritania","AF"],["Mexico","NA"],["Moldova","EU"],["Mongolia","AS"],
+  ["Montenegro","EU"],["Morocco","AF"],["Mozambique","AF"],["Myanmar","AS"],
+  ["Namibia","AF"],["Nepal","AS"],["Netherlands","EU"],["New Zealand","OC"],
+  ["Nicaragua","NA"],["Niger","AF"],["Nigeria","AF"],["North Korea","AS"],
+  ["North Macedonia","EU"],["Norway","EU"],["Oman","AS"],["Pakistan","AS"],
+  ["Panama","NA"],["Paraguay","SA"],["Peru","SA"],["Philippines","AS"],
+  ["Poland","EU"],["Portugal","EU"],["Qatar","AS"],["Romania","EU"],
+  ["Russia","EU"],["Rwanda","AF"],["Saudi Arabia","AS"],["Senegal","AF"],
+  ["Serbia","EU"],["Sierra Leone","AF"],["Singapore","AS"],["Slovakia","EU"],
+  ["Slovenia","EU"],["Somalia","AF"],["South Africa","AF"],["South Korea","AS"],
+  ["South Sudan","AF"],["Spain","EU"],["Sri Lanka","AS"],["Sudan","AF"],
+  ["Sweden","EU"],["Switzerland","EU"],["Syria","AS"],["Taiwan","AS"],
+  ["Tajikistan","AS"],["Tanzania","AF"],["Thailand","AS"],["Togo","AF"],
+  ["Tunisia","AF"],["Turkey","AS"],["Turkmenistan","AS"],["Uganda","AF"],
+  ["Ukraine","EU"],["United Arab Emirates","AS"],["United Kingdom","EU"],
+  ["United States","NA"],["Uruguay","SA"],["Uzbekistan","AS"],["Venezuela","SA"],
+  ["Vietnam","AS"],["Yemen","AS"],["Zambia","AF"],["Zimbabwe","AF"]
+];
 
-// ─── GITHUB ───────────────────────────────────────────────────────────────────
-async function ghLoad() {
-  setStatus('Lade Daten von GitHub…');
-  try {
-    const res = await fetch(GH_API, { headers: { 'Accept': 'application/vnd.github.v3+json' } });
-    if (res.status === 404) { ghSha = null; setStatus('Bereit. (Noch keine Daten)'); return { players: [], days: [] }; }
-    if (!res.ok) throw new Error(`GitHub API Fehler: ${res.status}`);
-    const json = await res.json();
-    ghSha = json.sha;
-    const data = JSON.parse(atob(json.content.replace(/\n/g, '')));
-    setStatus(`Daten geladen. (${data.days.length} Spieltage)`);
-    return migrateData(data);
-  } catch(e) { setStatus('Fehler beim Laden: ' + e.message, true); return { players: [], days: [] }; }
-}
+const CONTINENT_NAMES = { EU:"Europa", AS:"Asien", AF:"Afrika", NA:"Nordamerika", SA:"Südamerika", OC:"Ozeanien", AN:"Antarktis" };
+const CONTINENT_ORDER = ["EU","AS","AF","NA","SA","OC"];
+const COLORS = ['#00c','#c00','#080','#c60','#60c','#088','#c06','#660','#048','#840'];
 
-async function ghSave(state) {
-  setStatus('Speichere auf GitHub…');
-  const content = btoa(unescape(encodeURIComponent(JSON.stringify(state, null, 2))));
-  const body = { message: `Update ${new Date().toISOString().split('T')[0]}`, content, ...(ghSha ? { sha: ghSha } : {}) };
-  try {
-    const res = await fetch(GH_API, {
-      method: 'PUT',
-      headers: { 'Authorization': `token ${GH_TOKEN}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
-    if (!res.ok) { const e = await res.json(); throw new Error(e.message || res.status); }
-    const json = await res.json();
-    ghSha = json.content.sha;
-    setStatus(`Gespeichert. (${new Date().toLocaleTimeString('de-DE')})`);
-    return true;
-  } catch(e) { setStatus('Fehler beim Speichern: ' + e.message, true); return false; }
-}
-
-function setStatus(msg, err=false) { const el=document.getElementById('statusbar'); el.textContent=msg; el.className=err?'err':''; }
-function load() { return STATE; }
-async function save(s) { STATE = s; return await ghSave(s); }
-
-// ─── MIGRATION ────────────────────────────────────────────────────────────────
-function migrateData(data) {
-  const needsMigration = data.players.length > 0 && data.players[0].rating === undefined;
-  if (needsMigration) {
-    data.players = data.players.map(p => ({ id:p.id, name:p.name, rating:G2_R0, rd:G2_RD0, vol:G2_VOL0, games:0, total:0 }));
-    data.days.forEach(day => {
-      const active = day.entries.filter(e => !e.dnp);
-      const results = {};
-      data.players.forEach(p => { results[p.id] = []; });
-      for (let i=0;i<active.length;i++) for (let j=i+1;j<active.length;j++) {
-        const a=active[i],b=active[j],pA=data.players.find(p=>p.id===a.id),pB=data.players.find(p=>p.id===b.id);
-        if(!pA||!pB) continue;
-        const sA=a.score>b.score?1:a.score<b.score?0:0.5;
-        results[a.id].push({r:pB.rating,rd:pB.rd,s:sA,oppId:b.id});
-        results[b.id].push({r:pA.rating,rd:pA.rd,s:1-sA,oppId:a.id});
-      }
-      data.players.forEach(p => {
-        const entry = day.entries.find(e=>e.id===p.id);
-        if (!entry) return;
-        const before = Math.round(p.rating), rdBefore = Math.round(p.rd);
-        if (entry.dnp) {
-          p.rd = Math.min(G2_RD0, Math.sqrt(p.rd*p.rd+p.vol*p.vol));
-          entry.before=before; entry.after=before; entry.delta=0; entry.rdBefore=rdBefore; entry.rdAfter=Math.round(p.rd); entry.duels=[];
-        } else {
-          const duels = results[p.id].map(r=>({oppId:r.oppId,oppRating:Math.round(r.r),oppRD:Math.round(r.rd),score:r.s}));
-          const u = glicko2Update(p, results[p.id]);
-          p.rating=u.rating; p.rd=u.rd; p.vol=u.vol; p.games++; p.total+=entry.score;
-          const after=Math.round(p.rating);
-          entry.before=before; entry.after=after; entry.delta=after-before; entry.rdBefore=rdBefore; entry.rdAfter=Math.round(p.rd); entry.duels=duels;
-        }
-      });
-    });
-  }
-  // sanitize
-  data.players = data.players.map(p => ({
-    id:p.id, name:p.name, rating:p.rating??G2_R0, rd:p.rd??G2_RD0, vol:p.vol??G2_VOL0, games:p.games??0, total:p.total??0
-  }));
-  return data;
+function countryToContinent(name) {
+  const entry = COUNTRIES.find(c => c[0].toLowerCase() === name.toLowerCase());
+  return entry ? entry[1] : null;
 }
 
 // ─── GLICKO-2 ─────────────────────────────────────────────────────────────────
-function g(rd) { return 1/Math.sqrt(1+3*rd*rd/(Math.PI*Math.PI)); }
-function E(r,rj,rdj) { return 1/(1+Math.exp(-g(rdj)*(r-rj))); }
+const G2_R0=1500,G2_RD0=350,G2_VOL0=0.06,G2_TAU=0.5,G2_SCALE=173.7178;
+
+function g2g(rd){return 1/Math.sqrt(1+3*rd*rd/(Math.PI*Math.PI));}
+function g2E(r,rj,rdj){return 1/(1+Math.exp(-g2g(rdj)*(r-rj)));}
 
 function glicko2Update(player, results) {
   const mu=(player.rating-1500)/G2_SCALE, phi=player.rd/G2_SCALE, sigma=player.vol;
   if (!results.length) {
-    const phiStar=Math.sqrt(phi*phi+sigma*sigma);
-    return { rating:player.rating, rd:Math.min(phiStar*G2_SCALE,G2_RD0), vol:sigma };
+    return { rating:player.rating, rd:Math.min(Math.sqrt(phi*phi+sigma*sigma)*G2_SCALE,G2_RD0), vol:sigma };
   }
   const opps=results.map(r=>({mu:(r.r-1500)/G2_SCALE,phi:r.rd/G2_SCALE,s:r.s}));
-  let v=0;
-  opps.forEach(o=>{const gp=g(o.phi),ev=E(mu,o.mu,o.phi);v+=gp*gp*ev*(1-ev);});
-  v=1/v;
-  let delta=0;
-  opps.forEach(o=>{delta+=g(o.phi)*(o.s-E(mu,o.mu,o.phi));});
-  delta*=v;
-  const a=Math.log(sigma*sigma),tau2=G2_TAU*G2_TAU,delta2=delta*delta,phi2=phi*phi;
-  function f(x){const ex=Math.exp(x),d2=phi2+v+ex;return(ex*(delta2-d2))/(2*d2*d2)-(x-a)/tau2;}
-  let A=a,B=delta2>phi2+v?Math.log(delta2-phi2-v):a-G2_TAU;
+  let v=0; opps.forEach(o=>{const gp=g2g(o.phi),ev=g2E(mu,o.mu,o.phi);v+=gp*gp*ev*(1-ev);}); v=1/v;
+  let delta=0; opps.forEach(o=>{delta+=g2g(o.phi)*(o.s-g2E(mu,o.mu,o.phi));}); delta*=v;
+  const a=Math.log(sigma*sigma),tau2=G2_TAU*G2_TAU,d2=delta*delta,p2=phi*phi;
+  function f(x){const ex=Math.exp(x),dd=p2+v+ex;return(ex*(d2-dd))/(2*dd*dd)-(x-a)/tau2;}
+  let A=a, B=d2>p2+v?Math.log(d2-p2-v):a-G2_TAU;
   while(f(B)<0) B-=G2_TAU;
   let fA=f(A),fB=f(B);
   for(let i=0;i<100;i++){
     if(Math.abs(B-A)<1e-6) break;
     const C=A+(A-B)*fA/(fB-fA),fC=f(C);
-    if(fC*fB<0){A=B;fA=fB;}else{fA/=2;}
+    if(fC*fB<0){A=B;fA=fB;}else fA/=2;
     B=C;fB=fC;
   }
-  const sigmaNew=Math.exp(A/2);
-  const phiStar=Math.sqrt(phi*phi+sigmaNew*sigmaNew);
-  const phiNew=1/Math.sqrt(1/(phiStar*phiStar)+1/v);
-  let muNew=mu;
-  opps.forEach(o=>{muNew+=phiNew*phiNew*g(o.phi)*(o.s-E(mu,o.mu,o.phi));});
-  return { rating:muNew*G2_SCALE+1500, rd:Math.max(phiNew*G2_SCALE,30), vol:sigmaNew };
+  const sN=Math.exp(A/2), pS=Math.sqrt(phi*phi+sN*sN);
+  const pN=1/Math.sqrt(1/(pS*pS)+1/v);
+  let mN=mu; opps.forEach(o=>{mN+=pN*pN*g2g(o.phi)*(o.s-g2E(mu,o.mu,o.phi));});
+  return { rating:mN*G2_SCALE+1500, rd:Math.max(pN*G2_SCALE,30), vol:sN };
+}
+
+// ─── GITHUB ───────────────────────────────────────────────────────────────────
+let ghSha=null, GH_TOKEN='';
+const GH_API=`https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/${GH_FILE}`;
+
+async function ghLoad() {
+  setStatus('Lade…');
+  try {
+    const res=await fetch(GH_API,{headers:{'Accept':'application/vnd.github.v3+json'}});
+    if(res.status===404){ghSha=null;setStatus('Bereit');return{players:[],days:[]};}
+    if(!res.ok) throw new Error(res.status);
+    const json=await res.json(); ghSha=json.sha;
+    const data=JSON.parse(atob(json.content.replace(/\n/g,'')));
+    setStatus(`${data.days.length} Spieltage`);
+    return migrateData(data);
+  } catch(e){setStatus('Fehler: '+e.message,true);return{players:[],days:[]};}
+}
+
+async function ghSave(state) {
+  setStatus('Speichere…');
+  const content=btoa(unescape(encodeURIComponent(JSON.stringify(state,null,2))));
+  const body={message:`Update ${new Date().toISOString().split('T')[0]}`,content,...(ghSha?{sha:ghSha}:{})};
+  try {
+    const res=await fetch(GH_API,{method:'PUT',headers:{'Authorization':`token ${GH_TOKEN}`,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(!res.ok){const e=await res.json();throw new Error(e.message||res.status);}
+    const json=await res.json(); ghSha=json.content.sha;
+    setStatus(`Gespeichert ${new Date().toLocaleTimeString('de-DE')}`);
+    return true;
+  } catch(e){setStatus('Fehler: '+e.message,true);return false;}
+}
+
+function setStatus(msg,err=false){const el=document.getElementById('statusbar');el.textContent=msg;el.className=err?'err':'';}
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let STATE={players:[],days:[]}, loggedIn=false, sortMode='rating';
+function load(){return STATE;}
+async function save(s){STATE=s;return await ghSave(s);}
+
+// ─── MIGRATION ────────────────────────────────────────────────────────────────
+function migrateData(data) {
+  // Ensure all players have Glicko-2 fields
+  const needsG2 = data.players.length>0 && data.players[0].rating===undefined;
+  if (needsG2) {
+    data.players=data.players.map(p=>({id:p.id,name:p.name,rating:G2_R0,rd:G2_RD0,vol:G2_VOL0,games:0,total:0}));
+  }
+  data.players=data.players.map(p=>({
+    id:p.id,name:p.name,
+    rating:p.rating??G2_R0,rd:p.rd??G2_RD0,vol:p.vol??G2_VOL0,
+    games:p.games??0,total:p.total??0
+  }));
+  if (needsG2) recomputeRatings(data);
+  return data;
+}
+
+function recomputeRatings(data) {
+  data.players.forEach(p=>{p.rating=G2_R0;p.rd=G2_RD0;p.vol=G2_VOL0;p.games=0;p.total=0;});
+  data.days.forEach(day=>applyDayToPlayers(data.players, day));
+}
+
+function applyDayToPlayers(players, day) {
+  const active=day.entries.filter(e=>!e.dnp);
+  const results={};
+  players.forEach(p=>{results[p.id]=[];});
+  for(let i=0;i<active.length;i++) for(let j=i+1;j<active.length;j++){
+    const a=active[i],b=active[j];
+    const pA=players.find(p=>p.id===a.id),pB=players.find(p=>p.id===b.id);
+    if(!pA||!pB) continue;
+    // total score = sum of all rounds
+    const scoreA=a.rounds?a.rounds.reduce((s,r)=>s+(r.score||0),0):(a.score||0);
+    const scoreB=b.rounds?b.rounds.reduce((s,r)=>s+(r.score||0),0):(b.score||0);
+    const sA=scoreA>scoreB?1:scoreA<scoreB?0:0.5;
+    results[a.id].push({r:pB.rating,rd:pB.rd,s:sA,oppId:b.id});
+    results[b.id].push({r:pA.rating,rd:pA.rd,s:1-sA,oppId:a.id});
+  }
+  players.forEach(p=>{
+    const entry=day.entries.find(e=>e.id===p.id);
+    if(!entry) return;
+    const before=Math.round(p.rating),rdBefore=Math.round(p.rd);
+    if(entry.dnp){
+      p.rd=Math.min(G2_RD0,Math.sqrt(p.rd*p.rd+p.vol*p.vol));
+      entry.before=before;entry.after=before;entry.delta=0;
+      entry.rdBefore=rdBefore;entry.rdAfter=Math.round(p.rd);entry.duels=[];
+    } else {
+      const duels=results[p.id].map(r=>({oppId:r.oppId,oppRating:Math.round(r.r),oppRD:Math.round(r.rd),score:r.s}));
+      const u=glicko2Update(p,results[p.id]);
+      const totalScore=entry.rounds?entry.rounds.reduce((s,r)=>s+(r.score||0),0):(entry.score||0);
+      p.rating=u.rating;p.rd=u.rd;p.vol=u.vol;p.games++;p.total+=totalScore;
+      const after=Math.round(p.rating);
+      entry.before=before;entry.after=after;entry.delta=after-before;
+      entry.rdBefore=rdBefore;entry.rdAfter=Math.round(p.rd);entry.duels=duels;
+    }
+  });
 }
 
 // ─── AUTH ─────────────────────────────────────────────────────────────────────
-function checkPassword() {
-  if (document.getElementById('pw-input').value===atob('TWFwdGFwMjAyNg==')) {
+function checkPassword(){
+  if(document.getElementById('pw-input').value===atob('TWFwdGFwMjAyNg==')){
     document.getElementById('admin-login-form').style.display='none';
     document.getElementById('admin-token-form').style.display='';
     document.getElementById('token-input').focus();
-  } else { toast('Falsches Passwort.'); document.getElementById('pw-input').value=''; }
+  } else {toast('Falsches Passwort.');document.getElementById('pw-input').value='';}
 }
-function tryLogin() {
+function tryLogin(){
   const tok=document.getElementById('token-input').value.trim();
-  if (!tok) { toast('Bitte GitHub Token eingeben.'); return; }
-  GH_TOKEN=tok; loggedIn=true;
+  if(!tok){toast('Token fehlt.');return;}
+  GH_TOKEN=tok;loggedIn=true;
   document.getElementById('admin-token-form').style.display='none';
   document.getElementById('admin-logout-form').style.display='';
-  document.getElementById('admin-status').innerHTML='&#128275; Admin:';
+  document.getElementById('admin-status').innerHTML='&#128275;';
   document.getElementById('admin-panel').style.display='';
-  renderEntryForm(); renderPlayers();
-  toast('Willkommen!');
+  renderEntryForm();renderPlayers();toast('Willkommen!');
 }
-function doLogout() {
-  GH_TOKEN=''; loggedIn=false;
+function doLogout(){
+  GH_TOKEN='';loggedIn=false;
   document.getElementById('admin-login-form').style.display='';
   document.getElementById('admin-token-form').style.display='none';
   document.getElementById('admin-logout-form').style.display='none';
-  document.getElementById('admin-status').innerHTML='&#128274; Admin:';
+  document.getElementById('admin-status').innerHTML='&#128274;';
   document.getElementById('admin-panel').style.display='none';
   document.getElementById('pw-input').value='';
   document.getElementById('token-input').value='';
@@ -357,243 +472,100 @@ function doLogout() {
 }
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
-function playerName(s,id) { return (s.players.find(p=>p.id===id)||{}).name||'(gelöscht)'; }
+function playerName(s,id){return(s.players.find(p=>p.id===id)||{}).name||'(gelöscht)';}
 
-function toggleAdminSec(head) {
-  const body = head.nextElementSibling;
-  const open = body.classList.toggle('open');
-  head.innerHTML = head.innerHTML.replace(/[▶▼►▼▾▸]/g,'').replace('&#9658;','').replace('&#9660;','').trim();
-  head.innerHTML = (open ? '&#9660; ' : '&#9658; ') + head.innerHTML;
+function toggleAdminSec(head){
+  const body=head.nextElementSibling,open=body.classList.toggle('open');
+  head.innerHTML=head.textContent.replace(/^[▶▼►▾]/,'').trim();
+  head.innerHTML=(open?'&#9660; ':'&#9658; ')+head.innerHTML;
 }
 
-// ─── CHART ────────────────────────────────────────────────────────────────────
-const COLORS = ['#00c','#c00','#080','#c60','#60c','#088','#c06','#660','#048','#840'];
-
-function renderChart() {
-  const s=load(), canvas=document.getElementById('elo-chart');
-  if (!canvas) return;
-  const playerIds=s.players.map(p=>p.id), numDays=s.days.length;
-  const DPR=window.devicePixelRatio||1, W=canvas.offsetWidth||730, H=200;
-  canvas.width=W*DPR; canvas.height=H*DPR;
-  canvas.style.width=W+'px'; canvas.style.height=H+'px';
-  const ctx=canvas.getContext('2d');
-  ctx.scale(DPR,DPR); ctx.clearRect(0,0,W,H);
-  if (!playerIds.length||numDays===0) {
-    ctx.fillStyle='#aaa'; ctx.font='12px Arial'; ctx.textAlign='center';
-    ctx.fillText('Noch keine Spieltage.',W/2,H/2);
-    document.getElementById('elo-legend').innerHTML=''; return;
-  }
-  const history={};
-  playerIds.forEach(id=>{history[id]=[];});
-  s.days.forEach(day=>{
-    playerIds.forEach(id=>{
-      const e=day.entries.find(x=>x.id===id);
-      const last=history[id].length>0?history[id][history[id].length-1]:G2_R0;
-      history[id].push(e?e.after:last);
-    });
-  });
-  const PAD={top:14,right:60,bottom:24,left:50};
-  const cW=W-PAD.left-PAD.right, cH=H-PAD.top-PAD.bottom;
-  const allVals=Object.values(history).flat();
-  let minV=Math.min(...allVals),maxV=Math.max(...allVals);
-  const range=maxV-minV||50; minV-=range*0.12; maxV+=range*0.12;
-  const toX=i=>PAD.left+(numDays>1?i*cW/(numDays-1):cW/2);
-  const toY=v=>PAD.top+cH-((v-minV)/(maxV-minV))*cH;
-  for (let i=0;i<=4;i++) {
-    const v=minV+(maxV-minV)*i/4, y=toY(v);
-    ctx.strokeStyle='#ddd'; ctx.lineWidth=1;
-    ctx.beginPath(); ctx.moveTo(PAD.left,y); ctx.lineTo(W-PAD.right,y); ctx.stroke();
-    ctx.fillStyle='#666'; ctx.font='10px Arial'; ctx.textAlign='right';
-    ctx.fillText(Math.round(v),PAD.left-3,y+3);
-  }
-  for (let i=0;i<numDays;i++) {
-    const x=toX(i);
-    ctx.strokeStyle='#eee'; ctx.lineWidth=1;
-    ctx.beginPath(); ctx.moveTo(x,PAD.top); ctx.lineTo(x,H-PAD.bottom); ctx.stroke();
-    ctx.fillStyle='#888'; ctx.font='10px Arial'; ctx.textAlign='center';
-    ctx.fillText('T'+s.days[i].tag,x,H-PAD.bottom+12);
-  }
-  playerIds.forEach((id,ci)=>{
-    const color=COLORS[ci%COLORS.length], pts=history[id];
-    ctx.strokeStyle=color; ctx.lineWidth=2;
-    ctx.beginPath();
-    pts.forEach((v,i)=>{i===0?ctx.moveTo(toX(i),toY(v)):ctx.lineTo(toX(i),toY(v));});
-    ctx.stroke();
-    pts.forEach((v,i)=>{ctx.fillStyle=color;ctx.beginPath();ctx.arc(toX(i),toY(v),3,0,Math.PI*2);ctx.fill();});
-    const name=(s.players.find(p=>p.id===id)||{}).name||id;
-    ctx.fillStyle=color; ctx.font='bold 10px Arial'; ctx.textAlign='left';
-    ctx.fillText(name,toX(numDays-1)+5,toY(pts[pts.length-1])+4);
-  });
-  document.getElementById('elo-legend').innerHTML=playerIds.map((id,ci)=>{
-    const color=COLORS[ci%COLORS.length],name=(s.players.find(p=>p.id===id)||{}).name||id;
-    return `<span style="display:inline-flex;align-items:center;gap:3px;"><span style="display:inline-block;width:16px;height:2px;background:${color};border-top:2px solid ${color};"></span>${name}</span>`;
-  }).join('');
-}
-
-function toggleInfo() {
+function toggleInfo(){
   const box=document.getElementById('info-box'),tog=document.getElementById('info-toggle');
   const open=box.style.display==='none';
   box.style.display=open?'block':'none';
-  tog.innerHTML=(open?'&#9660;':'&#9658;')+' Wie funktioniert Glicko-2?';
+  tog.innerHTML=(open?'&#9660;':'&#9658;')+' Glicko-2 erkl&auml;rt';
 }
 
-// ─── RANGLISTE ────────────────────────────────────────────────────────────────
-function sortBy(mode) { sortMode=mode; renderLb(); }
-
-function renderLb() {
-  const s=load();
-  const sorted=[...s.players].sort((a,b)=>
-    sortMode==='avg'?(b.games>0?b.total/b.games:0)-(a.games>0?a.total/a.games:0):b.rating-a.rating
-  );
-  document.getElementById('lb-body').innerHTML=sorted.map((p,i)=>{
-    const avg=p.games>0?Math.round(p.total/p.games):'&mdash;';
-    const m=['🥇','🥈','🥉'][i]||`${i+1}.`;
-    const rdColor=p.rd<80?'green':p.rd<150?'#660':'#900';
-    return `<tr><td>${m}</td><td><b>${p.name}</b></td><td><b>${Math.round(p.rating)}</b></td><td style="color:${rdColor}">${Math.round(p.rd)}</td><td>${avg}</td><td>${p.games}</td></tr>`;
-  }).join('')||'<tr><td colspan="6" style="color:#666;text-align:center;">Noch keine Spieler.</td></tr>';
-  renderChart();
-}
-
-// ─── VERLAUF ──────────────────────────────────────────────────────────────────
-function renderHist() {
-  const s=load();
-  if (!s.days.length) { document.getElementById('verlauf-body').innerHTML='<span class="dim">Noch keine Spieltage.</span>'; return; }
-
-  const html=[...s.days].reverse().map(day=>{
-    const sortedEntries=[...day.entries].sort((a,b)=>a.dnp-b.dnp||(b.score||0)-(a.score||0));
-    const winner=sortedEntries.find(e=>!e.dnp);
-    const winnerName=winner?playerName(s,winner.id):'';
-    const participated=sortedEntries.filter(e=>!e.dnp).length;
-    const summary=`Tag ${day.tag} &mdash; ${day.date} &mdash; ${participated} Spieler &mdash; Bester: ${winnerName}`;
-
-    const playerRows=sortedEntries.map(e=>{
-      const name=playerName(s,e.id);
-      const deltaStr=e.dnp?'<span class="dim">DNP</span>':e.delta>0?`<span class="pos">+${e.delta}</span>`:e.delta<0?`<span class="neg">${e.delta}</span>`:'&plusmn;0';
-
-      // Glicko-2 detail block
-      let detailHtml='';
-      if (e.dnp) {
-        detailHtml=`<div class="player-detail" id="det-${day.tag}-${e.id}">
-          <span class="dim">DNP &mdash; kein Spiel. RD steigt: ${e.rdBefore??'?'} &rarr; ${e.rdAfter??'?'}</span>
-        </div>`;
-      } else {
-        const mu=((e.before-1500)/G2_SCALE).toFixed(4);
-        const phi=(e.rdBefore/G2_SCALE).toFixed(4);
-        let duelRows='';
-        if (e.duels && e.duels.length) {
-          duelRows=e.duels.map(d=>{
-            const oppName=playerName(s,d.oppId);
-            const muJ=((d.oppRating-1500)/G2_SCALE).toFixed(3);
-            const phiJ=(d.oppRD/G2_SCALE).toFixed(3);
-            const gVal=(1/Math.sqrt(1+3*(d.oppRD/G2_SCALE)**2/(Math.PI**2))).toFixed(4);
-            const expVal=(1/(1+Math.exp(-gVal*((e.before-1500)/G2_SCALE-(d.oppRating-1500)/G2_SCALE)))).toFixed(4);
-            const result=d.score===1?'Sieg':d.score===0?'Niederlage':'Unentschieden';
-            const contrib=(32*(d.score-expVal)).toFixed(1);
-            return `<tr>
-              <td>${oppName}</td>
-              <td>${d.oppRating} (RD ${d.oppRD})</td>
-              <td>${result}</td>
-              <td>${expVal}</td>
-              <td>${gVal}</td>
-              <td>${contrib>0?'+'+contrib:contrib}</td>
-            </tr>`;
-          }).join('');
-        }
-        detailHtml=`<div class="player-detail" id="det-${day.tag}-${e.id}">
-          <div style="margin-bottom:4px;">
-            <b>Glicko-2 Berechnung:</b><br>
-            Rating vorher: <b>${e.before}</b> (μ = ${mu}) &nbsp;|&nbsp;
-            RD vorher: <b>${e.rdBefore??'?'}</b> (φ = ${phi})<br>
-            Rating nachher: <b>${e.after}</b> &nbsp;|&nbsp; RD nachher: <b>${e.rdAfter??'?'}</b>
-          </div>
-          <table class="duel-table">
-            <thead><tr><th>Gegner</th><th>Rating (RD)</th><th>Ergebnis</th><th>Erwartet (E)</th><th>g(φ)</th><th>Beitrag</th></tr></thead>
-            <tbody>${duelRows}</tbody>
-          </table>
-          <div style="margin-top:3px;color:#555;font-size:10px;">
-            Beitrag = K &times; (Ergebnis &minus; E). Gesamtdelta = ${e.delta>0?'+'+e.delta:e.delta} aus ${e.duels?e.duels.length:0} Duellen.
-          </div>
-        </div>`;
-      }
-
-      return `<div class="player-result-row">
-        <div class="player-summary" onclick="togglePlayerDetail('det-${day.tag}-${e.id}',this)">
-          <span style="min-width:80px;"><b>${name}</b></span>
-          <span class="dim" style="min-width:55px;">${e.dnp?'DNP':'Score: '+e.score}</span>
-          <span style="min-width:60px;">${e.before} &rarr; <b>${e.after}</b></span>
-          <span>${deltaStr}</span>
-          <span style="margin-left:auto;color:#aaa;font-size:10px;">&#9658; Detail</span>
-        </div>
-        ${detailHtml}
-      </div>`;
-    }).join('');
-
-    return `<div class="day-block">
-      <div class="day-header" onclick="toggleDay(this)">
-        <span>${summary}</span>
-        <span style="font-size:10px;color:#666;">&#9658; aufklappen</span>
-      </div>
-      <div class="day-body">${playerRows}</div>
-    </div>`;
-  }).join('');
-
-  document.getElementById('verlauf-body').innerHTML=html;
-}
-
-function toggleDay(header) {
-  const body=header.nextElementSibling;
-  const open=body.classList.toggle('open');
-  const arrow=header.querySelector('span:last-child');
-  arrow.innerHTML=open?'&#9660; einklappen':'&#9658; aufklappen';
-}
-
-function togglePlayerDetail(id, row) {
-  const det=document.getElementById(id);
-  if (!det) return;
-  const open=det.classList.toggle('open');
-  const arrow=row.querySelector('span:last-child');
-  if (arrow) arrow.innerHTML=open?'&#9660; Detail':'&#9658; Detail';
+// ─── COUNTRY SELECT HTML ──────────────────────────────────────────────────────
+function countrySelectHtml(id, val='') {
+  const opts=COUNTRIES.map(([name,cont])=>
+    `<option value="${name}" data-cont="${cont}" ${val===name?'selected':''}>${name}</option>`
+  ).join('');
+  return `<select id="${id}" style="width:100%;font-size:10px;"><option value="">-- Land --</option>${opts}</select>`;
 }
 
 // ─── ENTRY FORM ───────────────────────────────────────────────────────────────
-function renderEntryForm() {
+function renderEntryForm(){
   const s=load();
   document.getElementById('e-date').value=new Date().toISOString().split('T')[0];
   document.getElementById('e-tag').value=s.days.length+1;
-  if (!s.players.length) { document.getElementById('e-players').innerHTML='<span class="dim">Erst Spieler anlegen.</span>'; return; }
-  document.getElementById('e-players').innerHTML=s.players.map(p=>`
-    <div class="prow">
-      <b>${p.name}</b>
-      <span class="dim">${Math.round(p.rating)} (&plusmn;${Math.round(p.rd)})</span>
-      <label style="font-size:12px;">Score:&nbsp;<input type="number" id="s-${p.id}" min="0" max="1000" placeholder="0" style="width:65px"></label>
-      <label style="margin-left:auto;font-size:12px;"><input type="checkbox" id="dnp-${p.id}" onchange="toggleDnp('${p.id}')"> DNP</label>
-    </div>`).join('');
+
+  // 5 round country selects
+  let roundsHtml='<div style="font-size:10px;font-weight:bold;margin-bottom:2px;">Länder der 5 Runden:</div>';
+  roundsHtml+='<div class="rounds-grid">';
+  for(let i=1;i<=5;i++){
+    roundsHtml+=`<div class="round-cell"><label>Runde ${i}</label>${countrySelectHtml('rc-'+i)}</div>`;
+  }
+  roundsHtml+='</div>';
+  document.getElementById('e-rounds').innerHTML=roundsHtml;
+
+  if(!s.players.length){document.getElementById('e-players').innerHTML='<span class="dim">Erst Spieler anlegen.</span>';return;}
+
+  let html='<div style="font-size:10px;font-weight:bold;margin:4px 0 2px;">Scores pro Spieler:</div>';
+  html+=s.players.map(p=>{
+    const scores=[1,2,3,4,5].map(i=>`<div class="round-cell"><label>R${i}</label><input type="number" id="sc-${p.id}-${i}" min="0" max="100" placeholder="0"></div>`).join('');
+    return `<div class="entry-player-row">
+      <div class="entry-player-name">${p.name} <span class="dim">${Math.round(p.rating)} (&plusmn;${Math.round(p.rd)})</span>
+        <label style="margin-left:8px;font-weight:normal;font-size:10px;"><input type="checkbox" id="dnp-${p.id}" onchange="toggleDnp('${p.id}')"> DNP</label>
+      </div>
+      <div class="rounds-grid" id="sg-${p.id}">${scores}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('e-players').innerHTML=html;
 }
 
-function toggleDnp(id) {
+function toggleDnp(id){
   const dnp=document.getElementById(`dnp-${id}`).checked;
-  const inp=document.getElementById(`s-${id}`);
-  inp.disabled=dnp; inp.style.background=dnp?'#eee':'#fff';
+  document.querySelectorAll(`#sg-${id} input`).forEach(i=>{i.disabled=dnp;i.style.background=dnp?'#eee':'#fff';});
 }
 
-async function submitDay() {
+async function submitDay(){
   const s=load();
   const date=document.getElementById('e-date').value;
   const tag=parseInt(document.getElementById('e-tag').value)||s.days.length+1;
-  if (!date) { toast('Datum fehlt!'); return; }
+  if(!date){toast('Datum fehlt!');return;}
+
+  // Get rounds
+  const rounds=[];
+  for(let i=1;i<=5;i++){
+    const sel=document.getElementById('rc-'+i);
+    rounds.push({country:sel?sel.value:'',continent:sel&&sel.value?countryToContinent(sel.value)||'':''});
+  }
+
   const entries=s.players.map(p=>{
     const dnp=document.getElementById(`dnp-${p.id}`)?.checked||false;
-    const x=parseInt(document.getElementById(`s-${p.id}`)?.value);
-    return {id:p.id,dnp,score:dnp?null:isNaN(x)?0:Math.min(1000,Math.max(0,x))};
+    let roundScores=null;
+    if(!dnp){
+      roundScores=[1,2,3,4,5].map(i=>{
+        const v=parseInt(document.getElementById(`sc-${p.id}-${i}`)?.value);
+        return{score:isNaN(v)?0:Math.min(100,Math.max(0,v))};
+      });
+    }
+    return{id:p.id,dnp,rounds:roundScores};
   });
-  if (entries.filter(e=>!e.dnp).length<2) { toast('Mind. 2 Spieler!'); return; }
 
+  if(entries.filter(e=>!e.dnp).length<2){toast('Mind. 2 Spieler!');return;}
+
+  // Compute Glicko-2
+  const active=entries.filter(e=>!e.dnp);
   const results={};
   s.players.forEach(p=>{results[p.id]=[];});
-  const active=entries.filter(e=>!e.dnp);
-  for (let i=0;i<active.length;i++) for (let j=i+1;j<active.length;j++) {
-    const a=active[i],b=active[j],pA=s.players.find(p=>p.id===a.id),pB=s.players.find(p=>p.id===b.id);
-    const sA=a.score>b.score?1:a.score<b.score?0:0.5;
+  for(let i=0;i<active.length;i++) for(let j=i+1;j<active.length;j++){
+    const a=active[i],b=active[j];
+    const pA=s.players.find(p=>p.id===a.id),pB=s.players.find(p=>p.id===b.id);
+    const totA=a.rounds.reduce((x,r)=>x+r.score,0),totB=b.rounds.reduce((x,r)=>x+r.score,0);
+    const sA=totA>totB?1:totA<totB?0:0.5;
     results[a.id].push({r:pB.rating,rd:pB.rd,s:sA,oppId:b.id});
     results[b.id].push({r:pA.rating,rd:pA.rd,s:1-sA,oppId:a.id});
   }
@@ -601,107 +573,384 @@ async function submitDay() {
   const dayEntries=entries.map(e=>{
     const p=s.players.find(x=>x.id===e.id);
     const before=Math.round(p.rating),rdBefore=Math.round(p.rd);
-    if (e.dnp) {
+    if(e.dnp){
       p.rd=Math.min(G2_RD0,Math.sqrt(p.rd*p.rd+p.vol*p.vol));
-      return {...e,before,after:before,delta:0,rdBefore,rdAfter:Math.round(p.rd),duels:[]};
+      return{...e,before,after:before,delta:0,rdBefore,rdAfter:Math.round(p.rd),duels:[]};
     }
     const duels=results[p.id].map(r=>({oppId:r.oppId,oppRating:Math.round(r.r),oppRD:Math.round(r.rd),score:r.s}));
     const u=glicko2Update(p,results[p.id]);
-    p.rating=u.rating; p.rd=u.rd; p.vol=u.vol; p.games++; p.total+=e.score;
+    const total=e.rounds.reduce((x,r)=>x+r.score,0);
+    p.rating=u.rating;p.rd=u.rd;p.vol=u.vol;p.games++;p.total+=total;
     const after=Math.round(p.rating);
-    return {...e,before,after,delta:after-before,rdBefore,rdAfter:Math.round(p.rd),duels};
+    return{...e,before,after,delta:after-before,rdBefore,rdAfter:Math.round(p.rd),duels};
   });
 
-  s.days.push({tag,date,entries:dayEntries});
+  // Insert day sorted by date
+  const newDay={tag,date,rounds,entries:dayEntries};
+  s.days.push(newDay);
+  s.days.sort((a,b)=>a.date.localeCompare(b.date)||a.tag-b.tag);
+  // Re-number tags? No – keep as entered, just sort
   const ok=await save(s);
-  if (ok) { toast(`Tag ${tag} gespeichert.`); renderAll(); renderEntryForm(); }
+  if(ok){toast(`Tag ${tag} gespeichert.`);renderAll();renderEntryForm();}
 }
 
-function renderPlayers() {
+// ─── RANGLISTE ────────────────────────────────────────────────────────────────
+function sortBy(m){sortMode=m;renderLb();}
+
+function renderLb(){
   const s=load();
+  const sorted=[...s.players].sort((a,b)=>
+    sortMode==='avg'?(b.games>0?b.total/b.games:0)-(a.games>0?a.total/a.games:0):b.rating-a.rating
+  );
+  const rdColor=rd=>rd<80?'green':rd<150?'#660':'#900';
+  document.getElementById('lb-body').innerHTML=sorted.map((p,i)=>{
+    const avg=p.games>0?Math.round(p.total/p.games):'&mdash;';
+    const m=['🥇','🥈','🥉'][i]||`${i+1}.`;
+    return`<tr><td>${m}</td><td><b>${p.name}</b></td><td><b>${Math.round(p.rating)}</b></td><td style="color:${rdColor(p.rd)}">${Math.round(p.rd)}</td><td>${avg}</td><td>${p.games}</td></tr>`;
+  }).join('')||'<tr><td colspan="6" style="color:#666;text-align:center;">Keine Spieler.</td></tr>';
+}
+
+// ─── CHART: RATING VERLAUF ────────────────────────────────────────────────────
+function renderRatingChart(){
+  const s=load(), canvas=document.getElementById('chart-rating');
+  if(!canvas) return;
+  const pids=s.players.map(p=>p.id), nd=s.days.length;
+  const DPR=window.devicePixelRatio||1, W=canvas.offsetWidth||360, H=140;
+  canvas.width=W*DPR;canvas.height=H*DPR;canvas.style.width=W+'px';canvas.style.height=H+'px';
+  const ctx=canvas.getContext('2d');ctx.scale(DPR,DPR);ctx.clearRect(0,0,W,H);
+  if(!pids.length||!nd){ctx.fillStyle='#aaa';ctx.font='11px Arial';ctx.textAlign='center';ctx.fillText('Keine Daten',W/2,H/2);document.getElementById('chart-rating-legend').innerHTML='';return;}
+  const hist={};pids.forEach(id=>{hist[id]=[];});
+  s.days.forEach(day=>{pids.forEach(id=>{const e=day.entries.find(x=>x.id===id);const last=hist[id].length>0?hist[id][hist[id].length-1]:G2_R0;hist[id].push(e?e.after:last);});});
+  const PAD={t:10,r:55,b:20,l:42};
+  const cW=W-PAD.l-PAD.r,cH=H-PAD.t-PAD.b;
+  const all=Object.values(hist).flat();
+  let minV=Math.min(...all),maxV=Math.max(...all);const range=maxV-minV||50;minV-=range*.12;maxV+=range*.12;
+  const toX=i=>PAD.l+(nd>1?i*cW/(nd-1):cW/2);
+  const toY=v=>PAD.t+cH-((v-minV)/(maxV-minV))*cH;
+  for(let i=0;i<=3;i++){const v=minV+(maxV-minV)*i/3,y=toY(v);ctx.strokeStyle='#eee';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(PAD.l,y);ctx.lineTo(W-PAD.r,y);ctx.stroke();ctx.fillStyle='#888';ctx.font='9px Arial';ctx.textAlign='right';ctx.fillText(Math.round(v),PAD.l-2,y+3);}
+  for(let i=0;i<nd;i++){const x=toX(i);ctx.strokeStyle='#f0f0f0';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,PAD.t);ctx.lineTo(x,H-PAD.b);ctx.stroke();ctx.fillStyle='#bbb';ctx.font='9px Arial';ctx.textAlign='center';ctx.fillText('T'+s.days[i].tag,x,H-PAD.b+10);}
+  pids.forEach((id,ci)=>{
+    const color=COLORS[ci%COLORS.length],pts=hist[id];
+    ctx.strokeStyle=color;ctx.lineWidth=2;ctx.beginPath();
+    pts.forEach((v,i)=>{i===0?ctx.moveTo(toX(i),toY(v)):ctx.lineTo(toX(i),toY(v));});ctx.stroke();
+    pts.forEach((v,i)=>{ctx.fillStyle=color;ctx.beginPath();ctx.arc(toX(i),toY(v),2.5,0,Math.PI*2);ctx.fill();});
+    const name=(s.players.find(p=>p.id===id)||{}).name||id;
+    ctx.fillStyle=color;ctx.font='bold 9px Arial';ctx.textAlign='left';
+    ctx.fillText(name,toX(nd-1)+4,toY(pts[pts.length-1])+3);
+  });
+  document.getElementById('chart-rating-legend').innerHTML=pids.map((id,ci)=>{
+    const color=COLORS[ci%COLORS.length],name=(s.players.find(p=>p.id===id)||{}).name||id;
+    return`<span style="display:inline-flex;align-items:center;gap:2px;"><span style="display:inline-block;width:14px;height:2px;background:${color};border-top:2px solid ${color};"></span>${name}</span>`;
+  }).join('');
+}
+
+// ─── CHART: KONTINENT ────────────────────────────────────────────────────────
+function renderKontinentChart(){
+  const s=load();
+  const canvas=document.getElementById('chart-kontinent');
+  if(!canvas) return;
+  const DPR=window.devicePixelRatio||1,W=canvas.offsetWidth||360,H=130;
+  canvas.width=W*DPR;canvas.height=H*DPR;canvas.style.width=W+'px';canvas.style.height=H+'px';
+  const ctx=canvas.getContext('2d');ctx.scale(DPR,DPR);ctx.clearRect(0,0,W,H);
+
+  const sel=document.getElementById('konti-player-select')?.value||'all';
+  // Build per-continent averages
+  // For each day, each round has a country+continent, each player has a score for that round
+  const contScores={};CONTINENT_ORDER.forEach(c=>{contScores[c]=[];});
+  s.days.forEach(day=>{
+    if(!day.rounds) return;
+    day.rounds.forEach((round,ri)=>{
+      if(!round.continent) return;
+      const cont=round.continent;
+      if(!contScores[cont]) contScores[cont]=[];
+      day.entries.forEach(e=>{
+        if(e.dnp||!e.rounds) return;
+        if(sel!=='all'&&e.id!==sel) return;
+        contScores[cont].push(e.rounds[ri]?.score||0);
+      });
+    });
+  });
+
+  const conts=CONTINENT_ORDER.filter(c=>contScores[c].length>0);
+  if(!conts.length){ctx.fillStyle='#aaa';ctx.font='11px Arial';ctx.textAlign='center';ctx.fillText('Noch keine Länderdaten',W/2,H/2);return;}
+
+  const avgs=conts.map(c=>{const arr=contScores[c];return arr.reduce((a,b)=>a+b,0)/arr.length;});
+  const maxV=Math.max(...avgs,1);
+  const PAD={t:10,r:8,b:28,l:8};
+  const cW=W-PAD.l-PAD.r,cH=H-PAD.t-PAD.b;
+  const bw=Math.min(40,Math.floor(cW/conts.length)-6);
+  const contColors={EU:'#4466cc',AS:'#cc8833',AF:'#cc4444',NA:'#44aa66',SA:'#9944cc',OC:'#aaaa22'};
+
+  conts.forEach((c,i)=>{
+    const x=PAD.l+i*(cW/conts.length)+((cW/conts.length)-bw)/2;
+    const bh=(avgs[i]/maxV)*cH;
+    const y=PAD.t+cH-bh;
+    ctx.fillStyle=contColors[c]||'#888';
+    ctx.fillRect(x,y,bw,bh);
+    // value on top
+    ctx.fillStyle='#000';ctx.font='bold 10px Arial';ctx.textAlign='center';
+    ctx.fillText(Math.round(avgs[i]),x+bw/2,y-2);
+    // label below
+    ctx.fillStyle='#333';ctx.font='10px Arial';
+    ctx.fillText(CONTINENT_NAMES[c]||(c),x+bw/2,H-PAD.b+12);
+    // count
+    ctx.fillStyle='#888';ctx.font='9px Arial';
+    ctx.fillText('n='+contScores[c].length,x+bw/2,H-PAD.b+22);
+  });
+}
+
+// ─── CHART: SCORE VERTEILUNG ──────────────────────────────────────────────────
+function renderScoreChart(){
+  const s=load();
+  const canvas=document.getElementById('chart-score');
+  if(!canvas) return;
+  const DPR=window.devicePixelRatio||1,W=canvas.offsetWidth||360,H=130;
+  canvas.width=W*DPR;canvas.height=H*DPR;canvas.style.width=W+'px';canvas.style.height=H+'px';
+  const ctx=canvas.getContext('2d');ctx.scale(DPR,DPR);ctx.clearRect(0,0,W,H);
+
+  // Per-player: all individual round scores
+  const playerScores={};
+  s.players.forEach(p=>{playerScores[p.id]=[];});
+  s.days.forEach(day=>{
+    day.entries.forEach(e=>{
+      if(e.dnp||!e.rounds) return;
+      e.rounds.forEach(r=>{if(r.score!=null)playerScores[e.id].push(r.score);});
+    });
+  });
+
+  const pids=s.players.filter(p=>playerScores[p.id].length>0).map(p=>p.id);
+  if(!pids.length){ctx.fillStyle='#aaa';ctx.font='11px Arial';ctx.textAlign='center';ctx.fillText('Noch keine Daten',W/2,H/2);document.getElementById('chart-score-legend').innerHTML='';return;}
+
+  const PAD={t:10,r:8,b:20,l:30};
+  const cW=W-PAD.l-PAD.r,cH=H-PAD.t-PAD.b;
+  const groupW=cW/pids.length;
+  const bw=Math.min(20,groupW*0.4);
+
+  // grid lines at 0,25,50,75,100
+  [0,25,50,75,100].forEach(v=>{
+    const y=PAD.t+cH-(v/100)*cH;
+    ctx.strokeStyle='#eee';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(PAD.l,y);ctx.lineTo(W-PAD.r,y);ctx.stroke();
+    ctx.fillStyle='#aaa';ctx.font='9px Arial';ctx.textAlign='right';ctx.fillText(v,PAD.l-2,y+3);
+  });
+
+  pids.forEach((id,i)=>{
+    const color=COLORS[i%COLORS.length];
+    const scores=playerScores[id];
+    const mn=Math.min(...scores),mx=Math.max(...scores);
+    const avg=scores.reduce((a,b)=>a+b,0)/scores.length;
+    const cx=PAD.l+i*groupW+groupW/2;
+
+    // min-max line
+    ctx.strokeStyle=color;ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(cx,PAD.t+cH-(mn/100)*cH);ctx.lineTo(cx,PAD.t+cH-(mx/100)*cH);ctx.stroke();
+    // min tick
+    ctx.beginPath();ctx.moveTo(cx-4,PAD.t+cH-(mn/100)*cH);ctx.lineTo(cx+4,PAD.t+cH-(mn/100)*cH);ctx.stroke();
+    // max tick
+    ctx.beginPath();ctx.moveTo(cx-4,PAD.t+cH-(mx/100)*cH);ctx.lineTo(cx+4,PAD.t+cH-(mx/100)*cH);ctx.stroke();
+    // avg dot
+    ctx.fillStyle=color;ctx.beginPath();ctx.arc(cx,PAD.t+cH-(avg/100)*cH,4,0,Math.PI*2);ctx.fill();
+    // avg label
+    ctx.fillStyle='#000';ctx.font='bold 9px Arial';ctx.textAlign='center';
+    ctx.fillText(Math.round(avg),cx,PAD.t+cH-(avg/100)*cH-6);
+  });
+
+  document.getElementById('chart-score-legend').innerHTML=pids.map((id,i)=>{
+    const color=COLORS[i%COLORS.length],name=(s.players.find(p=>p.id===id)||{}).name||id;
+    const scores=playerScores[id];
+    const avg=Math.round(scores.reduce((a,b)=>a+b,0)/scores.length);
+    return`<span style="display:inline-flex;align-items:center;gap:2px;"><span style="width:8px;height:8px;border-radius:50%;background:${color};display:inline-block;"></span>${name} Ø${avg}</span>`;
+  }).join('');
+}
+
+// ─── TABLE: LÄNDER ────────────────────────────────────────────────────────────
+function renderLaenderTable(){
+  const s=load();
+  const sel=document.getElementById('laender-player-select')?.value||'all';
+  // country -> [scores]
+  const cmap={};
+  s.days.forEach(day=>{
+    if(!day.rounds) return;
+    day.rounds.forEach((round,ri)=>{
+      if(!round.country) return;
+      if(!cmap[round.country]) cmap[round.country]={scores:[],continent:round.continent||''};
+      day.entries.forEach(e=>{
+        if(e.dnp||!e.rounds) return;
+        if(sel!=='all'&&e.id!==sel) return;
+        cmap[round.country].scores.push(e.rounds[ri]?.score||0);
+      });
+    });
+  });
+  const countries=Object.keys(cmap).filter(c=>cmap[c].scores.length>0);
+  if(!countries.length){document.getElementById('laender-table-wrap').innerHTML='<span class="dim">Noch keine Länderdaten.</span>';return;}
+  countries.sort((a,b)=>{
+    const avgA=cmap[a].scores.reduce((x,y)=>x+y,0)/cmap[a].scores.length;
+    const avgB=cmap[b].scores.reduce((x,y)=>x+y,0)/cmap[b].scores.length;
+    return avgB-avgA;
+  });
+  const rows=countries.slice(0,15).map(c=>{
+    const d=cmap[c];
+    const avg=Math.round(d.scores.reduce((a,b)=>a+b,0)/d.scores.length);
+    const mn=Math.min(...d.scores),mx=Math.max(...d.scores);
+    const cont=d.continent;
+    const badge=cont?`<span class="c-${cont}" style="padding:0 3px;border-radius:2px;font-size:9px;">${CONTINENT_NAMES[cont]||cont}</span>`:'';
+    return`<tr><td>${c} ${badge}</td><td style="text-align:center;"><b>${avg}</b></td><td style="text-align:center;">${mn}</td><td style="text-align:center;">${mx}</td><td style="text-align:center;">${d.scores.length}</td></tr>`;
+  }).join('');
+  document.getElementById('laender-table-wrap').innerHTML=
+    `<table><thead><tr><th>Land</th><th>Ø Score</th><th>Min</th><th>Max</th><th>n</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+// ─── VERLAUF ──────────────────────────────────────────────────────────────────
+function renderHist(){
+  const s=load();
+  if(!s.days.length){document.getElementById('verlauf-body').innerHTML='<span class="dim">Noch keine Spieltage.</span>';return;}
+  const html=[...s.days].reverse().map(day=>{
+    const sorted=[...day.entries].sort((a,b)=>a.dnp-b.dnp||(b.after||0)-(a.after||0));
+    const best=sorted.find(e=>!e.dnp);
+    const bestName=best?playerName(s,best.id):'';
+    const countries=day.rounds?day.rounds.filter(r=>r.country).map(r=>r.country).join(', '):'';
+    const header=`Tag ${day.tag} &mdash; ${day.date}${countries?' &mdash; '+countries:''} &mdash; Bester: ${bestName}`;
+    const playerRows=sorted.map(e=>{
+      const name=playerName(s,e.id);
+      const total=e.rounds?e.rounds.reduce((x,r)=>x+r.score,0):(e.score||0);
+      const dStr=e.dnp?'<span class="dim">DNP</span>':e.delta>0?`<span class="pos">+${e.delta}</span>`:e.delta<0?`<span class="neg">${e.delta}</span>`:'±0';
+      let detail='';
+      if(e.dnp){
+        detail=`<div class="player-detail" id="det-${day.tag}-${e.id}"><span class="dim">DNP – RD: ${e.rdBefore}→${e.rdAfter}</span></div>`;
+      } else {
+        const roundRows=e.rounds?e.rounds.map((r,i)=>{
+          const country=day.rounds&&day.rounds[i]?day.rounds[i].country:'?';
+          const cont=day.rounds&&day.rounds[i]?day.rounds[i].continent:'';
+          return`<tr><td>R${i+1}: ${country}${cont?' ('+( CONTINENT_NAMES[cont]||cont)+')':''}</td><td style="text-align:center;">${r.score}</td></tr>`;
+        }).join(''):'';
+        const duelRows=e.duels?e.duels.map(d=>{
+          const oName=playerName(s,d.oppId);
+          const gv=(1/Math.sqrt(1+3*(d.oppRD/G2_SCALE)**2/(Math.PI**2))).toFixed(3);
+          const ev=(1/(1+Math.exp(-gv*((e.before-1500)/G2_SCALE-(d.oppRating-1500)/G2_SCALE)))).toFixed(3);
+          const res=d.score===1?'Sieg':d.score===0?'Nied.':'Unent.';
+          const contrib=(32*(d.score-ev)).toFixed(1);
+          return`<tr><td>${oName}</td><td>${d.oppRating}</td><td>${res}</td><td>${ev}</td><td>${contrib>0?'+'+contrib:contrib}</td></tr>`;
+        }).join(''):'';
+        detail=`<div class="player-detail" id="det-${day.tag}-${e.id}">
+          <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <div>
+              <b>Runden:</b>
+              <table class="duel-table"><thead><tr><th>Ort</th><th>Score</th></tr></thead><tbody>${roundRows}</tbody></table>
+              <div style="margin-top:2px;">Gesamtscore: <b>${total}</b> &nbsp;|&nbsp; Rating: ${e.before}→<b>${e.after}</b> (${e.delta>0?'+'+e.delta:e.delta}) &nbsp;|&nbsp; RD: ${e.rdBefore}→${e.rdAfter}</div>
+            </div>
+            <div>
+              <b>Glicko-2 Duelle:</b>
+              <table class="duel-table"><thead><tr><th>Gegner</th><th>Rating</th><th>Erg.</th><th>E</th><th>Beitrag</th></tr></thead><tbody>${duelRows}</tbody></table>
+            </div>
+          </div>
+        </div>`;
+      }
+      return`<div class="player-result-row">
+        <div class="player-summary" onclick="togglePD('det-${day.tag}-${e.id}',this)">
+          <span style="min-width:70px;"><b>${name}</b></span>
+          <span class="dim">${e.dnp?'DNP':'Score: '+(e.rounds?e.rounds.reduce((x,r)=>x+r.score,0):e.score||0)}</span>
+          <span>${e.before}→<b>${e.after}</b></span>
+          <span>${dStr}</span>
+          <span style="margin-left:auto;color:#aaa;font-size:10px;">▶ Detail</span>
+        </div>
+        ${detail}
+      </div>`;
+    }).join('');
+    return`<div class="day-block">
+      <div class="day-header" onclick="toggleDay(this)">
+        <span>${header}</span><span style="font-size:10px;color:#666;">▶ aufklappen</span>
+      </div>
+      <div class="day-body">${playerRows}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('verlauf-body').innerHTML=html;
+}
+
+function toggleDay(h){const b=h.nextElementSibling,open=b.classList.toggle('open');h.querySelector('span:last-child').innerHTML=open?'▼ einklappen':'▶ aufklappen';}
+function togglePD(id,row){const d=document.getElementById(id);if(!d)return;const open=d.classList.toggle('open');row.querySelector('span:last-child').innerHTML=open?'▼ Detail':'▶ Detail';}
+
+// ─── PLAYERS ──────────────────────────────────────────────────────────────────
+function renderPlayers(){
+  const s=load();
+  // Update player dropdowns
+  const opts=s.players.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+  ['konti-player-select','laender-player-select'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el) return;
+    const cur=el.value;
+    el.innerHTML=`<option value="all">Alle Spieler</option>${opts}`;
+    el.value=cur&&s.players.find(p=>p.id===cur)?cur:'all';
+  });
   document.getElementById('player-list').innerHTML=s.players.length
-    ?s.players.map(p=>`<span class="chip">${p.name} <span class="dim">(${Math.round(p.rating)})</span><button onclick="removePlayer('${p.id}')">&#10005;</button></span>`).join('')
+    ?s.players.map(p=>`<span class="chip">${p.name} <span class="dim">(${Math.round(p.rating)})</span><button onclick="removePlayer('${p.id}')">✕</button></span>`).join('')
     :'<span class="dim">Keine Spieler.</span>';
 }
 
-async function addPlayer() {
-  const name=document.getElementById('new-name').value.trim(); if(!name) return;
+async function addPlayer(){
+  const name=document.getElementById('new-name').value.trim();if(!name) return;
   const s=load();
-  if(s.players.find(p=>p.name.toLowerCase()===name.toLowerCase())){toast('Existiert bereits.');return;}
+  if(s.players.find(p=>p.name.toLowerCase()===name.toLowerCase())){toast('Existiert.');return;}
   s.players.push({id:'p_'+Date.now(),name,rating:G2_R0,rd:G2_RD0,vol:G2_VOL0,games:0,total:0});
-  const ok=await save(s);
-  if(ok){document.getElementById('new-name').value='';renderAll();toast(`${name} hinzugefügt.`);}
+  const ok=await save(s);if(ok){document.getElementById('new-name').value='';renderAll();toast(`${name} hinzugefügt.`);}
 }
 
-async function removePlayer(id) {
+async function removePlayer(id){
   const s=load(),p=s.players.find(x=>x.id===id);
   if(!confirm(`${p?.name} löschen?`))return;
   s.players=s.players.filter(x=>x.id!==id);
-  const ok=await save(s); if(ok) renderAll();
+  const ok=await save(s);if(ok) renderAll();
 }
 
-async function undoLastDay() {
-  const s=load(); if(!s.days.length){toast('Keine Tage.');return;}
+async function undoLastDay(){
+  const s=load();if(!s.days.length){toast('Keine Tage.');return;}
   const day=s.days[s.days.length-1];
   if(!confirm(`Tag ${day.tag} (${day.date}) löschen?`))return;
   s.days.pop();
-  const recalc=migrateData({players:s.players.map(p=>({...p,rating:G2_R0,rd:G2_RD0,vol:G2_VOL0,games:0,total:0})),days:s.days});
-  s.players=recalc.players; s.days=recalc.days;
-  const ok=await save(s);
-  if(ok){toast('Rückgängig.');renderAll();}
+  recomputeRatings(s);
+  const ok=await save(s);if(ok){toast('Rückgängig.');renderAll();}
 }
 
-async function resetAll() {
-  if(!confirm('Alle Ratings zurücksetzen + Verlauf löschen?'))return;
-  const s=load();
-  s.players=s.players.map(p=>({...p,rating:G2_R0,rd:G2_RD0,vol:G2_VOL0,games:0,total:0}));
-  s.days=[];
-  const ok=await save(s); if(ok){renderAll();toast('Reset.');}
+async function resetAll(){
+  if(!confirm('Ratings zurücksetzen + Verlauf löschen?'))return;
+  const s=load();s.players=s.players.map(p=>({...p,rating:G2_R0,rd:G2_RD0,vol:G2_VOL0,games:0,total:0}));s.days=[];
+  const ok=await save(s);if(ok){renderAll();toast('Reset.');}
 }
 
-async function clearAll() {
+async function clearAll(){
   if(!confirm('Alle Daten löschen?'))return;
-  const ok=await save({players:[],days:[]}); if(ok){renderAll();toast('Gelöscht.');}
+  const ok=await save({players:[],days:[]});if(ok){renderAll();toast('Gelöscht.');}
 }
 
 // ─── EXPORT ───────────────────────────────────────────────────────────────────
-function genExport(mode) {
+function genExport(mode){
   const s=load(),sorted=[...s.players].sort((a,b)=>b.rating-a.rating),today=new Date().toLocaleDateString('de-DE');
   let out='';
   if(mode==='current'){
     out+=`### 🌍 Maptap Rangliste | ${today}\n\n| # | Name | Rating | RD | Ø Score | Spiele |\n|---|------|--------|-----|---------|--------|\n`;
     sorted.forEach((p,i)=>{const m=['🥇','🥈','🥉'][i]||`${i+1}.`,avg=p.games>0?Math.round(p.total/p.games):'—';out+=`| ${m} | ${p.name} | **${Math.round(p.rating)}** | ${Math.round(p.rd)} | ${avg} | ${p.games} |\n`;});
-  } else if(mode==='lastday'){
+  } else {
     if(!s.days.length){document.getElementById('mm-out').value='Keine Spieltage.';return;}
     const day=s.days[s.days.length-1];
     out+=`### 🌍 Maptap | Tag ${day.tag} | ${day.date}\n\n| # | Name | Score | Rating | +/- |\n|---|------|-------|--------|-----|\n`;
-    [...day.entries].sort((a,b)=>a.dnp-b.dnp||(b.score||0)-(a.score||0)).forEach((e,i)=>{
+    [...day.entries].sort((a,b)=>a.dnp-b.dnp||(b.after||0)-(a.after||0)).forEach((e,i)=>{
       const name=playerName(s,e.id),m=e.dnp?'—':(['🥇','🥈','🥉'][i]||`${i+1}.`);
-      out+=`| ${m} | ${name} | ${e.dnp?'—':e.score} | ${e.after} | ${e.dnp?'DNP':e.delta>0?'+'+e.delta:e.delta} |\n`;
+      const total=e.rounds?e.rounds.reduce((x,r)=>x+r.score,0):(e.score||0);
+      out+=`| ${m} | ${name} | ${e.dnp?'—':total} | ${e.after} | ${e.dnp?'DNP':e.delta>0?'+'+e.delta:e.delta} |\n`;
     });
-    out+=`\n*Glicko-2*`;
-  } else {
-    out+=`### 🌍 Maptap | ${today} | ${s.days.length} Spieltage\n\n| # | Name | Rating | RD | Ø Score | Spiele |\n|---|------|--------|-----|---------|--------|\n`;
-    sorted.forEach((p,i)=>{const m=['🥇','🥈','🥉'][i]||`${i+1}.`,avg=p.games>0?Math.round(p.total/p.games):'—';out+=`| ${m} | ${p.name} | **${Math.round(p.rating)}** | ${Math.round(p.rd)} | ${avg} | ${p.games} |\n`;});
-    if(s.days.length){
-      const day=s.days[s.days.length-1];
-      out+=`\n**Letzter Tag (T${day.tag}, ${day.date}):**\n\n| Name | Score | Δ Rating |\n|------|-------|----------|\n`;
-      [...day.entries].sort((a,b)=>a.dnp-b.dnp||(b.score||0)-(a.score||0)).forEach(e=>{out+=`| ${playerName(s,e.id)} | ${e.dnp?'DNP':e.score} | ${e.dnp?'—':e.delta>0?'+'+e.delta:e.delta} |\n`;});
-    }
-    out+=`\n*Glicko-2, DNP = kein Ratingverlust*`;
   }
   document.getElementById('mm-out').value=out;
 }
 
-function copyExport() {
-  const ta=document.getElementById('mm-out'); if(!ta.value){toast('Erst Format wählen!');return;}
-  ta.select(); document.execCommand('copy'); toast('Kopiert.');
+function copyExport(){const ta=document.getElementById('mm-out');if(!ta.value){toast('Erst Format wählen!');return;}ta.select();document.execCommand('copy');toast('Kopiert.');}
+
+// ─── RENDER ALL ───────────────────────────────────────────────────────────────
+function renderAll(){
+  renderLb();renderRatingChart();renderKontinentChart();renderScoreChart();renderLaenderTable();renderHist();
+  if(loggedIn){renderPlayers();renderEntryForm();}
 }
+window.addEventListener('resize',()=>{renderRatingChart();renderKontinentChart();renderScoreChart();});
 
 let toastT;
 function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.style.display='block';clearTimeout(toastT);toastT=setTimeout(()=>el.style.display='none',2500);}
-function renderAll(){renderLb();renderHist();if(loggedIn){renderPlayers();renderEntryForm();}}
-window.addEventListener('resize',renderChart);
 
 (async()=>{STATE=await ghLoad();renderAll();})();
 </script>
