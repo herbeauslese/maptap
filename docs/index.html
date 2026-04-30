@@ -4,23 +4,15 @@
 <meta charset="UTF-8">
 <title>Maptap Leaderboard</title>
 <style>
-  body { font-family: Arial, sans-serif; font-size: 13px; background: #fff; color: #000; max-width: 750px; margin: 16px auto; padding: 0 10px; }
+  body { font-family: Arial, sans-serif; font-size: 13px; background: #fff; color: #000; max-width: 750px; margin: 16px auto; padding: 0 10px; overflow-x: hidden; }
   h1 { font-size: 18px; margin: 0 0 2px; }
-  p.sub { margin: 0 0 6px; font-size: 11px; color: #444; }
+  p.sub { margin: 0 0 4px; font-size: 11px; color: #444; }
+  hr { border: none; border-top: 1px solid #ccc; margin: 10px 0; }
 
-  .nav { margin: 8px 0 0; }
-  .nav a { display: inline-block; padding: 2px 10px; border: 1px solid #999; background: #eee; text-decoration: none; color: #000; cursor: pointer; margin-right: 2px; font-size: 12px; }
-  .nav a.active { background: #fff; border-bottom-color: #fff; font-weight: bold; position: relative; top: 1px; }
-  .nav a:hover:not(.active) { background: #dde; }
-  .tab-line { border-top: 1px solid #999; margin: 0 0 8px; }
-
-  .panel { display: none; }
-  .panel.active { display: block; }
-
-  table { border-collapse: collapse; width: 100%; font-size: 12px; }
-  th { background: #336; color: #fff; padding: 3px 7px; text-align: left; border: 1px solid #224; }
+  table { border-collapse: collapse; width: 100%; font-size: 12px; table-layout: fixed; }
+  th { background: #336; color: #fff; padding: 3px 7px; text-align: left; border: 1px solid #224; white-space: nowrap; overflow: hidden; }
   th a { color: #ff6; font-size: 10px; cursor: pointer; text-decoration: underline; margin-left: 3px; }
-  td { padding: 2px 7px; border: 1px solid #ccc; }
+  td { padding: 2px 7px; border: 1px solid #ccc; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   tr:nth-child(even) td { background: #f0f0f8; }
   tr:hover td { background: #ffc; }
 
@@ -30,10 +22,10 @@
   button { font-size: 12px; padding: 2px 8px; background: #eee; border: 1px solid #888; cursor: pointer; font-family: Arial, sans-serif; }
   button:hover { background: #dde; }
   button.danger { color: #900; }
-  textarea { font-family: monospace; font-size: 11px; width: 100%; height: 130px; border: 1px solid #888; padding: 3px; box-sizing: border-box; margin-top: 3px; }
+  textarea { font-family: monospace; font-size: 11px; width: 100%; height: 120px; border: 1px solid #888; padding: 3px; box-sizing: border-box; margin-top: 3px; }
 
-  .prow { border: 1px solid #ccc; padding: 3px 7px; margin: 2px 0; background: #f8f8f8; display: flex; align-items: center; gap: 10px; font-size: 12px; }
-  .prow b { min-width: 90px; }
+  .prow { border: 1px solid #ccc; padding: 3px 7px; margin: 2px 0; background: #f8f8f8; display: flex; align-items: center; gap: 10px; font-size: 12px; flex-wrap: wrap; }
+  .prow b { min-width: 80px; }
 
   .pos { color: green; font-weight: bold; }
   .neg { color: #900; font-weight: bold; }
@@ -44,13 +36,45 @@
   .sec-head { font-weight: bold; font-size: 12px; border-bottom: 1px solid #ccc; margin: 10px 0 4px; padding-bottom: 2px; }
   .lockbar { border: 1px solid #aaa; background: #f5f5f5; padding: 4px 7px; margin-top: 10px; font-size: 12px; }
   .infobox { border: 1px solid #aaa; background: #fffde7; padding: 5px 8px; font-size: 11px; margin-top: 4px; line-height: 1.5; }
-  #statusbar { font-size: 11px; color: #555; margin-bottom: 4px; font-style: italic; }
+  #statusbar { font-size: 11px; color: #555; font-style: italic; margin-bottom: 4px; }
   #statusbar.err { color: #900; font-style: normal; font-weight: bold; }
 
   #elo-chart { width: 100%; height: 200px; display: block; border: 1px solid #aaa; background: #fff; cursor: crosshair; margin-top: 4px; }
   #elo-legend { margin-top: 3px; font-size: 11px; display: flex; flex-wrap: wrap; gap: 8px; }
 
-  #toast { position: fixed; bottom: 10px; right: 10px; background: #336; color: #fff; padding: 4px 10px; font-size: 12px; display: none; border: 1px solid #224; }
+  /* VERLAUF */
+  .day-block { margin: 3px 0; border: 1px solid #ccc; }
+  .day-header {
+    background: #eef; padding: 3px 8px; cursor: pointer; font-size: 12px;
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid #ccc; user-select: none;
+  }
+  .day-header:hover { background: #ddf; }
+  .day-body { display: none; }
+  .day-body.open { display: block; }
+
+  .player-result-row { border-bottom: 1px solid #eee; }
+  .player-result-row:last-child { border-bottom: none; }
+  .player-summary {
+    padding: 2px 8px; display: flex; gap: 10px; align-items: center;
+    font-size: 12px; cursor: pointer; background: #fff; flex-wrap: wrap;
+  }
+  .player-summary:hover { background: #fffde7; }
+  .player-detail { display: none; background: #f8f8f8; border-top: 1px solid #eee; padding: 5px 8px; font-size: 11px; }
+  .player-detail.open { display: block; }
+
+  .duel-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 4px; }
+  .duel-table th { background: #ddd; color: #000; padding: 2px 5px; border: 1px solid #bbb; font-weight: bold; }
+  .duel-table td { padding: 2px 5px; border: 1px solid #ddd; }
+
+  /* ADMIN */
+  .admin-section { border: 1px solid #ccc; margin-top: 8px; }
+  .admin-section-head { background: #eee; padding: 3px 8px; cursor: pointer; font-size: 12px; font-weight: bold; border-bottom: 1px solid #ccc; user-select: none; }
+  .admin-section-head:hover { background: #dde; }
+  .admin-section-body { display: none; padding: 6px 8px; }
+  .admin-section-body.open { display: block; }
+
+  #toast { position: fixed; bottom: 10px; right: 10px; background: #336; color: #fff; padding: 4px 10px; font-size: 12px; display: none; border: 1px solid #224; z-index: 100; }
 </style>
 </head>
 <body>
@@ -58,112 +82,117 @@
 <h1>Maptap &mdash; Leaderboard</h1>
 <p class="sub">Geografie-Quiz &middot; Glicko-2-Ratingsystem</p>
 <div id="statusbar">Lade Daten&hellip;</div>
+<hr>
 
-<div class="nav">
-  <a class="active" onclick="tab('rangliste')">Rangliste</a>
-  <a onclick="tab('verlauf')">Verlauf</a>
-  <a id="tab-admin" onclick="tab('admin')" style="display:none">Admin</a>
-</div>
-<div class="tab-line"></div>
+<!-- ═══ RANGLISTE ════════════════════════════════════════════════════════════ -->
+<div class="sec-head">Rangliste</div>
+<table>
+  <colgroup>
+    <col style="width:30px"><col style="width:auto"><col style="width:70px">
+    <col style="width:55px"><col style="width:65px"><col style="width:50px">
+  </colgroup>
+  <thead><tr>
+    <th>#</th>
+    <th>Name</th>
+    <th>Rating <a onclick="sortBy('rating')">&#9660;</a></th>
+    <th>RD</th>
+    <th>&Oslash; Score <a onclick="sortBy('avg')">&#9660;</a></th>
+    <th>Spiele</th>
+  </tr></thead>
+  <tbody id="lb-body"></tbody>
+</table>
 
-<!-- RANGLISTE -->
-<div id="p-rangliste" class="panel active">
-  <table>
-    <thead><tr>
-      <th>#</th>
-      <th>Name</th>
-      <th>Rating <a onclick="sortBy('rating')">&#9660;</a></th>
-      <th>RD <span style="font-weight:normal;font-size:10px;color:#aaf;">(Unsicherheit)</span></th>
-      <th>&Oslash; Score <a onclick="sortBy('avg')">&#9660;</a></th>
-      <th>Spiele</th>
-    </tr></thead>
-    <tbody id="lb-body"></tbody>
-  </table>
+<!-- ═══ CHART ════════════════════════════════════════════════════════════════ -->
+<div class="sec-head" style="margin-top:10px;">Rating-Verlauf</div>
+<canvas id="elo-chart"></canvas>
+<div id="elo-legend"></div>
 
-  <div class="sec-head">Rating-Verlauf</div>
-  <canvas id="elo-chart"></canvas>
-  <div id="elo-legend"></div>
-
-  <p style="margin:6px 0 2px;font-size:12px;">
-    <a href="#" onclick="toggleInfo();return false;" id="info-toggle">&#9658; Wie funktioniert Glicko-2?</a>
-  </p>
-  <div id="info-box" style="display:none" class="infobox">
-    Jeder Spieler hat drei Werte: <b>Rating</b> (Startwert 1500, h&ouml;her = besser),
-    <b>RD</b> (Rating Deviation, Startwert 350 &ndash; wie sicher das Rating ist; sinkt mit mehr Spielen),
-    und <b>Volatility</b> (wie stark jemand schwankt). Nach jedem Spieltag wird jeder gegen jeden verglichen
-    (h&ouml;herer Score = Sieg). Rating und RD werden nach der Glicko-2-Formel aktualisiert &ndash;
-    wer gegen starke Spieler gewinnt, steigt mehr. <b>DNP</b> = nicht gespielt: RD steigt leicht
-    (das System wird unsicherer &uuml;ber die Person), Rating bleibt unver&auml;ndert.
-    Je niedriger das RD, desto verl&auml;sslicher ist das Rating.
-  </div>
-
-  <div class="lockbar">
-    <span id="admin-status">&#128274; Admin:</span>&nbsp;
-    <span id="admin-login-form">
-      <input type="password" id="pw-input" placeholder="Passwort" style="width:110px"
-        onkeydown="if(event.key==='Enter')checkPassword()">
-      <button onclick="checkPassword()">Weiter</button>
-    </span>
-    <span id="admin-token-form" style="display:none">
-      <input type="password" id="token-input" placeholder="GitHub Token" style="width:180px"
-        onkeydown="if(event.key==='Enter')tryLogin()">
-      <button onclick="tryLogin()">Anmelden</button>
-    </span>
-    <span id="admin-logout-form" style="display:none">
-      <button onclick="doLogout()">Abmelden</button>
-    </span>
-  </div>
+<p style="margin:5px 0 2px;font-size:12px;">
+  <a href="#" onclick="toggleInfo();return false;" id="info-toggle">&#9658; Wie funktioniert Glicko-2?</a>
+</p>
+<div id="info-box" style="display:none" class="infobox">
+  Jeder Spieler hat drei Werte: <b>Rating</b> (Startwert 1500, h&ouml;her = besser),
+  <b>RD</b> (Rating Deviation &ndash; Unsicherheit, Start 350, sinkt mit mehr Spielen),
+  <b>Volatility</b> (Schwankungsneigung). Nach jedem Spieltag: jeder gegen jeden (h&ouml;herer Score = Sieg).
+  Wer gegen starke Spieler gewinnt steigt mehr. <b>DNP</b> = RD steigt leicht, Rating bleibt.
 </div>
 
-<!-- VERLAUF -->
-<div id="p-verlauf" class="panel">
-  <table>
-    <thead><tr><th>Tag</th><th>Datum</th><th>Spieler</th><th>Score</th><th>Rating vorher</th><th>Rating nachher</th><th>&Delta;</th></tr></thead>
-    <tbody id="hist-body"></tbody>
-  </table>
+<hr>
+
+<!-- ═══ VERLAUF ══════════════════════════════════════════════════════════════ -->
+<div class="sec-head">Verlauf</div>
+<div id="verlauf-body"><span class="dim">Noch keine Spieltage.</span></div>
+
+<hr>
+
+<!-- ═══ ADMIN ════════════════════════════════════════════════════════════════ -->
+<div class="lockbar">
+  <span id="admin-status">&#128274; Admin:</span>&nbsp;
+  <span id="admin-login-form">
+    <input type="password" id="pw-input" placeholder="Passwort" style="width:110px"
+      onkeydown="if(event.key==='Enter')checkPassword()">
+    <button onclick="checkPassword()">Weiter</button>
+  </span>
+  <span id="admin-token-form" style="display:none">
+    <input type="password" id="token-input" placeholder="GitHub Token" style="width:180px"
+      onkeydown="if(event.key==='Enter')tryLogin()">
+    <button onclick="tryLogin()">Anmelden</button>
+  </span>
+  <span id="admin-logout-form" style="display:none">
+    <button onclick="doLogout()">Abmelden</button>
+  </span>
 </div>
 
-<!-- ADMIN -->
-<div id="p-admin" class="panel">
+<div id="admin-panel" style="display:none">
 
-  <div class="sec-head">Tag eintragen</div>
-  <div class="row">
-    <label>Datum: <input type="date" id="e-date" style="width:135px"></label>
-    <label>Tag #: <input type="number" id="e-tag" style="width:50px" min="1"></label>
+  <div class="admin-section">
+    <div class="admin-section-head" onclick="toggleAdminSec(this)">&#9658; Tag eintragen</div>
+    <div class="admin-section-body">
+      <div class="row">
+        <label>Datum: <input type="date" id="e-date" style="width:135px"></label>
+        <label>Tag #: <input type="number" id="e-tag" style="width:50px" min="1"></label>
+      </div>
+      <div id="e-players" style="margin-top:4px;"></div>
+      <div class="row" style="margin-top:5px;">
+        <button onclick="submitDay()">Speichern</button>
+        <button onclick="renderEntryForm()">Formular zur&uuml;cksetzen</button>
+      </div>
+    </div>
   </div>
-  <div id="e-players" style="margin-top:4px;"></div>
-  <div class="row" style="margin-top:5px;">
-    <button onclick="submitDay()">Speichern</button>
-    <button onclick="renderEntryForm()">Formular zur&uuml;cksetzen</button>
+
+  <div class="admin-section">
+    <div class="admin-section-head" onclick="toggleAdminSec(this)">&#9658; Spieler verwalten</div>
+    <div class="admin-section-body">
+      <div class="row">
+        <input type="text" id="new-name" placeholder="Name" style="width:150px" onkeydown="if(event.key==='Enter')addPlayer()">
+        <button onclick="addPlayer()">+ Hinzuf&uuml;gen</button>
+      </div>
+      <div id="player-list" style="margin-top:4px;"></div>
+    </div>
   </div>
 
-  <hr>
-
-  <div class="sec-head">Spieler verwalten</div>
-  <div class="row">
-    <input type="text" id="new-name" placeholder="Name" style="width:150px" onkeydown="if(event.key==='Enter')addPlayer()">
-    <button onclick="addPlayer()">+ Hinzuf&uuml;gen</button>
+  <div class="admin-section">
+    <div class="admin-section-head" onclick="toggleAdminSec(this)">&#9658; Mattermost-Export</div>
+    <div class="admin-section-body">
+      <div class="row">
+        <button onclick="genExport('current')">Rangliste</button>
+        <button onclick="genExport('lastday')">Letzter Tag</button>
+        <button onclick="genExport('full')">Vollst&auml;ndig</button>
+        <button onclick="copyExport()">Kopieren</button>
+      </div>
+      <textarea id="mm-out" readonly></textarea>
+    </div>
   </div>
-  <div id="player-list" style="margin-top:4px;"></div>
 
-  <hr>
-
-  <div class="sec-head">Mattermost-Export</div>
-  <div class="row">
-    <button onclick="genExport('current')">Rangliste</button>
-    <button onclick="genExport('lastday')">Letzter Tag</button>
-    <button onclick="genExport('full')">Vollst&auml;ndig</button>
-    <button onclick="copyExport()">Kopieren</button>
-  </div>
-  <textarea id="mm-out" readonly></textarea>
-
-  <hr>
-
-  <div class="sec-head">Gef&auml;hrliche Zone</div>
-  <div class="row">
-    <button class="danger" onclick="undoLastDay()">&larr; Letzten Tag r&uuml;ckg&auml;ngig</button>
-    <button class="danger" onclick="resetAll()">Rating-Reset (alle zur&uuml;cksetzen)</button>
-    <button class="danger" onclick="clearAll()">Alle Daten l&ouml;schen</button>
+  <div class="admin-section">
+    <div class="admin-section-head" onclick="toggleAdminSec(this)">&#9658; Gef&auml;hrliche Zone</div>
+    <div class="admin-section-body">
+      <div class="row">
+        <button class="danger" onclick="undoLastDay()">&larr; Letzten Tag r&uuml;ckg&auml;ngig</button>
+        <button class="danger" onclick="resetAll()">Rating-Reset</button>
+        <button class="danger" onclick="clearAll()">Alle Daten l&ouml;schen</button>
+      </div>
+    </div>
   </div>
 
 </div>
@@ -177,13 +206,7 @@ const GH_REPO = 'maptap';
 const GH_FILE = 'data.json';
 // ─────────────────────────────────────────────────────────────────────────────
 
-// Glicko-2 constants
-const G2_R0    = 1500;   // default rating
-const G2_RD0   = 350;    // default RD
-const G2_VOL0  = 0.06;   // default volatility
-const G2_TAU   = 0.5;    // system constant (controls vol change speed)
-const G2_SCALE = 173.7178; // conversion factor (= 400 / ln(10))
-
+const G2_R0 = 1500, G2_RD0 = 350, G2_VOL0 = 0.06, G2_TAU = 0.5, G2_SCALE = 173.7178;
 let loggedIn = false, sortMode = 'rating';
 let ghSha = null, GH_TOKEN = '';
 let STATE = { players: [], days: [] };
@@ -222,346 +245,323 @@ async function ghSave(state) {
   } catch(e) { setStatus('Fehler beim Speichern: ' + e.message, true); return false; }
 }
 
-function setStatus(msg, err=false) {
-  const el = document.getElementById('statusbar');
-  el.textContent = msg; el.className = err ? 'err' : '';
-}
+function setStatus(msg, err=false) { const el=document.getElementById('statusbar'); el.textContent=msg; el.className=err?'err':''; }
 function load() { return STATE; }
 async function save(s) { STATE = s; return await ghSave(s); }
 
-// ─── MIGRATION: old ELO data → Glicko-2 ──────────────────────────────────────
-// If a player has 'elo' but not 'rating', recalculate everything from scratch
-// using the stored day history. This preserves all match data.
+// ─── MIGRATION ────────────────────────────────────────────────────────────────
 function migrateData(data) {
   const needsMigration = data.players.length > 0 && data.players[0].rating === undefined;
-  if (!needsMigration) return sanitize(data);
-
-  // Reset all players to Glicko-2 defaults
-  data.players = data.players.map(p => ({
-    id: p.id,
-    name: p.name,
-    rating: G2_R0,
-    rd: G2_RD0,
-    vol: G2_VOL0,
-    games: 0,
-    total: 0,
-  }));
-
-  // Replay all days through Glicko-2
-  data.days.forEach(day => {
-    const players = data.players;
-    const active = day.entries.filter(e => !e.dnp);
-
-    // Build pairwise results
-    const results = {};
-    players.forEach(p => { results[p.id] = []; });
-    for (let i = 0; i < active.length; i++) {
-      for (let j = i+1; j < active.length; j++) {
-        const a = active[i], b = active[j];
-        const pA = players.find(p => p.id === a.id);
-        const pB = players.find(p => p.id === b.id);
-        if (!pA || !pB) continue;
-        const sA = a.score > b.score ? 1 : a.score < b.score ? 0 : 0.5;
-        results[a.id].push({ r: pB.rating, rd: pB.rd, s: sA, oppId: b.id });
-        results[b.id].push({ r: pA.rating, rd: pA.rd, s: 1 - sA, oppId: a.id });
+  if (needsMigration) {
+    data.players = data.players.map(p => ({ id:p.id, name:p.name, rating:G2_R0, rd:G2_RD0, vol:G2_VOL0, games:0, total:0 }));
+    data.days.forEach(day => {
+      const active = day.entries.filter(e => !e.dnp);
+      const results = {};
+      data.players.forEach(p => { results[p.id] = []; });
+      for (let i=0;i<active.length;i++) for (let j=i+1;j<active.length;j++) {
+        const a=active[i],b=active[j],pA=data.players.find(p=>p.id===a.id),pB=data.players.find(p=>p.id===b.id);
+        if(!pA||!pB) continue;
+        const sA=a.score>b.score?1:a.score<b.score?0:0.5;
+        results[a.id].push({r:pB.rating,rd:pB.rd,s:sA,oppId:b.id});
+        results[b.id].push({r:pA.rating,rd:pA.rd,s:1-sA,oppId:a.id});
       }
-    }
-
-    // Update each player
-    players.forEach(p => {
-      const entry = day.entries.find(e => e.id === p.id);
-      const before = { rating: p.rating, rd: p.rd };
-      if (!entry || entry.dnp) {
-        p.rd = Math.min(G2_RD0, Math.sqrt(p.rd * p.rd + p.vol * p.vol));
-        if (entry) { entry.before = Math.round(before.rating); entry.after = Math.round(before.rating); entry.delta = 0; entry.rdBefore = Math.round(before.rd); entry.rdAfter = Math.round(p.rd); entry.duels = []; }
-      } else {
-        const duels = results[p.id].map(r => ({ oppId: r.oppId, oppRating: Math.round(r.r), oppRD: Math.round(r.rd), score: r.s }));
-        const updated = glicko2Update(p, results[p.id]);
-        p.rating = updated.rating; p.rd = updated.rd; p.vol = updated.vol;
-        p.games++; p.total += entry.score;
-        entry.before = Math.round(before.rating); entry.after = Math.round(p.rating);
-        entry.delta = Math.round(p.rating - before.rating);
-        entry.rdBefore = Math.round(before.rd); entry.rdAfter = Math.round(p.rd);
-        entry.duels = duels;
-      }
+      data.players.forEach(p => {
+        const entry = day.entries.find(e=>e.id===p.id);
+        if (!entry) return;
+        const before = Math.round(p.rating), rdBefore = Math.round(p.rd);
+        if (entry.dnp) {
+          p.rd = Math.min(G2_RD0, Math.sqrt(p.rd*p.rd+p.vol*p.vol));
+          entry.before=before; entry.after=before; entry.delta=0; entry.rdBefore=rdBefore; entry.rdAfter=Math.round(p.rd); entry.duels=[];
+        } else {
+          const duels = results[p.id].map(r=>({oppId:r.oppId,oppRating:Math.round(r.r),oppRD:Math.round(r.rd),score:r.s}));
+          const u = glicko2Update(p, results[p.id]);
+          p.rating=u.rating; p.rd=u.rd; p.vol=u.vol; p.games++; p.total+=entry.score;
+          const after=Math.round(p.rating);
+          entry.before=before; entry.after=after; entry.delta=after-before; entry.rdBefore=rdBefore; entry.rdAfter=Math.round(p.rd); entry.duels=duels;
+        }
+      });
     });
-  });
-
-  return data;
-}
-
-function sanitize(data) {
+  }
+  // sanitize
   data.players = data.players.map(p => ({
-    id: p.id,
-    name: p.name,
-    rating: p.rating ?? G2_R0,
-    rd: p.rd ?? G2_RD0,
-    vol: p.vol ?? G2_VOL0,
-    games: p.games ?? 0,
-    total: p.total ?? 0,
+    id:p.id, name:p.name, rating:p.rating??G2_R0, rd:p.rd??G2_RD0, vol:p.vol??G2_VOL0, games:p.games??0, total:p.total??0
   }));
   return data;
 }
 
 // ─── GLICKO-2 ─────────────────────────────────────────────────────────────────
-// Implementation of Glicko-2 as per Mark Glickman's paper
-// http://www.glicko.net/glicko/glicko2.pdf
-
-function g(rd) {
-  return 1 / Math.sqrt(1 + 3 * rd * rd / (Math.PI * Math.PI));
-}
-
-function E(r, rj, rdj) {
-  return 1 / (1 + Math.exp(-g(rdj) * (r - rj)));
-}
+function g(rd) { return 1/Math.sqrt(1+3*rd*rd/(Math.PI*Math.PI)); }
+function E(r,rj,rdj) { return 1/(1+Math.exp(-g(rdj)*(r-rj))); }
 
 function glicko2Update(player, results) {
-  // Convert to Glicko-2 scale
-  const mu  = (player.rating - 1500) / G2_SCALE;
-  const phi = player.rd / G2_SCALE;
-  const sigma = player.vol;
-
-  if (results.length === 0) {
-    // No games: phi increases
-    const phiStar = Math.sqrt(phi * phi + sigma * sigma);
-    return { rating: player.rating, rd: Math.min(phiStar * G2_SCALE, G2_RD0), vol: sigma };
+  const mu=(player.rating-1500)/G2_SCALE, phi=player.rd/G2_SCALE, sigma=player.vol;
+  if (!results.length) {
+    const phiStar=Math.sqrt(phi*phi+sigma*sigma);
+    return { rating:player.rating, rd:Math.min(phiStar*G2_SCALE,G2_RD0), vol:sigma };
   }
-
-  // Convert opponents to Glicko-2 scale
-  const opponents = results.map(r => ({
-    mu:  (r.r - 1500) / G2_SCALE,
-    phi: r.rd / G2_SCALE,
-    s:   r.s,
-  }));
-
-  // Step 3: compute v (estimated variance)
-  let v = 0;
-  opponents.forEach(opp => {
-    const gPhi = g(opp.phi);
-    const eVal = E(mu, opp.mu, opp.phi);
-    v += gPhi * gPhi * eVal * (1 - eVal);
-  });
-  v = 1 / v;
-
-  // Step 4: compute delta
-  let delta = 0;
-  opponents.forEach(opp => {
-    const gPhi = g(opp.phi);
-    const eVal = E(mu, opp.mu, opp.phi);
-    delta += gPhi * (opp.s - eVal);
-  });
-  delta *= v;
-
-  // Step 5: update volatility (Illinois algorithm)
-  const a = Math.log(sigma * sigma);
-  const tau2 = G2_TAU * G2_TAU;
-  const delta2 = delta * delta;
-  const phi2 = phi * phi;
-
-  function f(x) {
-    const ex = Math.exp(x);
-    const d2 = phi2 + v + ex;
-    return (ex * (delta2 - d2)) / (2 * d2 * d2) - (x - a) / tau2;
+  const opps=results.map(r=>({mu:(r.r-1500)/G2_SCALE,phi:r.rd/G2_SCALE,s:r.s}));
+  let v=0;
+  opps.forEach(o=>{const gp=g(o.phi),ev=E(mu,o.mu,o.phi);v+=gp*gp*ev*(1-ev);});
+  v=1/v;
+  let delta=0;
+  opps.forEach(o=>{delta+=g(o.phi)*(o.s-E(mu,o.mu,o.phi));});
+  delta*=v;
+  const a=Math.log(sigma*sigma),tau2=G2_TAU*G2_TAU,delta2=delta*delta,phi2=phi*phi;
+  function f(x){const ex=Math.exp(x),d2=phi2+v+ex;return(ex*(delta2-d2))/(2*d2*d2)-(x-a)/tau2;}
+  let A=a,B=delta2>phi2+v?Math.log(delta2-phi2-v):a-G2_TAU;
+  while(f(B)<0) B-=G2_TAU;
+  let fA=f(A),fB=f(B);
+  for(let i=0;i<100;i++){
+    if(Math.abs(B-A)<1e-6) break;
+    const C=A+(A-B)*fA/(fB-fA),fC=f(C);
+    if(fC*fB<0){A=B;fA=fB;}else{fA/=2;}
+    B=C;fB=fC;
   }
-
-  let A = a;
-  let B;
-  if (delta2 > phi2 + v) {
-    B = Math.log(delta2 - phi2 - v);
-  } else {
-    let k = 1;
-    while (f(a - k * G2_TAU) < 0) k++;
-    B = a - k * G2_TAU;
-  }
-
-  let fA = f(A), fB = f(B);
-  for (let iter = 0; iter < 100; iter++) {
-    if (Math.abs(B - A) < 1e-6) break;
-    const C = A + (A - B) * fA / (fB - fA);
-    const fC = f(C);
-    if (fC * fB < 0) { A = B; fA = fB; }
-    else { fA /= 2; }
-    B = C; fB = fC;
-  }
-  const sigmaNew = Math.exp(A / 2);
-
-  // Step 6: update phi*
-  const phiStar = Math.sqrt(phi * phi + sigmaNew * sigmaNew);
-
-  // Step 7: update phi and mu
-  const phiNew = 1 / Math.sqrt(1 / (phiStar * phiStar) + 1 / v);
-  let muNew = mu;
-  opponents.forEach(opp => {
-    muNew += phiNew * phiNew * g(opp.phi) * (opp.s - E(mu, opp.mu, opp.phi));
-  });
-
-  return {
-    rating: muNew * G2_SCALE + 1500,
-    rd: Math.max(phiNew * G2_SCALE, 30), // floor at 30
-    vol: sigmaNew,
-  };
+  const sigmaNew=Math.exp(A/2);
+  const phiStar=Math.sqrt(phi*phi+sigmaNew*sigmaNew);
+  const phiNew=1/Math.sqrt(1/(phiStar*phiStar)+1/v);
+  let muNew=mu;
+  opps.forEach(o=>{muNew+=phiNew*phiNew*g(o.phi)*(o.s-E(mu,o.mu,o.phi));});
+  return { rating:muNew*G2_SCALE+1500, rd:Math.max(phiNew*G2_SCALE,30), vol:sigmaNew };
 }
 
 // ─── AUTH ─────────────────────────────────────────────────────────────────────
 function checkPassword() {
-  if (document.getElementById('pw-input').value === atob('TWFwdGFwMjAyNg==')) {
-    document.getElementById('admin-login-form').style.display = 'none';
-    document.getElementById('admin-token-form').style.display = '';
+  if (document.getElementById('pw-input').value===atob('TWFwdGFwMjAyNg==')) {
+    document.getElementById('admin-login-form').style.display='none';
+    document.getElementById('admin-token-form').style.display='';
     document.getElementById('token-input').focus();
-  } else { toast('Falsches Passwort.'); document.getElementById('pw-input').value = ''; }
+  } else { toast('Falsches Passwort.'); document.getElementById('pw-input').value=''; }
 }
-
 function tryLogin() {
-  const tok = document.getElementById('token-input').value.trim();
+  const tok=document.getElementById('token-input').value.trim();
   if (!tok) { toast('Bitte GitHub Token eingeben.'); return; }
-  GH_TOKEN = tok; loggedIn = true;
-  document.getElementById('admin-token-form').style.display = 'none';
-  document.getElementById('admin-logout-form').style.display = '';
-  document.getElementById('admin-status').innerHTML = '&#128275; Admin:';
-  document.getElementById('tab-admin').style.display = '';
-  tab('admin'); toast('Willkommen!');
+  GH_TOKEN=tok; loggedIn=true;
+  document.getElementById('admin-token-form').style.display='none';
+  document.getElementById('admin-logout-form').style.display='';
+  document.getElementById('admin-status').innerHTML='&#128275; Admin:';
+  document.getElementById('admin-panel').style.display='';
+  renderEntryForm(); renderPlayers();
+  toast('Willkommen!');
 }
-
 function doLogout() {
-  GH_TOKEN = ''; loggedIn = false;
-  document.getElementById('admin-login-form').style.display = '';
-  document.getElementById('admin-token-form').style.display = 'none';
-  document.getElementById('admin-logout-form').style.display = 'none';
-  document.getElementById('admin-status').innerHTML = '&#128274; Admin:';
-  document.getElementById('tab-admin').style.display = 'none';
-  document.getElementById('pw-input').value = '';
-  document.getElementById('token-input').value = '';
-  tab('rangliste'); toast('Abgemeldet.');
+  GH_TOKEN=''; loggedIn=false;
+  document.getElementById('admin-login-form').style.display='';
+  document.getElementById('admin-token-form').style.display='none';
+  document.getElementById('admin-logout-form').style.display='none';
+  document.getElementById('admin-status').innerHTML='&#128274; Admin:';
+  document.getElementById('admin-panel').style.display='none';
+  document.getElementById('pw-input').value='';
+  document.getElementById('token-input').value='';
+  toast('Abgemeldet.');
 }
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
-function playerName(s, id) { return (s.players.find(p => p.id === id) || {}).name || '(gelöscht)'; }
+function playerName(s,id) { return (s.players.find(p=>p.id===id)||{}).name||'(gelöscht)'; }
+
+function toggleAdminSec(head) {
+  const body = head.nextElementSibling;
+  const open = body.classList.toggle('open');
+  head.innerHTML = head.innerHTML.replace(/[▶▼►▼▾▸]/g,'').replace('&#9658;','').replace('&#9660;','').trim();
+  head.innerHTML = (open ? '&#9660; ' : '&#9658; ') + head.innerHTML;
+}
 
 // ─── CHART ────────────────────────────────────────────────────────────────────
 const COLORS = ['#00c','#c00','#080','#c60','#60c','#088','#c06','#660','#048','#840'];
 
 function renderChart() {
-  const s = load();
-  const canvas = document.getElementById('elo-chart');
+  const s=load(), canvas=document.getElementById('elo-chart');
   if (!canvas) return;
-  const playerIds = s.players.map(p => p.id);
-  const numDays = s.days.length;
-
-  const DPR = window.devicePixelRatio || 1;
-  const W = canvas.offsetWidth || 730;
-  const H = 200;
-  canvas.width = W * DPR; canvas.height = H * DPR;
-  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
-  const ctx = canvas.getContext('2d');
-  ctx.scale(DPR, DPR);
-  ctx.clearRect(0, 0, W, H);
-
-  if (!playerIds.length || numDays === 0) {
-    ctx.fillStyle = '#aaa'; ctx.font = '12px Arial'; ctx.textAlign = 'center';
-    ctx.fillText('Noch keine Spieltage vorhanden.', W / 2, H / 2);
-    document.getElementById('elo-legend').innerHTML = '';
-    return;
+  const playerIds=s.players.map(p=>p.id), numDays=s.days.length;
+  const DPR=window.devicePixelRatio||1, W=canvas.offsetWidth||730, H=200;
+  canvas.width=W*DPR; canvas.height=H*DPR;
+  canvas.style.width=W+'px'; canvas.style.height=H+'px';
+  const ctx=canvas.getContext('2d');
+  ctx.scale(DPR,DPR); ctx.clearRect(0,0,W,H);
+  if (!playerIds.length||numDays===0) {
+    ctx.fillStyle='#aaa'; ctx.font='12px Arial'; ctx.textAlign='center';
+    ctx.fillText('Noch keine Spieltage.',W/2,H/2);
+    document.getElementById('elo-legend').innerHTML=''; return;
   }
-
-  // Build history: rating after each day
-  const history = {};
-  playerIds.forEach(id => { history[id] = []; });
-  s.days.forEach(day => {
-    playerIds.forEach(id => {
-      const e = day.entries.find(x => x.id === id);
-      const last = history[id].length > 0 ? history[id][history[id].length - 1] : G2_R0;
-      history[id].push(e ? e.after : last);
+  const history={};
+  playerIds.forEach(id=>{history[id]=[];});
+  s.days.forEach(day=>{
+    playerIds.forEach(id=>{
+      const e=day.entries.find(x=>x.id===id);
+      const last=history[id].length>0?history[id][history[id].length-1]:G2_R0;
+      history[id].push(e?e.after:last);
     });
   });
-
-  const PAD = { top: 14, right: 60, bottom: 24, left: 50 };
-  const cW = W - PAD.left - PAD.right;
-  const cH = H - PAD.top - PAD.bottom;
-
-  const allVals = Object.values(history).flat();
-  let minV = Math.min(...allVals), maxV = Math.max(...allVals);
-  const range = maxV - minV || 50;
-  minV -= range * 0.12; maxV += range * 0.12;
-
-  const toX = i => PAD.left + (numDays > 1 ? i * cW / (numDays - 1) : cW / 2);
-  const toY = v => PAD.top + cH - ((v - minV) / (maxV - minV)) * cH;
-
-  // Grid
-  for (let i = 0; i <= 4; i++) {
-    const v = minV + (maxV - minV) * i / 4;
-    const y = toY(v);
-    ctx.strokeStyle = '#ddd'; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(PAD.left, y); ctx.lineTo(W - PAD.right, y); ctx.stroke();
-    ctx.fillStyle = '#666'; ctx.font = '10px Arial'; ctx.textAlign = 'right';
-    ctx.fillText(Math.round(v), PAD.left - 3, y + 3);
+  const PAD={top:14,right:60,bottom:24,left:50};
+  const cW=W-PAD.left-PAD.right, cH=H-PAD.top-PAD.bottom;
+  const allVals=Object.values(history).flat();
+  let minV=Math.min(...allVals),maxV=Math.max(...allVals);
+  const range=maxV-minV||50; minV-=range*0.12; maxV+=range*0.12;
+  const toX=i=>PAD.left+(numDays>1?i*cW/(numDays-1):cW/2);
+  const toY=v=>PAD.top+cH-((v-minV)/(maxV-minV))*cH;
+  for (let i=0;i<=4;i++) {
+    const v=minV+(maxV-minV)*i/4, y=toY(v);
+    ctx.strokeStyle='#ddd'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(PAD.left,y); ctx.lineTo(W-PAD.right,y); ctx.stroke();
+    ctx.fillStyle='#666'; ctx.font='10px Arial'; ctx.textAlign='right';
+    ctx.fillText(Math.round(v),PAD.left-3,y+3);
   }
-
-  // Day labels + vertical lines
-  for (let i = 0; i < numDays; i++) {
-    const x = toX(i);
-    ctx.strokeStyle = '#eee'; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(x, PAD.top); ctx.lineTo(x, H - PAD.bottom); ctx.stroke();
-    ctx.fillStyle = '#888'; ctx.font = '10px Arial'; ctx.textAlign = 'center';
-    ctx.fillText('T' + s.days[i].tag, x, H - PAD.bottom + 12);
+  for (let i=0;i<numDays;i++) {
+    const x=toX(i);
+    ctx.strokeStyle='#eee'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(x,PAD.top); ctx.lineTo(x,H-PAD.bottom); ctx.stroke();
+    ctx.fillStyle='#888'; ctx.font='10px Arial'; ctx.textAlign='center';
+    ctx.fillText('T'+s.days[i].tag,x,H-PAD.bottom+12);
   }
-
-  // Lines per player
-  playerIds.forEach((id, ci) => {
-    const color = COLORS[ci % COLORS.length];
-    const pts = history[id];
-    ctx.strokeStyle = color; ctx.lineWidth = 2;
+  playerIds.forEach((id,ci)=>{
+    const color=COLORS[ci%COLORS.length], pts=history[id];
+    ctx.strokeStyle=color; ctx.lineWidth=2;
     ctx.beginPath();
-    pts.forEach((v, i) => { i === 0 ? ctx.moveTo(toX(i), toY(v)) : ctx.lineTo(toX(i), toY(v)); });
+    pts.forEach((v,i)=>{i===0?ctx.moveTo(toX(i),toY(v)):ctx.lineTo(toX(i),toY(v));});
     ctx.stroke();
-    pts.forEach((v, i) => {
-      ctx.fillStyle = color;
-      ctx.beginPath(); ctx.arc(toX(i), toY(v), 3, 0, Math.PI * 2); ctx.fill();
-    });
-    const name = (s.players.find(p => p.id === id) || {}).name || id;
-    ctx.fillStyle = color; ctx.font = 'bold 10px Arial'; ctx.textAlign = 'left';
-    ctx.fillText(name, toX(numDays - 1) + 5, toY(pts[pts.length - 1]) + 4);
+    pts.forEach((v,i)=>{ctx.fillStyle=color;ctx.beginPath();ctx.arc(toX(i),toY(v),3,0,Math.PI*2);ctx.fill();});
+    const name=(s.players.find(p=>p.id===id)||{}).name||id;
+    ctx.fillStyle=color; ctx.font='bold 10px Arial'; ctx.textAlign='left';
+    ctx.fillText(name,toX(numDays-1)+5,toY(pts[pts.length-1])+4);
   });
-
-  document.getElementById('elo-legend').innerHTML = playerIds.map((id, ci) => {
-    const color = COLORS[ci % COLORS.length];
-    const name = (s.players.find(p => p.id === id) || {}).name || id;
+  document.getElementById('elo-legend').innerHTML=playerIds.map((id,ci)=>{
+    const color=COLORS[ci%COLORS.length],name=(s.players.find(p=>p.id===id)||{}).name||id;
     return `<span style="display:inline-flex;align-items:center;gap:3px;"><span style="display:inline-block;width:16px;height:2px;background:${color};border-top:2px solid ${color};"></span>${name}</span>`;
   }).join('');
 }
 
 function toggleInfo() {
-  const box = document.getElementById('info-box');
-  const tog = document.getElementById('info-toggle');
-  const open = box.style.display === 'none';
-  box.style.display = open ? 'block' : 'none';
-  tog.innerHTML = (open ? '&#9660;' : '&#9658;') + ' Wie funktioniert Glicko-2?';
+  const box=document.getElementById('info-box'),tog=document.getElementById('info-toggle');
+  const open=box.style.display==='none';
+  box.style.display=open?'block':'none';
+  tog.innerHTML=(open?'&#9660;':'&#9658;')+' Wie funktioniert Glicko-2?';
 }
 
-// ─── RENDER ───────────────────────────────────────────────────────────────────
-function sortBy(mode) { sortMode = mode; renderLb(); }
+// ─── RANGLISTE ────────────────────────────────────────────────────────────────
+function sortBy(mode) { sortMode=mode; renderLb(); }
 
 function renderLb() {
-  const s = load();
-  const sorted = [...s.players].sort((a, b) =>
-    sortMode === 'avg'
-      ? (b.games > 0 ? b.total/b.games : 0) - (a.games > 0 ? a.total/a.games : 0)
-      : b.rating - a.rating
+  const s=load();
+  const sorted=[...s.players].sort((a,b)=>
+    sortMode==='avg'?(b.games>0?b.total/b.games:0)-(a.games>0?a.total/a.games:0):b.rating-a.rating
   );
-  document.getElementById('lb-body').innerHTML = sorted.map((p, i) => {
-    const avg = p.games > 0 ? Math.round(p.total / p.games) : '&mdash;';
-    const m = ['🥇','🥈','🥉'][i] || `${i+1}.`;
-    const rdColor = p.rd < 80 ? 'green' : p.rd < 150 ? '#660' : '#900';
+  document.getElementById('lb-body').innerHTML=sorted.map((p,i)=>{
+    const avg=p.games>0?Math.round(p.total/p.games):'&mdash;';
+    const m=['🥇','🥈','🥉'][i]||`${i+1}.`;
+    const rdColor=p.rd<80?'green':p.rd<150?'#660':'#900';
     return `<tr><td>${m}</td><td><b>${p.name}</b></td><td><b>${Math.round(p.rating)}</b></td><td style="color:${rdColor}">${Math.round(p.rd)}</td><td>${avg}</td><td>${p.games}</td></tr>`;
-  }).join('') || '<tr><td colspan="6" style="color:#666;text-align:center;">Noch keine Spieler.</td></tr>';
+  }).join('')||'<tr><td colspan="6" style="color:#666;text-align:center;">Noch keine Spieler.</td></tr>';
   renderChart();
 }
 
+// ─── VERLAUF ──────────────────────────────────────────────────────────────────
+function renderHist() {
+  const s=load();
+  if (!s.days.length) { document.getElementById('verlauf-body').innerHTML='<span class="dim">Noch keine Spieltage.</span>'; return; }
+
+  const html=[...s.days].reverse().map(day=>{
+    const sortedEntries=[...day.entries].sort((a,b)=>a.dnp-b.dnp||(b.score||0)-(a.score||0));
+    const winner=sortedEntries.find(e=>!e.dnp);
+    const winnerName=winner?playerName(s,winner.id):'';
+    const participated=sortedEntries.filter(e=>!e.dnp).length;
+    const summary=`Tag ${day.tag} &mdash; ${day.date} &mdash; ${participated} Spieler &mdash; Bester: ${winnerName}`;
+
+    const playerRows=sortedEntries.map(e=>{
+      const name=playerName(s,e.id);
+      const deltaStr=e.dnp?'<span class="dim">DNP</span>':e.delta>0?`<span class="pos">+${e.delta}</span>`:e.delta<0?`<span class="neg">${e.delta}</span>`:'&plusmn;0';
+
+      // Glicko-2 detail block
+      let detailHtml='';
+      if (e.dnp) {
+        detailHtml=`<div class="player-detail" id="det-${day.tag}-${e.id}">
+          <span class="dim">DNP &mdash; kein Spiel. RD steigt: ${e.rdBefore??'?'} &rarr; ${e.rdAfter??'?'}</span>
+        </div>`;
+      } else {
+        const mu=((e.before-1500)/G2_SCALE).toFixed(4);
+        const phi=(e.rdBefore/G2_SCALE).toFixed(4);
+        let duelRows='';
+        if (e.duels && e.duels.length) {
+          duelRows=e.duels.map(d=>{
+            const oppName=playerName(s,d.oppId);
+            const muJ=((d.oppRating-1500)/G2_SCALE).toFixed(3);
+            const phiJ=(d.oppRD/G2_SCALE).toFixed(3);
+            const gVal=(1/Math.sqrt(1+3*(d.oppRD/G2_SCALE)**2/(Math.PI**2))).toFixed(4);
+            const expVal=(1/(1+Math.exp(-gVal*((e.before-1500)/G2_SCALE-(d.oppRating-1500)/G2_SCALE)))).toFixed(4);
+            const result=d.score===1?'Sieg':d.score===0?'Niederlage':'Unentschieden';
+            const contrib=(32*(d.score-expVal)).toFixed(1);
+            return `<tr>
+              <td>${oppName}</td>
+              <td>${d.oppRating} (RD ${d.oppRD})</td>
+              <td>${result}</td>
+              <td>${expVal}</td>
+              <td>${gVal}</td>
+              <td>${contrib>0?'+'+contrib:contrib}</td>
+            </tr>`;
+          }).join('');
+        }
+        detailHtml=`<div class="player-detail" id="det-${day.tag}-${e.id}">
+          <div style="margin-bottom:4px;">
+            <b>Glicko-2 Berechnung:</b><br>
+            Rating vorher: <b>${e.before}</b> (μ = ${mu}) &nbsp;|&nbsp;
+            RD vorher: <b>${e.rdBefore??'?'}</b> (φ = ${phi})<br>
+            Rating nachher: <b>${e.after}</b> &nbsp;|&nbsp; RD nachher: <b>${e.rdAfter??'?'}</b>
+          </div>
+          <table class="duel-table">
+            <thead><tr><th>Gegner</th><th>Rating (RD)</th><th>Ergebnis</th><th>Erwartet (E)</th><th>g(φ)</th><th>Beitrag</th></tr></thead>
+            <tbody>${duelRows}</tbody>
+          </table>
+          <div style="margin-top:3px;color:#555;font-size:10px;">
+            Beitrag = K &times; (Ergebnis &minus; E). Gesamtdelta = ${e.delta>0?'+'+e.delta:e.delta} aus ${e.duels?e.duels.length:0} Duellen.
+          </div>
+        </div>`;
+      }
+
+      return `<div class="player-result-row">
+        <div class="player-summary" onclick="togglePlayerDetail('det-${day.tag}-${e.id}',this)">
+          <span style="min-width:80px;"><b>${name}</b></span>
+          <span class="dim" style="min-width:55px;">${e.dnp?'DNP':'Score: '+e.score}</span>
+          <span style="min-width:60px;">${e.before} &rarr; <b>${e.after}</b></span>
+          <span>${deltaStr}</span>
+          <span style="margin-left:auto;color:#aaa;font-size:10px;">&#9658; Detail</span>
+        </div>
+        ${detailHtml}
+      </div>`;
+    }).join('');
+
+    return `<div class="day-block">
+      <div class="day-header" onclick="toggleDay(this)">
+        <span>${summary}</span>
+        <span style="font-size:10px;color:#666;">&#9658; aufklappen</span>
+      </div>
+      <div class="day-body">${playerRows}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('verlauf-body').innerHTML=html;
+}
+
+function toggleDay(header) {
+  const body=header.nextElementSibling;
+  const open=body.classList.toggle('open');
+  const arrow=header.querySelector('span:last-child');
+  arrow.innerHTML=open?'&#9660; einklappen':'&#9658; aufklappen';
+}
+
+function togglePlayerDetail(id, row) {
+  const det=document.getElementById(id);
+  if (!det) return;
+  const open=det.classList.toggle('open');
+  const arrow=row.querySelector('span:last-child');
+  if (arrow) arrow.innerHTML=open?'&#9660; Detail':'&#9658; Detail';
+}
+
+// ─── ENTRY FORM ───────────────────────────────────────────────────────────────
 function renderEntryForm() {
-  const s = load();
-  document.getElementById('e-date').value = new Date().toISOString().split('T')[0];
-  document.getElementById('e-tag').value = s.days.length + 1;
-  if (!s.players.length) { document.getElementById('e-players').innerHTML = '<span class="dim">Erst Spieler anlegen.</span>'; return; }
-  document.getElementById('e-players').innerHTML = s.players.map(p => `
+  const s=load();
+  document.getElementById('e-date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('e-tag').value=s.days.length+1;
+  if (!s.players.length) { document.getElementById('e-players').innerHTML='<span class="dim">Erst Spieler anlegen.</span>'; return; }
+  document.getElementById('e-players').innerHTML=s.players.map(p=>`
     <div class="prow">
       <b>${p.name}</b>
       <span class="dim">${Math.round(p.rating)} (&plusmn;${Math.round(p.rd)})</span>
@@ -571,189 +571,139 @@ function renderEntryForm() {
 }
 
 function toggleDnp(id) {
-  const dnp = document.getElementById(`dnp-${id}`).checked;
-  const inp = document.getElementById(`s-${id}`);
-  inp.disabled = dnp; inp.style.background = dnp ? '#eee' : '#fff';
+  const dnp=document.getElementById(`dnp-${id}`).checked;
+  const inp=document.getElementById(`s-${id}`);
+  inp.disabled=dnp; inp.style.background=dnp?'#eee':'#fff';
 }
 
 async function submitDay() {
-  const s = load();
-  const date = document.getElementById('e-date').value;
-  const tag = parseInt(document.getElementById('e-tag').value) || s.days.length + 1;
+  const s=load();
+  const date=document.getElementById('e-date').value;
+  const tag=parseInt(document.getElementById('e-tag').value)||s.days.length+1;
   if (!date) { toast('Datum fehlt!'); return; }
-
-  const entries = s.players.map(p => {
-    const dnp = document.getElementById(`dnp-${p.id}`)?.checked || false;
-    const x = parseInt(document.getElementById(`s-${p.id}`)?.value);
-    return { id: p.id, dnp, score: dnp ? null : isNaN(x) ? 0 : Math.min(1000, Math.max(0, x)) };
+  const entries=s.players.map(p=>{
+    const dnp=document.getElementById(`dnp-${p.id}`)?.checked||false;
+    const x=parseInt(document.getElementById(`s-${p.id}`)?.value);
+    return {id:p.id,dnp,score:dnp?null:isNaN(x)?0:Math.min(1000,Math.max(0,x))};
   });
-  if (entries.filter(e => !e.dnp).length < 2) { toast('Mind. 2 Spieler!'); return; }
+  if (entries.filter(e=>!e.dnp).length<2) { toast('Mind. 2 Spieler!'); return; }
 
-  // Build pairwise results for Glicko-2 – store oppId for display
-  const results = {};
-  s.players.forEach(p => { results[p.id] = []; });
-  const active = entries.filter(e => !e.dnp);
-  for (let i = 0; i < active.length; i++) {
-    for (let j = i+1; j < active.length; j++) {
-      const a = active[i], b = active[j];
-      const pA = s.players.find(p => p.id === a.id);
-      const pB = s.players.find(p => p.id === b.id);
-      const sA = a.score > b.score ? 1 : a.score < b.score ? 0 : 0.5;
-      results[a.id].push({ r: pB.rating, rd: pB.rd, s: sA, oppId: b.id });
-      results[b.id].push({ r: pA.rating, rd: pA.rd, s: 1 - sA, oppId: a.id });
-    }
+  const results={};
+  s.players.forEach(p=>{results[p.id]=[];});
+  const active=entries.filter(e=>!e.dnp);
+  for (let i=0;i<active.length;i++) for (let j=i+1;j<active.length;j++) {
+    const a=active[i],b=active[j],pA=s.players.find(p=>p.id===a.id),pB=s.players.find(p=>p.id===b.id);
+    const sA=a.score>b.score?1:a.score<b.score?0:0.5;
+    results[a.id].push({r:pB.rating,rd:pB.rd,s:sA,oppId:b.id});
+    results[b.id].push({r:pA.rating,rd:pA.rd,s:1-sA,oppId:a.id});
   }
 
-  // Apply Glicko-2 updates
-  const dayEntries = entries.map(e => {
-    const p = s.players.find(x => x.id === e.id);
-    const before = Math.round(p.rating);
-    const rdBefore = Math.round(p.rd);
+  const dayEntries=entries.map(e=>{
+    const p=s.players.find(x=>x.id===e.id);
+    const before=Math.round(p.rating),rdBefore=Math.round(p.rd);
     if (e.dnp) {
-      p.rd = Math.min(G2_RD0, Math.sqrt(p.rd * p.rd + p.vol * p.vol));
-      return { ...e, before, after: before, delta: 0, rdBefore, rdAfter: Math.round(p.rd), duels: [] };
-    } else {
-      const duels = results[p.id].map(r => ({
-        oppId: r.oppId,
-        oppRating: Math.round(r.r),
-        oppRD: Math.round(r.rd),
-        score: r.s,
-      }));
-      const updated = glicko2Update(p, results[p.id]);
-      p.rating = updated.rating;
-      p.rd = updated.rd;
-      p.vol = updated.vol;
-      p.games++;
-      p.total += e.score;
-      const after = Math.round(p.rating);
-      return { ...e, before, after, delta: after - before, rdBefore, rdAfter: Math.round(p.rd), duels };
+      p.rd=Math.min(G2_RD0,Math.sqrt(p.rd*p.rd+p.vol*p.vol));
+      return {...e,before,after:before,delta:0,rdBefore,rdAfter:Math.round(p.rd),duels:[]};
     }
+    const duels=results[p.id].map(r=>({oppId:r.oppId,oppRating:Math.round(r.r),oppRD:Math.round(r.rd),score:r.s}));
+    const u=glicko2Update(p,results[p.id]);
+    p.rating=u.rating; p.rd=u.rd; p.vol=u.vol; p.games++; p.total+=e.score;
+    const after=Math.round(p.rating);
+    return {...e,before,after,delta:after-before,rdBefore,rdAfter:Math.round(p.rd),duels};
   });
 
-  s.days.push({ tag, date, entries: dayEntries });
-  const ok = await save(s);
+  s.days.push({tag,date,entries:dayEntries});
+  const ok=await save(s);
   if (ok) { toast(`Tag ${tag} gespeichert.`); renderAll(); renderEntryForm(); }
 }
 
-function renderHist() {
-  const s = load(), rows = [];
-  [...s.days].reverse().forEach(day => {
-    [...day.entries].sort((a,b) => a.dnp - b.dnp || (b.score||0) - (a.score||0)).forEach((e, i) => {
-      const d = e.dnp ? '<span class="dim">DNP</span>' : e.delta > 0 ? `<span class="pos">+${e.delta}</span>` : e.delta < 0 ? `<span class="neg">${e.delta}</span>` : '&plusmn;0';
-      rows.push(`<tr><td>${i===0?`Tag ${day.tag}`:''}</td><td>${i===0?day.date:''}</td><td>${playerName(s,e.id)}</td><td>${e.dnp?'&mdash;':e.score}</td><td>${e.before}</td><td><b>${e.after}</b></td><td>${d}</td></tr>`);
-    });
-  });
-  document.getElementById('hist-body').innerHTML = rows.join('') || '<tr><td colspan="7" style="color:#666;text-align:center;">Noch keine Eintr&auml;ge.</td></tr>';
-}
-
-async function undoLastDay() {
-  const s = load(); if (!s.days.length) { toast('Keine Tage.'); return; }
-  const day = s.days[s.days.length-1];
-  if (!confirm(`Tag ${day.tag} (${day.date}) löschen?\n\nAchtung: Ratings werden komplett neu berechnet.`)) return;
-  s.days.pop();
-  // Recalculate all ratings from scratch
-  const recalc = migrateData({ players: s.players.map(p => ({ ...p, rating: G2_R0, rd: G2_RD0, vol: G2_VOL0, games: 0, total: 0 })), days: s.days });
-  s.players = recalc.players;
-  s.days = recalc.days;
-  const ok = await save(s);
-  if (ok) { toast('Rückgängig. Ratings neu berechnet.'); renderAll(); }
-}
-
 function renderPlayers() {
-  const s = load();
-  document.getElementById('player-list').innerHTML = s.players.length
-    ? s.players.map(p => `<span class="chip">${p.name} <span class="dim">(${Math.round(p.rating)})</span><button onclick="removePlayer('${p.id}')">&#10005;</button></span>`).join('')
-    : '<span class="dim">Keine Spieler.</span>';
+  const s=load();
+  document.getElementById('player-list').innerHTML=s.players.length
+    ?s.players.map(p=>`<span class="chip">${p.name} <span class="dim">(${Math.round(p.rating)})</span><button onclick="removePlayer('${p.id}')">&#10005;</button></span>`).join('')
+    :'<span class="dim">Keine Spieler.</span>';
 }
 
 async function addPlayer() {
-  const name = document.getElementById('new-name').value.trim(); if (!name) return;
-  const s = load();
-  if (s.players.find(p => p.name.toLowerCase() === name.toLowerCase())) { toast('Existiert bereits.'); return; }
-  s.players.push({ id: 'p_' + Date.now(), name, rating: G2_R0, rd: G2_RD0, vol: G2_VOL0, games: 0, total: 0 });
-  const ok = await save(s);
-  if (ok) { document.getElementById('new-name').value = ''; renderAll(); toast(`${name} hinzugefügt.`); }
+  const name=document.getElementById('new-name').value.trim(); if(!name) return;
+  const s=load();
+  if(s.players.find(p=>p.name.toLowerCase()===name.toLowerCase())){toast('Existiert bereits.');return;}
+  s.players.push({id:'p_'+Date.now(),name,rating:G2_R0,rd:G2_RD0,vol:G2_VOL0,games:0,total:0});
+  const ok=await save(s);
+  if(ok){document.getElementById('new-name').value='';renderAll();toast(`${name} hinzugefügt.`);}
 }
 
 async function removePlayer(id) {
-  const s = load(), p = s.players.find(x => x.id === id);
-  if (!confirm(`${p?.name} löschen?`)) return;
-  s.players = s.players.filter(x => x.id !== id);
-  const ok = await save(s); if (ok) renderAll();
+  const s=load(),p=s.players.find(x=>x.id===id);
+  if(!confirm(`${p?.name} löschen?`))return;
+  s.players=s.players.filter(x=>x.id!==id);
+  const ok=await save(s); if(ok) renderAll();
+}
+
+async function undoLastDay() {
+  const s=load(); if(!s.days.length){toast('Keine Tage.');return;}
+  const day=s.days[s.days.length-1];
+  if(!confirm(`Tag ${day.tag} (${day.date}) löschen?`))return;
+  s.days.pop();
+  const recalc=migrateData({players:s.players.map(p=>({...p,rating:G2_R0,rd:G2_RD0,vol:G2_VOL0,games:0,total:0})),days:s.days});
+  s.players=recalc.players; s.days=recalc.days;
+  const ok=await save(s);
+  if(ok){toast('Rückgängig.');renderAll();}
 }
 
 async function resetAll() {
-  if (!confirm('Alle Ratings zurücksetzen + Verlauf löschen?')) return;
-  const s = load();
-  s.players = s.players.map(p => ({ ...p, rating: G2_R0, rd: G2_RD0, vol: G2_VOL0, games: 0, total: 0 }));
-  s.days = [];
-  const ok = await save(s); if (ok) { renderAll(); toast('Reset.'); }
+  if(!confirm('Alle Ratings zurücksetzen + Verlauf löschen?'))return;
+  const s=load();
+  s.players=s.players.map(p=>({...p,rating:G2_R0,rd:G2_RD0,vol:G2_VOL0,games:0,total:0}));
+  s.days=[];
+  const ok=await save(s); if(ok){renderAll();toast('Reset.');}
 }
 
 async function clearAll() {
-  if (!confirm('Alle Daten löschen?')) return;
-  const ok = await save({ players: [], days: [] }); if (ok) { renderAll(); toast('Gelöscht.'); }
+  if(!confirm('Alle Daten löschen?'))return;
+  const ok=await save({players:[],days:[]}); if(ok){renderAll();toast('Gelöscht.');}
 }
 
 // ─── EXPORT ───────────────────────────────────────────────────────────────────
 function genExport(mode) {
-  const s = load(), sorted = [...s.players].sort((a,b) => b.rating - a.rating), today = new Date().toLocaleDateString('de-DE');
-  let out = '';
-  if (mode === 'current') {
-    out += `### 🌍 Maptap Rangliste | ${today}\n\n| # | Name | Rating | RD | Ø Score | Spiele |\n|---|------|--------|-----|---------|--------|\n`;
-    sorted.forEach((p,i) => {
-      const m=['🥇','🥈','🥉'][i]||`${i+1}.`, avg=p.games>0?Math.round(p.total/p.games):'—';
-      out+=`| ${m} | ${p.name} | **${Math.round(p.rating)}** | ${Math.round(p.rd)} | ${avg} | ${p.games} |\n`;
-    });
-  } else if (mode === 'lastday') {
-    if (!s.days.length) { document.getElementById('mm-out').value='Keine Spieltage.'; return; }
-    const day = s.days[s.days.length-1];
-    out += `### 🌍 Maptap | Tag ${day.tag} | ${day.date}\n\n| # | Name | Score | Rating | +/- |\n|---|------|-------|--------|-----|\n`;
-    [...day.entries].sort((a,b)=>a.dnp-b.dnp||(b.score||0)-(a.score||0)).forEach((e,i) => {
-      const name=playerName(s,e.id), m=e.dnp?'—':(['🥇','🥈','🥉'][i]||`${i+1}.`);
+  const s=load(),sorted=[...s.players].sort((a,b)=>b.rating-a.rating),today=new Date().toLocaleDateString('de-DE');
+  let out='';
+  if(mode==='current'){
+    out+=`### 🌍 Maptap Rangliste | ${today}\n\n| # | Name | Rating | RD | Ø Score | Spiele |\n|---|------|--------|-----|---------|--------|\n`;
+    sorted.forEach((p,i)=>{const m=['🥇','🥈','🥉'][i]||`${i+1}.`,avg=p.games>0?Math.round(p.total/p.games):'—';out+=`| ${m} | ${p.name} | **${Math.round(p.rating)}** | ${Math.round(p.rd)} | ${avg} | ${p.games} |\n`;});
+  } else if(mode==='lastday'){
+    if(!s.days.length){document.getElementById('mm-out').value='Keine Spieltage.';return;}
+    const day=s.days[s.days.length-1];
+    out+=`### 🌍 Maptap | Tag ${day.tag} | ${day.date}\n\n| # | Name | Score | Rating | +/- |\n|---|------|-------|--------|-----|\n`;
+    [...day.entries].sort((a,b)=>a.dnp-b.dnp||(b.score||0)-(a.score||0)).forEach((e,i)=>{
+      const name=playerName(s,e.id),m=e.dnp?'—':(['🥇','🥈','🥉'][i]||`${i+1}.`);
       out+=`| ${m} | ${name} | ${e.dnp?'—':e.score} | ${e.after} | ${e.dnp?'DNP':e.delta>0?'+'+e.delta:e.delta} |\n`;
     });
-    out += `\n*Glicko-2 Ratingsystem*`;
+    out+=`\n*Glicko-2*`;
   } else {
-    out += `### 🌍 Maptap | ${today} | ${s.days.length} Spieltage\n\n| # | Name | Rating | RD | Ø Score | Spiele |\n|---|------|--------|-----|---------|--------|\n`;
-    sorted.forEach((p,i) => {
-      const m=['🥇','🥈','🥉'][i]||`${i+1}.`, avg=p.games>0?Math.round(p.total/p.games):'—';
-      out+=`| ${m} | ${p.name} | **${Math.round(p.rating)}** | ${Math.round(p.rd)} | ${avg} | ${p.games} |\n`;
-    });
-    if (s.days.length) {
-      const day = s.days[s.days.length-1];
-      out += `\n**Letzter Tag (T${day.tag}, ${day.date}):**\n\n| Name | Score | Δ Rating |\n|------|-------|----------|\n`;
-      [...day.entries].sort((a,b)=>a.dnp-b.dnp||(b.score||0)-(a.score||0)).forEach(e => {
-        out+=`| ${playerName(s,e.id)} | ${e.dnp?'DNP':e.score} | ${e.dnp?'—':e.delta>0?'+'+e.delta:e.delta} |\n`;
-      });
+    out+=`### 🌍 Maptap | ${today} | ${s.days.length} Spieltage\n\n| # | Name | Rating | RD | Ø Score | Spiele |\n|---|------|--------|-----|---------|--------|\n`;
+    sorted.forEach((p,i)=>{const m=['🥇','🥈','🥉'][i]||`${i+1}.`,avg=p.games>0?Math.round(p.total/p.games):'—';out+=`| ${m} | ${p.name} | **${Math.round(p.rating)}** | ${Math.round(p.rd)} | ${avg} | ${p.games} |\n`;});
+    if(s.days.length){
+      const day=s.days[s.days.length-1];
+      out+=`\n**Letzter Tag (T${day.tag}, ${day.date}):**\n\n| Name | Score | Δ Rating |\n|------|-------|----------|\n`;
+      [...day.entries].sort((a,b)=>a.dnp-b.dnp||(b.score||0)-(a.score||0)).forEach(e=>{out+=`| ${playerName(s,e.id)} | ${e.dnp?'DNP':e.score} | ${e.dnp?'—':e.delta>0?'+'+e.delta:e.delta} |\n`;});
     }
-    out += `\n*Glicko-2 Ratingsystem, DNP = kein Ratingverlust*`;
+    out+=`\n*Glicko-2, DNP = kein Ratingverlust*`;
   }
-  document.getElementById('mm-out').value = out;
+  document.getElementById('mm-out').value=out;
 }
 
 function copyExport() {
-  const ta = document.getElementById('mm-out'); if (!ta.value) { toast('Erst Format wählen!'); return; }
+  const ta=document.getElementById('mm-out'); if(!ta.value){toast('Erst Format wählen!');return;}
   ta.select(); document.execCommand('copy'); toast('Kopiert.');
 }
 
-// ─── TABS ─────────────────────────────────────────────────────────────────────
-function tab(name) {
-  const names = ['rangliste','verlauf','admin'];
-  document.querySelectorAll('.nav a').forEach((a,i) => a.classList.toggle('active', names[i]===name));
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  if (name === 'admin' && !loggedIn) return;
-  document.getElementById('p-'+name).classList.add('active');
-  if (name === 'verlauf') renderHist();
-  if (name === 'admin') { renderEntryForm(); renderPlayers(); }
-}
-
 let toastT;
-function toast(msg) { const el=document.getElementById('toast'); el.textContent=msg; el.style.display='block'; clearTimeout(toastT); toastT=setTimeout(()=>el.style.display='none',2500); }
-function renderAll() { renderLb(); renderHist(); if (loggedIn) renderPlayers(); }
-window.addEventListener('resize', renderChart);
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.style.display='block';clearTimeout(toastT);toastT=setTimeout(()=>el.style.display='none',2500);}
+function renderAll(){renderLb();renderHist();if(loggedIn){renderPlayers();renderEntryForm();}}
+window.addEventListener('resize',renderChart);
 
-(async () => { STATE = await ghLoad(); renderAll(); })();
+(async()=>{STATE=await ghLoad();renderAll();})();
 </script>
 </body>
 </html>
