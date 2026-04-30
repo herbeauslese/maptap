@@ -99,8 +99,11 @@
     <span id="admin-status">&#128274; Admin:</span>&nbsp;
     <span id="admin-login-form">
       <input type="password" id="pw-input" placeholder="Passwort" style="width:110px"
-        onkeydown="if(event.key==='Enter')tryLogin()">
-      <input type="password" id="token-input" placeholder="GitHub Token" style="width:150px"
+        onkeydown="if(event.key==='Enter')checkPassword()">
+      <button onclick="checkPassword()">Weiter</button>
+    </span>
+    <span id="admin-token-form" style="display:none">
+      <input type="password" id="token-input" placeholder="GitHub Token" style="width:180px"
         onkeydown="if(event.key==='Enter')tryLogin()">
       <button onclick="tryLogin()">Anmelden</button>
     </span>
@@ -261,29 +264,36 @@ async function save(s) {
 }
 
 // ─── AUTH ─────────────────────────────────────────────────────────────────────
-function tryLogin() {
+function checkPassword() {
   const pw = document.getElementById('pw-input').value;
-  const tok = document.getElementById('token-input').value.trim();
   if (pw === atob('TWFwdGFwMjAyNg==')) {
-    if (!tok) { toast('Bitte GitHub Token eingeben.'); return; }
-    GH_TOKEN = tok;
-    loggedIn = true;
     document.getElementById('admin-login-form').style.display = 'none';
-    document.getElementById('admin-logout-form').style.display = '';
-    document.getElementById('admin-status').innerHTML = '&#128275; Admin:';
-    document.getElementById('tab-admin').style.display = '';
-    tab('admin');
-    toast('Willkommen!');
+    document.getElementById('admin-token-form').style.display = '';
+    document.getElementById('token-input').focus();
   } else {
     toast('Falsches Passwort.');
     document.getElementById('pw-input').value = '';
   }
 }
 
+function tryLogin() {
+  const tok = document.getElementById('token-input').value.trim();
+  if (!tok) { toast('Bitte GitHub Token eingeben.'); return; }
+  GH_TOKEN = tok;
+  loggedIn = true;
+  document.getElementById('admin-token-form').style.display = 'none';
+  document.getElementById('admin-logout-form').style.display = '';
+  document.getElementById('admin-status').innerHTML = '&#128275; Admin:';
+  document.getElementById('tab-admin').style.display = '';
+  tab('admin');
+  toast('Willkommen!');
+}
+
 function doLogout() {
   GH_TOKEN = '';
   loggedIn = false;
   document.getElementById('admin-login-form').style.display = '';
+  document.getElementById('admin-token-form').style.display = 'none';
   document.getElementById('admin-logout-form').style.display = 'none';
   document.getElementById('admin-status').innerHTML = '&#128274; Admin:';
   document.getElementById('tab-admin').style.display = 'none';
