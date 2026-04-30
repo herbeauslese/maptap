@@ -98,7 +98,9 @@
   <div class="lockbar">
     <span id="admin-status">&#128274; Admin:</span>&nbsp;
     <span id="admin-login-form">
-      <input type="password" id="pw-input" placeholder="Passwort" style="width:120px"
+      <input type="password" id="pw-input" placeholder="Passwort" style="width:110px"
+        onkeydown="if(event.key==='Enter')tryLogin()">
+      <input type="password" id="token-input" placeholder="GitHub Token" style="width:150px"
         onkeydown="if(event.key==='Enter')tryLogin()">
       <button onclick="tryLogin()">Anmelden</button>
     </span>
@@ -174,16 +176,15 @@
 
 <script>
 // ─── KONFIGURATION ────────────────────────────────────────────────────────────
-// Diese drei Werte musst du eintragen (siehe Anleitung unten)
 const GH_USER  = 'DEIN_GITHUB_USERNAME';
 const GH_REPO  = 'maptap-leaderboard';
-const GH_TOKEN = 'DEIN_GITHUB_TOKEN';
 const GH_FILE  = 'data.json';
 // ─────────────────────────────────────────────────────────────────────────────
 
 const K = 32, E0 = 1000;
 let loggedIn = false, sortMode = 'elo';
-let ghSha = null; // SHA des aktuellen data.json – braucht GitHub zum Überschreiben
+let ghSha = null;
+let GH_TOKEN = ''; // wird nur zur Laufzeit beim Login gesetzt
 
 // ─── GITHUB API ───────────────────────────────────────────────────────────────
 const GH_API = `https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/${GH_FILE}`;
@@ -192,10 +193,9 @@ async function ghLoad() {
   setStatus('Lade Daten von GitHub…');
   try {
     const res = await fetch(GH_API, {
-      headers: { 'Authorization': `token ${GH_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' }
+      headers: { 'Accept': 'application/vnd.github.v3+json' }
     });
     if (res.status === 404) {
-      // Datei existiert noch nicht – leerer Zustand
       ghSha = null;
       setStatus('Bereit. (Noch keine Daten vorhanden)');
       return { players: [], days: [] };
@@ -262,8 +262,11 @@ async function save(s) {
 
 // ─── AUTH ─────────────────────────────────────────────────────────────────────
 function tryLogin() {
-  const val = document.getElementById('pw-input').value;
-  if (val === atob('TWFwdGFwMjAyNg==')) {
+  const pw = document.getElementById('pw-input').value;
+  const tok = document.getElementById('token-input').value.trim();
+  if (pw === atob('TWFwdGFwMjAyNg==')) {
+    if (!tok) { toast('Bitte GitHub Token eingeben.'); return; }
+    GH_TOKEN = tok;
     loggedIn = true;
     document.getElementById('admin-login-form').style.display = 'none';
     document.getElementById('admin-logout-form').style.display = '';
@@ -278,11 +281,14 @@ function tryLogin() {
 }
 
 function doLogout() {
+  GH_TOKEN = '';
   loggedIn = false;
   document.getElementById('admin-login-form').style.display = '';
   document.getElementById('admin-logout-form').style.display = 'none';
   document.getElementById('admin-status').innerHTML = '&#128274; Admin:';
   document.getElementById('tab-admin').style.display = 'none';
+  document.getElementById('pw-input').value = '';
+  document.getElementById('token-input').value = '';
   tab('rangliste');
   toast('Abgemeldet.');
 }
