@@ -3,72 +3,72 @@
     {
       "id": "p_1777533282032",
       "name": "Domenik",
-      "elo": 1250,
-      "games": 4,
-      "total": 3661
+      "elo": 1307,
+      "games": 5,
+      "total": 4651
     },
     {
       "id": "p_1777533288456",
       "name": "Erik",
-      "elo": 1254,
-      "games": 4,
-      "total": 3467
+      "elo": 1214,
+      "games": 5,
+      "total": 4392
     },
     {
       "id": "p_1777533292348",
       "name": "Marco",
-      "elo": 1021,
-      "games": 4,
-      "total": 2831
+      "elo": 1028,
+      "games": 5,
+      "total": 3745
     },
     {
       "id": "p_1777533294586",
       "name": "Heiner",
-      "elo": 918,
-      "games": 4,
-      "total": 2912
+      "elo": 836,
+      "games": 5,
+      "total": 3699
     },
     {
       "id": "p_1777533304937",
       "name": "Burak",
-      "elo": 764,
-      "games": 4,
-      "total": 2288
+      "elo": 703,
+      "games": 5,
+      "total": 3004
     },
     {
       "id": "p_1777533307547",
       "name": "Thomi",
-      "elo": 1028,
-      "games": 2,
-      "total": 1514
+      "elo": 1000,
+      "games": 3,
+      "total": 2427
     },
     {
       "id": "p_1777533312021",
       "name": "Gulzina",
-      "elo": 1116,
-      "games": 3,
-      "total": 2374
+      "elo": 1184,
+      "games": 4,
+      "total": 3342
     },
     {
       "id": "p_1777533316368",
       "name": "Janek",
-      "elo": 882,
-      "games": 4,
-      "total": 2417
+      "elo": 877,
+      "games": 5,
+      "total": 3235
     },
     {
       "id": "p_1777533343282",
       "name": "Jan",
-      "elo": 804,
-      "games": 4,
-      "total": 2285
+      "elo": 794,
+      "games": 5,
+      "total": 3084
     },
     {
       "id": "p_1777533352238",
       "name": "Reiko",
-      "elo": 961,
-      "games": 4,
-      "total": 2697
+      "elo": 1055,
+      "games": 5,
+      "total": 3624
     }
   ],
   "days": [
@@ -413,6 +413,92 @@
           "before": 860,
           "after": 961,
           "delta": 101
+        }
+      ]
+    },
+    {
+      "tag": 5,
+      "date": "2026-04-30",
+      "entries": [
+        {
+          "id": "p_1777533282032",
+          "dnp": false,
+          "score": 990,
+          "before": 1250,
+          "after": 1307,
+          "delta": 57
+        },
+        {
+          "id": "p_1777533288456",
+          "dnp": false,
+          "score": 925,
+          "before": 1254,
+          "after": 1214,
+          "delta": -40
+        },
+        {
+          "id": "p_1777533292348",
+          "dnp": false,
+          "score": 914,
+          "before": 1021,
+          "after": 1028,
+          "delta": 7
+        },
+        {
+          "id": "p_1777533294586",
+          "dnp": false,
+          "score": 787,
+          "before": 918,
+          "after": 836,
+          "delta": -82
+        },
+        {
+          "id": "p_1777533304937",
+          "dnp": false,
+          "score": 716,
+          "before": 764,
+          "after": 703,
+          "delta": -61
+        },
+        {
+          "id": "p_1777533307547",
+          "dnp": false,
+          "score": 913,
+          "before": 1028,
+          "after": 1000,
+          "delta": -28
+        },
+        {
+          "id": "p_1777533312021",
+          "dnp": false,
+          "score": 968,
+          "before": 1116,
+          "after": 1184,
+          "delta": 68
+        },
+        {
+          "id": "p_1777533316368",
+          "dnp": false,
+          "score": 818,
+          "before": 882,
+          "after": 877,
+          "delta": -5
+        },
+        {
+          "id": "p_1777533343282",
+          "dnp": false,
+          "score": 799,
+          "before": 804,
+          "after": 794,
+          "delta": -10
+        },
+        {
+          "id": "p_1777533352238",
+          "dnp": false,
+          "score": 927,
+          "before": 961,
+          "after": 1055,
+          "delta": 94
         }
       ]
     }
