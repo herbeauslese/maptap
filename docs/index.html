@@ -5,82 +5,72 @@
 <title>Maptap Leaderboard</title>
 <style>
 * { box-sizing: border-box; }
+
 body {
   font-family: Arial, sans-serif; font-size: 12px; background: #fff; color: #000;
-  margin: 0; padding: 6px 10px; overflow-x: hidden;
+  margin: 0 auto; padding: 8px 12px; overflow-x: hidden;
+  max-width: 960px; width: 70%;
 }
-h1 { font-size: 16px; margin: 0 0 1px; display: inline; }
+
+h1 { font-size: 15px; margin: 0; display: inline; }
 .sub { font-size: 10px; color: #555; margin-left: 8px; }
-#statusbar { font-size: 10px; color: #555; font-style: italic; display: inline; margin-left: 8px; }
+#statusbar { font-size: 10px; color: #777; font-style: italic; display: inline; margin-left: 8px; }
 #statusbar.err { color: #900; font-style: normal; font-weight: bold; }
+.header-bar { border-bottom: 1px solid #000; padding-bottom: 4px; margin-bottom: 7px; }
 
 /* ── GRID ── */
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto auto auto auto;
-  gap: 6px;
-  margin-top: 6px;
-}
-.box {
-  border: 1px solid #aaa;
-  padding: 5px 7px;
-  overflow: hidden;
-}
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.box { border: 1px solid #aaa; padding: 6px 8px; overflow: hidden; }
 .box-title {
-  font-weight: bold; font-size: 11px; border-bottom: 1px solid #ddd;
-  margin-bottom: 4px; padding-bottom: 2px; display: flex; justify-content: space-between; align-items: center;
+  font-weight: bold; font-size: 11px;
+  border-bottom: 1px solid #aaa; margin-bottom: 5px; padding-bottom: 2px;
+  display: flex; justify-content: space-between; align-items: center;
 }
 .box-title a { font-size: 10px; font-weight: normal; cursor: pointer; color: #00c; text-decoration: underline; }
-
-/* span full width */
+.box-title select { font-size: 10px; border: 1px solid #aaa; padding: 1px 2px; }
 .full { grid-column: 1 / -1; }
 
 /* ── TABLES ── */
 table { border-collapse: collapse; width: 100%; font-size: 11px; }
-th { background: #336; color: #fff; padding: 2px 5px; text-align: left; border: 1px solid #224; white-space: nowrap; }
+th { background: #000; color: #fff; padding: 3px 6px; text-align: left; border: 1px solid #000; white-space: nowrap; }
 th a { color: #ff6; font-size: 10px; cursor: pointer; text-decoration: underline; margin-left: 2px; }
-td { padding: 2px 5px; border: 1px solid #ddd; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-tr:nth-child(even) td { background: #f0f0f8; }
-tr:hover td { background: #ffc; }
+td { padding: 2px 6px; border: 1px solid #ccc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+tr:nth-child(even) td { background: #f5f5f5; }
+tr:hover td { background: #ffd; }
 
 /* ── INPUTS ── */
-input[type=text], input[type=number], input[type=date], input[type=password],
-select {
-  font-size: 11px; padding: 2px 3px; border: 1px solid #888;
+input[type=text], input[type=number], input[type=date], input[type=password], select {
+  font-size: 11px; padding: 2px 3px; border: 1px solid #aaa;
   background: #fff; font-family: Arial, sans-serif;
 }
-button {
-  font-size: 11px; padding: 2px 7px; background: #eee;
-  border: 1px solid #888; cursor: pointer; font-family: Arial, sans-serif;
-}
-button:hover { background: #dde; }
+button { font-size: 11px; padding: 2px 8px; background: #ddd; border: 1px solid #aaa; cursor: pointer; font-family: Arial, sans-serif; }
+button:hover { background: #bbd; }
 button.danger { color: #900; }
-textarea { font-family: monospace; font-size: 10px; width: 100%; height: 100px; border: 1px solid #888; padding: 3px; }
+textarea { font-family: monospace; font-size: 10px; width: 100%; height: 90px; border: 1px solid #aaa; padding: 3px; }
 
 /* ── ENTRY FORM ── */
-.entry-player-row { border: 1px solid #ccc; padding: 3px 5px; margin: 2px 0; background: #fafafa; }
-.entry-player-name { font-weight: bold; margin-bottom: 2px; font-size: 11px; }
-.rounds-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px; }
+.entry-player-row { border: 1px solid #ccc; border-top: none; padding: 4px 6px; background: #fafafa; }
+.entry-player-row:first-of-type { border-top: 1px solid #ccc; }
+.entry-player-name { font-weight: bold; margin-bottom: 3px; font-size: 11px; }
+.rounds-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
 .round-cell { display: flex; flex-direction: column; gap: 2px; }
 .round-cell label { font-size: 10px; color: #555; }
-.round-cell select { width: 100%; font-size: 10px; }
-.round-cell input { width: 100%; text-align: center; }
-.prow-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.round-cell select, .round-cell input { width: 100%; }
+.round-cell input { text-align: center; }
 
 /* ── VERLAUF ── */
 .day-block { margin: 2px 0; border: 1px solid #ccc; font-size: 11px; }
-.day-header { background: #eef; padding: 2px 6px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ccc; user-select: none; }
+.day-header { background: #eee; padding: 3px 7px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ccc; user-select: none; }
 .day-header:hover { background: #ddf; }
 .day-body { display: none; }
 .day-body.open { display: block; }
-.player-summary { padding: 2px 6px; display: flex; gap: 8px; align-items: center; cursor: pointer; flex-wrap: wrap; border-bottom: 1px solid #eee; }
-.player-summary:hover { background: #fffde7; }
-.player-detail { display: none; padding: 4px 6px; background: #f8f8f8; border-top: 1px solid #eee; font-size: 10px; }
+.player-summary { padding: 2px 7px; display: flex; gap: 10px; align-items: center; cursor: pointer; flex-wrap: wrap; border-bottom: 1px solid #eee; }
+.player-summary:hover { background: #ffd; }
+.player-detail { display: none; padding: 5px 8px; background: #f8f8f8; border-top: 1px solid #ddd; font-size: 10px; }
 .player-detail.open { display: block; }
 .duel-table { width: 100%; border-collapse: collapse; font-size: 10px; margin-top: 3px; }
-.duel-table th { background: #ddd; color: #000; padding: 2px 4px; border: 1px solid #bbb; }
-.duel-table td { padding: 2px 4px; border: 1px solid #ddd; }
+.duel-table th { background: #ddd; color: #000; padding: 2px 5px; border: 1px solid #bbb; }
+.duel-table td { padding: 2px 5px; border: 1px solid #ddd; }
 
 /* ── CANVAS ── */
 canvas { display: block; width: 100%; background: #fff; }
@@ -88,34 +78,33 @@ canvas { display: block; width: 100%; background: #fff; }
 /* ── MISC ── */
 .pos { color: green; font-weight: bold; }
 .neg { color: #900; font-weight: bold; }
-.dim { color: #666; font-size: 10px; }
-.chip { display: inline-block; border: 1px solid #999; padding: 1px 4px; margin: 2px; background: #f0f0f0; }
-.chip button { padding: 0 3px; font-size: 10px; background: #fdd; border: 1px solid #aaa; margin-left: 2px; }
-.row { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; margin: 3px 0; }
-.lockbar { border: 1px solid #aaa; background: #f5f5f5; padding: 3px 6px; font-size: 11px; margin-top: 4px; }
+.dim { color: #777; font-size: 10px; }
+.chip { display: inline-block; border: 1px solid #aaa; padding: 1px 5px; margin: 2px; background: #eee; font-size: 11px; }
+.chip button { padding: 0 3px; font-size: 10px; background: #fcc; border: 1px solid #aaa; margin-left: 2px; cursor: pointer; }
+.row { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; margin: 4px 0; }
+.lockbar { border: 1px solid #aaa; background: #f0f0f0; padding: 4px 7px; font-size: 11px; margin-top: 5px; }
 .admin-sec { border: 1px solid #ccc; margin-top: 4px; }
-.admin-sec-head { background: #eee; padding: 2px 7px; cursor: pointer; font-size: 11px; font-weight: bold; border-bottom: 1px solid #ccc; user-select: none; }
-.admin-sec-head:hover { background: #dde; }
-.admin-sec-body { display: none; padding: 5px 7px; }
+.admin-sec-head { background: #eee; padding: 3px 8px; cursor: pointer; font-size: 11px; font-weight: bold; border-bottom: 1px solid #ccc; user-select: none; }
+.admin-sec-head:hover { background: #ddf; }
+.admin-sec-body { display: none; padding: 6px 8px; }
 .admin-sec-body.open { display: block; }
-.infobox { border: 1px solid #aaa; background: #fffde7; padding: 4px 7px; font-size: 10px; margin-top: 3px; line-height: 1.5; }
-#toast { position: fixed; bottom: 10px; right: 10px; background: #336; color: #fff; padding: 3px 10px; font-size: 11px; display: none; border: 1px solid #224; z-index: 999; }
+.infobox { border: 1px solid #aaa; background: #fffde7; padding: 5px 8px; font-size: 10px; margin-top: 4px; line-height: 1.6; }
+#toast { position: fixed; bottom: 12px; right: 12px; background: #000; color: #fff; padding: 4px 10px; font-size: 11px; display: none; border: 1px solid #000; z-index: 999; }
 
-/* continent badge colors */
-.c-EU { background: #d0e8ff; }
-.c-AS { background: #ffe8c0; }
-.c-AF { background: #ffd0d0; }
-.c-NA { background: #d0ffd8; }
-.c-SA { background: #f0d0ff; }
-.c-OC { background: #fff8c0; }
-.c-AN { background: #e8e8e8; }
+/* continent badges */
+.cont-badge { padding: 0 3px; font-size: 9px; border: 1px solid #ccc; }
+.c-EU { background: #ddeeff; } .c-AS { background: #fff0d0; } .c-AF { background: #ffd8d8; }
+.c-NA { background: #d8f5e0; } .c-SA { background: #eeddff; } .c-OC { background: #fffacc; }
+.c-AN { background: #eaeaea; }
 </style>
 </head>
 <body>
 
+<div class="header-bar">
 <h1>Maptap</h1>
 <span class="sub">Geografie-Quiz &middot; Glicko-2</span>
 <span id="statusbar">Lade&hellip;</span>
+</div>
 
 <div class="grid">
 
@@ -209,6 +198,7 @@ canvas { display: block; width: 100%; background: #fff; }
           <div class="row">
             <label>Datum: <input type="date" id="e-date" style="width:125px"></label>
             <label>Tag #: <input type="number" id="e-tag" style="width:45px" min="1"></label>
+            <span class="dim">Nachtragen möglich – Tage werden nach Datum sortiert</span>
           </div>
           <div id="e-rounds" style="margin:4px 0;"></div>
           <div id="e-players"></div>
@@ -414,7 +404,6 @@ function applyDayToPlayers(players, day) {
     const a=active[i],b=active[j];
     const pA=players.find(p=>p.id===a.id),pB=players.find(p=>p.id===b.id);
     if(!pA||!pB) continue;
-    // total score = sum of all rounds
     const scoreA=a.rounds?a.rounds.reduce((s,r)=>s+(r.score||0),0):(a.score||0);
     const scoreB=b.rounds?b.rounds.reduce((s,r)=>s+(r.score||0),0):(b.score||0);
     const sA=scoreA>scoreB?1:scoreA<scoreB?0:0.5;
@@ -428,7 +417,8 @@ function applyDayToPlayers(players, day) {
     if(entry.dnp){
       p.rd=Math.min(G2_RD0,Math.sqrt(p.rd*p.rd+p.vol*p.vol));
       entry.before=before;entry.after=before;entry.delta=0;
-      entry.rdBefore=rdBefore;entry.rdAfter=Math.round(p.rd);entry.duels=[];
+      entry.rdBefore=rdBefore;entry.rdAfter=Math.round(p.rd);
+      if(!entry.duels) entry.duels=[];
     } else {
       const duels=results[p.id].map(r=>({oppId:r.oppId,oppRating:Math.round(r.r),oppRD:Math.round(r.rd),score:r.s}));
       const u=glicko2Update(p,results[p.id]);
@@ -585,13 +575,14 @@ async function submitDay(){
     return{...e,before,after,delta:after-before,rdBefore,rdAfter:Math.round(p.rd),duels};
   });
 
-  // Insert day sorted by date
+  // Insert day sorted by date, then recompute ALL ratings from scratch
   const newDay={tag,date,rounds,entries:dayEntries};
   s.days.push(newDay);
   s.days.sort((a,b)=>a.date.localeCompare(b.date)||a.tag-b.tag);
-  // Re-number tags? No – keep as entered, just sort
+  // Always recompute so inserted past days don't corrupt subsequent ratings
+  recomputeRatings(s);
   const ok=await save(s);
-  if(ok){toast(`Tag ${tag} gespeichert.`);renderAll();renderEntryForm();}
+  if(ok){toast(`Tag ${tag} gespeichert.`);renderAllExceptForm();renderEntryForm();}
 }
 
 // ─── RANGLISTE ────────────────────────────────────────────────────────────────
@@ -685,18 +676,22 @@ function renderKontinentChart(){
     const x=PAD.l+i*(cW/conts.length)+((cW/conts.length)-bw)/2;
     const bh=(avgs[i]/maxV)*cH;
     const y=PAD.t+cH-bh;
-    ctx.fillStyle=contColors[c]||'#888';
+    const n=contScores[c].length;
+    // grey out bars with very few data points
+    ctx.fillStyle=n<3?'#bbb':(contColors[c]||'#888');
     ctx.fillRect(x,y,bw,bh);
-    // value on top
-    ctx.fillStyle='#000';ctx.font='bold 10px Arial';ctx.textAlign='center';
+    ctx.fillStyle=n<3?'#999':'#000';ctx.font='bold 10px Arial';ctx.textAlign='center';
     ctx.fillText(Math.round(avgs[i]),x+bw/2,y-2);
-    // label below
     ctx.fillStyle='#333';ctx.font='10px Arial';
     ctx.fillText(CONTINENT_NAMES[c]||(c),x+bw/2,H-PAD.b+12);
-    // count
-    ctx.fillStyle='#888';ctx.font='9px Arial';
-    ctx.fillText('n='+contScores[c].length,x+bw/2,H-PAD.b+22);
+    ctx.fillStyle=n<3?'#c44':'#888';ctx.font='9px Arial';
+    ctx.fillText(n<3?`n=${n}*`:`n=${n}`,x+bw/2,H-PAD.b+22);
   });
+  // footnote if any low-n bars
+  if(conts.some(c=>contScores[c].length<3)){
+    ctx.fillStyle='#999';ctx.font='9px Arial';ctx.textAlign='left';
+    ctx.fillText('* wenig Daten',PAD.l,H-2);
+  }
 }
 
 // ─── CHART: SCORE VERTEILUNG ──────────────────────────────────────────────────
@@ -792,7 +787,7 @@ function renderLaenderTable(){
     const avg=Math.round(d.scores.reduce((a,b)=>a+b,0)/d.scores.length);
     const mn=Math.min(...d.scores),mx=Math.max(...d.scores);
     const cont=d.continent;
-    const badge=cont?`<span class="c-${cont}" style="padding:0 3px;border-radius:2px;font-size:9px;">${CONTINENT_NAMES[cont]||cont}</span>`:'';
+    const badge=cont?`<span class="cont-badge c-${cont}">${CONTINENT_NAMES[cont]||cont}</span>`:'';
     return`<tr><td>${c} ${badge}</td><td style="text-align:center;"><b>${avg}</b></td><td style="text-align:center;">${mn}</td><td style="text-align:center;">${mx}</td><td style="text-align:center;">${d.scores.length}</td></tr>`;
   }).join('');
   document.getElementById('laender-table-wrap').innerHTML=
@@ -820,7 +815,7 @@ function renderHist(){
         const roundRows=e.rounds?e.rounds.map((r,i)=>{
           const country=day.rounds&&day.rounds[i]?day.rounds[i].country:'?';
           const cont=day.rounds&&day.rounds[i]?day.rounds[i].continent:'';
-          return`<tr><td>R${i+1}: ${country}${cont?' ('+( CONTINENT_NAMES[cont]||cont)+')':''}</td><td style="text-align:center;">${r.score}</td></tr>`;
+          return`<tr><td>R${i+1}: ${country}${cont?` <span class="cont-badge c-${cont}">${CONTINENT_NAMES[cont]||cont}</span>`:''}</td><td style="text-align:center;">${r.score}</td></tr>`;
         }).join(''):'';
         const duelRows=e.duels?e.duels.map(d=>{
           const oName=playerName(s,d.oppId);
@@ -890,14 +885,14 @@ async function addPlayer(){
   const s=load();
   if(s.players.find(p=>p.name.toLowerCase()===name.toLowerCase())){toast('Existiert.');return;}
   s.players.push({id:'p_'+Date.now(),name,rating:G2_R0,rd:G2_RD0,vol:G2_VOL0,games:0,total:0});
-  const ok=await save(s);if(ok){document.getElementById('new-name').value='';renderAll();toast(`${name} hinzugefügt.`);}
+  const ok=await save(s);if(ok){document.getElementById('new-name').value='';renderAllExceptForm();renderPlayers();toast(`${name} hinzugefügt.`);}
 }
 
 async function removePlayer(id){
   const s=load(),p=s.players.find(x=>x.id===id);
   if(!confirm(`${p?.name} löschen?`))return;
   s.players=s.players.filter(x=>x.id!==id);
-  const ok=await save(s);if(ok) renderAll();
+  const ok=await save(s);if(ok) renderAllExceptForm();
 }
 
 async function undoLastDay(){
@@ -906,18 +901,18 @@ async function undoLastDay(){
   if(!confirm(`Tag ${day.tag} (${day.date}) löschen?`))return;
   s.days.pop();
   recomputeRatings(s);
-  const ok=await save(s);if(ok){toast('Rückgängig.');renderAll();}
+  const ok=await save(s);if(ok){toast('Rückgängig. Ratings neu berechnet.');renderAllExceptForm();}
 }
 
 async function resetAll(){
   if(!confirm('Ratings zurücksetzen + Verlauf löschen?'))return;
   const s=load();s.players=s.players.map(p=>({...p,rating:G2_R0,rd:G2_RD0,vol:G2_VOL0,games:0,total:0}));s.days=[];
-  const ok=await save(s);if(ok){renderAll();toast('Reset.');}
+  const ok=await save(s);if(ok){renderAllExceptForm();toast('Reset.');}
 }
 
 async function clearAll(){
   if(!confirm('Alle Daten löschen?'))return;
-  const ok=await save({players:[],days:[]});if(ok){renderAll();toast('Gelöscht.');}
+  const ok=await save({players:[],days:[]});if(ok){renderAllExceptForm();toast('Gelöscht.');}
 }
 
 // ─── EXPORT ───────────────────────────────────────────────────────────────────
@@ -945,7 +940,12 @@ function copyExport(){const ta=document.getElementById('mm-out');if(!ta.value){t
 // ─── RENDER ALL ───────────────────────────────────────────────────────────────
 function renderAll(){
   renderLb();renderRatingChart();renderKontinentChart();renderScoreChart();renderLaenderTable();renderHist();
-  if(loggedIn){renderPlayers();renderEntryForm();}
+  if(loggedIn) renderPlayers();
+  // Never reset entry form automatically – only on explicit user action
+}
+function renderAllExceptForm(){
+  renderLb();renderRatingChart();renderKontinentChart();renderScoreChart();renderLaenderTable();renderHist();
+  if(loggedIn) renderPlayers();
 }
 window.addEventListener('resize',()=>{renderRatingChart();renderKontinentChart();renderScoreChart();});
 
