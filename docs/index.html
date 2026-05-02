@@ -247,16 +247,15 @@ function glicko2Update(player,results){
 
 // ─── MIGRATE + RECOMPUTE ──────────────────────────────────────────────────────
 function migrate(data){
+  // Check for old ELO format BEFORE mapping strips the field
+  const isOldFormat = data.players.length > 0 && data.players[0].rating === undefined;
   data.players=data.players.map(p=>({
     id:p.id,name:p.name,
-    rating:p.rating??G2_R0,rd:p.rd??G2_RD0,vol:p.vol??G2_VOL0,
-    games:p.games??0,total:p.total??0
+    rating:G2_R0,rd:G2_RD0,vol:G2_VOL0,
+    games:0,total:0
   }));
-  // If old ELO data, reset and recompute
-  if(data.players.length&&data.players[0].elo!==undefined){
-    data.players.forEach(p=>{p.rating=G2_R0;p.rd=G2_RD0;p.vol=G2_VOL0;p.games=0;p.total=0;});
-    data.days.forEach(day=>applyDay(data.players,day));
-  }
+  // Always recompute from scratch using stored scores
+  recompute(data);
   return data;
 }
 
