@@ -5,187 +5,234 @@
 <title>Maptap Leaderboard</title>
 <style>
 body {
-  font-family: Arial, sans-serif; font-size: 13px;
-  margin: 12px auto; padding: 0 12px;
-  max-width: 900px; width: 70%;
+  font-family: Arial, sans-serif; font-size: 13px; background: #fff; color: #000;
+  margin: 0 auto; padding: 0 16px 32px;
+  max-width: 860px; width: 72%;
 }
-h1 { font-size: 16px; margin: 0; display: inline; }
-#statusbar { font-size: 11px; color: #666; font-style: italic; margin-left: 10px; }
-#statusbar.err { color: red; font-style: normal; font-weight: bold; }
-hr { border: none; border-top: 1px solid #ccc; margin: 8px 0; }
 
-.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
-.full { grid-column: 1 / -1; }
-.sec-title { font-weight: bold; border-bottom: 1px solid #999; margin-bottom: 4px; padding-bottom: 1px; }
+/* ── HEADER ── */
+.header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 0 10px;
+  border-bottom: 2px solid #000;
+  margin-bottom: 0;
+}
+h1 { font-size: 18px; margin: 0; letter-spacing: 0.01em; }
+.header-sub { font-size: 11px; color: #666; margin-top: 2px; }
+#statusbar { font-size: 11px; color: #888; font-style: italic; }
+#statusbar.err { color: #c00; font-style: normal; font-weight: bold; }
 
+/* ── SECTIONS ── */
+.section { margin-top: 28px; }
+.section-title {
+  font-size: 11px; font-weight: bold; text-transform: uppercase;
+  letter-spacing: 0.12em; color: #000;
+  border-bottom: 1px solid #000;
+  padding-bottom: 4px; margin-bottom: 10px;
+  display: flex; justify-content: space-between; align-items: baseline;
+}
+.section-title a { font-size: 10px; font-weight: normal; text-transform: none; letter-spacing: 0; color: #00c; cursor: pointer; }
+
+/* ── TWO COLUMN ── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+/* ── TABLES ── */
 table { border-collapse: collapse; width: 100%; font-size: 12px; }
-th { background: #000; color: #fff; padding: 3px 6px; text-align: left; }
-th a { color: #ff6; font-size: 11px; cursor: pointer; margin-left: 3px; }
-td { padding: 2px 6px; border-bottom: 1px solid #ddd; }
+th { background: #000; color: #fff; padding: 5px 8px; text-align: left; font-weight: normal; font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; }
+th a { color: #fd0; font-size: 10px; cursor: pointer; margin-left: 4px; }
+td { padding: 5px 8px; border-bottom: 1px solid #e8e8e8; }
+tr:last-child td { border-bottom: none; }
 tr:nth-child(even) td { background: #f8f8f8; }
-tr:hover td { background: #ffc; }
+tr:hover td { background: #fff8cc; }
 
-input, button, select, textarea { font-family: Arial, sans-serif; font-size: 12px; }
-input[type=text], input[type=number], input[type=date], input[type=password] { border: 1px solid #999; padding: 2px 4px; }
-button { border: 1px solid #999; background: #eee; padding: 2px 8px; cursor: pointer; }
-button:hover { background: #ddf; }
+/* ── INPUTS ── */
+input[type=text], input[type=number], input[type=date], input[type=password] {
+  border: 1px solid #aaa; padding: 3px 5px; font-size: 12px; font-family: Arial, sans-serif;
+}
+input:focus { outline: none; border-color: #555; }
+button {
+  border: 1px solid #aaa; background: #f0f0f0; padding: 3px 10px;
+  cursor: pointer; font-size: 12px; font-family: Arial, sans-serif;
+}
+button:hover { background: #e0e0f8; border-color: #888; }
 button.danger { color: #900; }
-textarea { border: 1px solid #999; padding: 3px; width: 100%; height: 80px; font-family: monospace; font-size: 11px; }
+textarea { border: 1px solid #aaa; padding: 5px; width: 100%; height: 80px; font-family: monospace; font-size: 11px; display: block; margin-top: 6px; }
 
-.prow { display: flex; align-items: center; gap: 10px; padding: 2px 0; border-bottom: 1px solid #eee; font-size: 12px; }
+/* ── ENTRY FORM ── */
+.prow {
+  display: flex; align-items: center; gap: 12px;
+  padding: 5px 0; border-bottom: 1px solid #eee; font-size: 12px;
+}
+.prow:last-child { border-bottom: none; }
 .prow b { min-width: 80px; }
 
-.day-block { margin: 3px 0; }
-.day-header { background: #f0f0f0; border: 1px solid #ccc; padding: 2px 6px; cursor: pointer; display: flex; justify-content: space-between; user-select: none; font-size: 12px; }
-.day-header:hover { background: #e8e8ff; }
+/* ── VERLAUF ── */
+.day-block { margin-bottom: 4px; }
+.day-header {
+  background: #f4f4f4; border: 1px solid #ccc;
+  padding: 5px 9px; cursor: pointer;
+  display: flex; justify-content: space-between; align-items: center;
+  user-select: none; font-size: 12px;
+}
+.day-header:hover { background: #eeeef8; }
 .day-body { display: none; border: 1px solid #ccc; border-top: none; }
 .day-body.open { display: block; }
-.player-summary { display: flex; gap: 10px; align-items: center; padding: 2px 6px; cursor: pointer; border-bottom: 1px solid #f0f0f0; font-size: 12px; }
-.player-summary:hover { background: #ffc; }
-.player-detail { display: none; padding: 5px 8px; background: #f9f9f9; border-top: 1px solid #e8e8e8; font-size: 11px; }
+.player-summary {
+  display: flex; gap: 12px; align-items: center;
+  padding: 4px 9px; cursor: pointer;
+  border-bottom: 1px solid #efefef; font-size: 12px;
+}
+.player-summary:last-child { border-bottom: none; }
+.player-summary:hover { background: #fff8cc; }
+.player-detail { display: none; padding: 8px 10px; background: #fafafa; border-top: 1px solid #e4e4e4; font-size: 11px; }
 .player-detail.open { display: block; }
-.duel-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 3px; }
-.duel-table th { background: #e8e8e8; color: #000; padding: 2px 5px; border: 1px solid #ccc; font-weight: bold; }
-.duel-table td { padding: 2px 5px; border: 1px solid #e8e8e8; }
+.duel-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 5px; }
+.duel-table th { background: #e8e8e8; color: #000; padding: 3px 6px; border: 1px solid #ccc; text-transform: none; letter-spacing: 0; font-size: 11px; }
+.duel-table td { padding: 3px 6px; border: 1px solid #e8e8e8; }
 
+/* ── MISC ── */
 canvas { display: block; width: 100%; }
-.pos { color: green; font-weight: bold; }
+.pos { color: #080; font-weight: bold; }
 .neg { color: #900; font-weight: bold; }
 .dim { color: #888; font-size: 11px; }
-.chip { display: inline-block; border: 1px solid #ccc; padding: 1px 5px; margin: 2px; font-size: 12px; }
-.chip button { padding: 0 3px; font-size: 10px; border: 1px solid #ccc; cursor: pointer; margin-left: 2px; }
-.row { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; margin: 4px 0; }
-.lockbar { background: #f5f5f5; border: 1px solid #ccc; padding: 4px 7px; margin-top: 6px; font-size: 12px; }
-.admin-sec { border: 1px solid #ddd; margin-top: 4px; }
-.admin-sec-head { background: #f0f0f0; border-bottom: 1px solid #ddd; padding: 2px 8px; cursor: pointer; font-weight: bold; font-size: 12px; user-select: none; }
-.admin-sec-head:hover { background: #e8e8ff; }
-.admin-sec-body { display: none; padding: 6px 8px; }
+.chip { display: inline-block; border: 1px solid #ccc; padding: 2px 6px; margin: 2px; font-size: 12px; }
+.chip button { padding: 0 4px; font-size: 10px; border: 1px solid #ccc; cursor: pointer; margin-left: 3px; }
+.row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin: 5px 0; }
+.lockbar { background: #f8f8f8; border: 1px solid #ccc; padding: 6px 9px; margin-top: 8px; font-size: 12px; }
+.admin-sec { border: 1px solid #ddd; margin-top: 6px; }
+.admin-sec-head { background: #f4f4f4; border-bottom: 1px solid #ddd; padding: 4px 9px; cursor: pointer; font-weight: bold; font-size: 12px; user-select: none; }
+.admin-sec-head:hover { background: #eeeef8; }
+.admin-sec-body { display: none; padding: 8px 10px; }
 .admin-sec-body.open { display: block; }
-.infobox { border: 1px solid #ccc; background: #ffffee; padding: 5px 8px; font-size: 11px; margin-top: 4px; line-height: 1.6; }
-#toast { position: fixed; bottom: 12px; right: 12px; background: #000; color: #fff; padding: 4px 10px; font-size: 11px; display: none; z-index: 999; }
-#legend { margin-top: 3px; font-size: 11px; display: flex; flex-wrap: wrap; gap: 8px; }
+.infobox { border: 1px solid #ccc; background: #fffef0; padding: 8px 10px; font-size: 11px; margin-top: 6px; line-height: 1.7; }
+#toast { position: fixed; bottom: 14px; right: 14px; background: #000; color: #fff; padding: 5px 12px; font-size: 11px; display: none; z-index: 999; }
 </style>
 </head>
 <body>
 
-<div style="display:flex;justify-content:space-between;align-items:center;">
+<div class="header">
   <div>
-    <h1>Maptap</h1>
-    <span style="font-size:11px;color:#555;">Geografie-Quiz &middot; Glicko-2</span>
-    <span id="statusbar">Lade&hellip;</span>
+    <h1>Maptap &mdash; ELO Leaderboard</h1>
+    <div class="header-sub">Geografie-Quiz &middot; Glicko-2-Ratingsystem &nbsp;&nbsp; <span id="statusbar">Lade&hellip;</span></div>
   </div>
-  <canvas id="globe" width="40" height="40" style="display:block;width:32px;height:32px;"></canvas>
+  <canvas id="globe" width="40" height="40" style="display:block;width:36px;height:36px;flex-shrink:0;"></canvas>
 </div>
-<hr>
 
-<div class="grid">
+<div class="two-col section">
 
   <!-- RANGLISTE -->
   <div>
-    <div class="sec-title">Rangliste &nbsp;<small><a onclick="sortBy('rating')" style="cursor:pointer;color:#00c;">Rating &#9660;</a> &nbsp; <a onclick="sortBy('avg')" style="cursor:pointer;color:#00c;">Score &#9660;</a></small></div>
+    <div class="section-title">
+      Rangliste
+      <span>
+        <a onclick="sortBy('rating')">Rating &#9660;</a> &nbsp;
+        <a onclick="sortBy('avg')">Score &#9660;</a>
+      </span>
+    </div>
     <table>
       <thead><tr><th>#</th><th>Name</th><th>Rating</th><th>RD</th><th>&Oslash; Score</th><th>Spiele</th></tr></thead>
       <tbody id="lb-body"></tbody>
     </table>
   </div>
 
-  <!-- RATING VERLAUF -->
+  <!-- CHART -->
   <div>
-    <div class="sec-title">Rating-Verlauf</div>
-    <canvas id="chart-rating" height="140"></canvas>
-    <div id="chart-legend" style="margin-top:3px;font-size:11px;display:flex;flex-wrap:wrap;gap:6px;"></div>
-  </div>
-
-  <!-- VERLAUF -->
-  <div class="full">
-    <div class="sec-title">
-      Verlauf &nbsp;
-      <small><a href="#" onclick="toggleInfo();return false;" id="info-toggle" style="color:#00c;">&#9658; Glicko-2 erkl&auml;rt</a></small>
-    </div>
-    <div id="info-box" style="display:none" class="infobox">
-      Jeder Spieler hat drei Werte: <b>Rating</b> (Startwert 1500 &ndash; h&ouml;her ist besser), <b>RD</b> (Rating Deviation, Startwert 350 &ndash; zeigt wie sicher das Rating ist; sinkt je mehr man spielt) und <b>Volatility</b> (wie unbest&auml;ndig jemand spielt).<br><br>
-      Nach jedem Spieltag wird jeder gegen jeden verglichen: wer einen h&ouml;heren Score hat, gewinnt das Duell. Wer gegen einen starken Gegner gewinnt, steigt mehr als wenn er einen schwachen schl&auml;gt &ndash; und umgekehrt. Alle Duelle eines Tages werden zusammengerechnet und das Rating entsprechend angepasst.<br><br>
-      <b>DNP</b> (Did Not Play) = nicht gespielt. Das Rating bleibt gleich, aber das RD steigt leicht &ndash; das System wird also etwas unsicherer &uuml;ber diese Person. Je niedriger das RD, desto verl&auml;sslicher ist das Rating.
-    </div>
-    <div id="verlauf-body" style="margin-top:4px;max-height:240px;overflow-y:auto;">
-      <span class="dim">Noch keine Spieltage.</span>
-    </div>
-  </div>
-
-  <!-- ADMIN -->
-  <div class="full">
-    <div class="sec-title">Admin</div>
-    <div class="lockbar">
-      <span id="admin-status">&#128274;</span>&nbsp;
-      <span id="admin-login-form">
-        <input type="password" id="pw-input" placeholder="Passwort" style="width:105px" onkeydown="if(event.key==='Enter')checkPassword()">
-        <button onclick="checkPassword()">Weiter</button>
-      </span>
-      <span id="admin-token-form" style="display:none">
-        <input type="password" id="token-input" placeholder="GitHub Token" style="width:175px" onkeydown="if(event.key==='Enter')tryLogin()">
-        <button onclick="tryLogin()">Anmelden</button>
-      </span>
-      <span id="admin-logout-form" style="display:none">
-        <button onclick="doLogout()">Abmelden</button>
-      </span>
-    </div>
-
-    <div id="admin-panel" style="display:none">
-
-      <div class="admin-sec">
-        <div class="admin-sec-head" onclick="toggleAdminSec(this)">&#9658; Tag eintragen</div>
-        <div class="admin-sec-body">
-          <div class="row">
-            <label>Datum: <input type="date" id="e-date" style="width:130px"></label>
-            <label>Tag #: <input type="number" id="e-tag" style="width:48px" min="1"></label>
-            <span class="dim">Nachtragen m&ouml;glich – wird nach Datum sortiert</span>
-          </div>
-          <div id="e-players" style="margin-top:4px;"></div>
-          <div class="row" style="margin-top:5px;">
-            <button onclick="submitDay()">Speichern</button>
-            <button onclick="renderEntryForm()">Zur&uuml;cksetzen</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="admin-sec">
-        <div class="admin-sec-head" onclick="toggleAdminSec(this)">&#9658; Spieler verwalten</div>
-        <div class="admin-sec-body">
-          <div class="row">
-            <input type="text" id="new-name" placeholder="Name" style="width:145px" onkeydown="if(event.key==='Enter')addPlayer()">
-            <button onclick="addPlayer()">+ Hinzuf&uuml;gen</button>
-          </div>
-          <div id="player-list" style="margin-top:4px;"></div>
-        </div>
-      </div>
-
-      <div class="admin-sec">
-        <div class="admin-sec-head" onclick="toggleAdminSec(this)">&#9658; Mattermost-Export</div>
-        <div class="admin-sec-body">
-          <div class="row">
-            <button onclick="genExport('current')">Rangliste</button>
-            <button onclick="genExport('lastday')">Letzter Tag</button>
-            <button onclick="copyExport()">Kopieren</button>
-          </div>
-          <textarea id="mm-out" readonly></textarea>
-        </div>
-      </div>
-
-      <div class="admin-sec">
-        <div class="admin-sec-head" onclick="toggleAdminSec(this)">&#9658; Gef&auml;hrliche Zone</div>
-        <div class="admin-sec-body">
-          <div class="row">
-            <button class="danger" onclick="undoLastDay()">&larr; Letzten Tag r&uuml;ckg&auml;ngig</button>
-            <button class="danger" onclick="resetAll()">Rating-Reset</button>
-            <button class="danger" onclick="clearAll()">Alle Daten l&ouml;schen</button>
-          </div>
-        </div>
-      </div>
-
-    </div>
+    <div class="section-title">Rating-Verlauf</div>
+    <canvas id="chart-rating" height="160"></canvas>
+    <div id="chart-legend" style="margin-top:6px;font-size:11px;display:flex;flex-wrap:wrap;gap:8px;"></div>
   </div>
 
 </div>
+
+<!-- VERLAUF -->
+<div class="section">
+  <div class="section-title">
+    Verlauf
+    <a href="#" onclick="toggleInfo();return false;" id="info-toggle">&#9658; Glicko-2 erkl&auml;rt</a>
+  </div>
+  <div id="info-box" style="display:none" class="infobox">
+    Jeder Spieler hat drei Werte: <b>Rating</b> (Startwert 1500 &ndash; h&ouml;her ist besser), <b>RD</b> (Rating Deviation, Startwert 350 &ndash; zeigt wie sicher das Rating ist; sinkt je mehr man spielt) und <b>Volatility</b> (wie unbest&auml;ndig jemand spielt).<br><br>
+    Nach jedem Spieltag wird jeder gegen jeden verglichen: wer einen h&ouml;heren Score hat, gewinnt das Duell. Wer gegen einen starken Gegner gewinnt, steigt mehr als wenn er einen schwachen schl&auml;gt &ndash; und umgekehrt. Alle Duelle eines Tages werden zusammengerechnet und das Rating entsprechend angepasst.<br><br>
+    <b>DNP</b> (Did Not Play) = nicht gespielt. Das Rating bleibt gleich, aber das RD steigt leicht &ndash; das System wird etwas unsicherer &uuml;ber diese Person. Je niedriger das RD, desto verl&auml;sslicher ist das Rating.
+  </div>
+  <div id="verlauf-body" style="margin-top:8px;max-height:260px;overflow-y:auto;">
+    <span class="dim">Noch keine Spieltage.</span>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="section">
+  <div class="section-title">Admin</div>
+  <div class="lockbar">
+    <span id="admin-status">&#128274;</span>&nbsp;
+    <span id="admin-login-form">
+      <input type="password" id="pw-input" placeholder="Passwort" style="width:110px" onkeydown="if(event.key==='Enter')checkPassword()">
+      <button onclick="checkPassword()">Weiter</button>
+    </span>
+    <span id="admin-token-form" style="display:none">
+      <input type="password" id="token-input" placeholder="GitHub Token" style="width:180px" onkeydown="if(event.key==='Enter')tryLogin()">
+      <button onclick="tryLogin()">Anmelden</button>
+    </span>
+    <span id="admin-logout-form" style="display:none">
+      <button onclick="doLogout()">Abmelden</button>
+    </span>
+  </div>
+
+  <div id="admin-panel" style="display:none">
+
+    <div class="admin-sec">
+      <div class="admin-sec-head" onclick="toggleAdminSec(this)">&#9658; Tag eintragen</div>
+      <div class="admin-sec-body">
+        <div class="row">
+          <label>Datum: <input type="date" id="e-date" style="width:135px"></label>
+          <label>Tag #: <input type="number" id="e-tag" style="width:50px" min="1"></label>
+          <span class="dim">Nachtragen m&ouml;glich &ndash; wird nach Datum sortiert</span>
+        </div>
+        <div id="e-players" style="margin-top:8px;"></div>
+        <div class="row" style="margin-top:8px;">
+          <button onclick="submitDay()">Speichern</button>
+          <button onclick="renderEntryForm()">Zur&uuml;cksetzen</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-sec">
+      <div class="admin-sec-head" onclick="toggleAdminSec(this)">&#9658; Spieler verwalten</div>
+      <div class="admin-sec-body">
+        <div class="row">
+          <input type="text" id="new-name" placeholder="Name" style="width:150px" onkeydown="if(event.key==='Enter')addPlayer()">
+          <button onclick="addPlayer()">+ Hinzuf&uuml;gen</button>
+        </div>
+        <div id="player-list" style="margin-top:6px;"></div>
+      </div>
+    </div>
+
+    <div class="admin-sec">
+      <div class="admin-sec-head" onclick="toggleAdminSec(this)">&#9658; Mattermost-Export</div>
+      <div class="admin-sec-body">
+        <div class="row">
+          <button onclick="genExport('current')">Rangliste</button>
+          <button onclick="genExport('lastday')">Letzter Tag</button>
+          <button onclick="copyExport()">Kopieren</button>
+        </div>
+        <textarea id="mm-out" readonly></textarea>
+      </div>
+    </div>
+
+    <div class="admin-sec">
+      <div class="admin-sec-head" onclick="toggleAdminSec(this)">&#9658; Gef&auml;hrliche Zone</div>
+      <div class="admin-sec-body">
+        <div class="row">
+          <button class="danger" onclick="undoLastDay()">&larr; Letzten Tag r&uuml;ckg&auml;ngig</button>
+          <button class="danger" onclick="resetAll()">Rating-Reset</button>
+          <button class="danger" onclick="clearAll()">Alle Daten l&ouml;schen</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
