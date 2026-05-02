@@ -68,9 +68,14 @@ canvas { display: block; width: 100%; }
 </head>
 <body>
 
-<h1>Maptap</h1>
-<span style="font-size:11px;color:#555;">Geografie-Quiz &middot; Glicko-2</span>
-<span id="statusbar">Lade&hellip;</span>
+<div style="display:flex;justify-content:space-between;align-items:center;">
+  <div>
+    <h1>Maptap</h1>
+    <span style="font-size:11px;color:#555;">Geografie-Quiz &middot; Glicko-2</span>
+    <span id="statusbar">Lade&hellip;</span>
+  </div>
+  <canvas id="globe" width="40" height="40" style="display:block;"></canvas>
+</div>
 <hr>
 
 <div class="grid">
@@ -98,9 +103,9 @@ canvas { display: block; width: 100%; }
       <small><a href="#" onclick="toggleInfo();return false;" id="info-toggle" style="color:#00c;">&#9658; Glicko-2 erkl&auml;rt</a></small>
     </div>
     <div id="info-box" style="display:none" class="infobox">
-      Jeder Spieler hat <b>Rating</b> (Start 1500), <b>RD</b> (Unsicherheit, Start 350 – sinkt mit mehr Spielen) und <b>Volatility</b>.
-      Nach jedem Spieltag wird jeder gegen jeden verglichen (h&ouml;herer Score = Sieg).
-      Wer gegen starke Spieler gewinnt, steigt mehr. <b>DNP</b> = nicht gespielt: RD steigt leicht, Rating bleibt.
+      Jeder Spieler hat drei Werte: <b>Rating</b> (Startwert 1500 &ndash; h&ouml;her ist besser), <b>RD</b> (Rating Deviation, Startwert 350 &ndash; zeigt wie sicher das Rating ist; sinkt je mehr man spielt) und <b>Volatility</b> (wie unbest&auml;ndig jemand spielt).<br><br>
+      Nach jedem Spieltag wird jeder gegen jeden verglichen: wer einen h&ouml;heren Score hat, gewinnt das Duell. Wer gegen einen starken Gegner gewinnt, steigt mehr als wenn er einen schwachen schl&auml;gt &ndash; und umgekehrt. Alle Duelle eines Tages werden zusammengerechnet und das Rating entsprechend angepasst.<br><br>
+      <b>DNP</b> (Did Not Play) = nicht gespielt. Das Rating bleibt gleich, aber das RD steigt leicht &ndash; das System wird also etwas unsicherer &uuml;ber diese Person. Je niedriger das RD, desto verl&auml;sslicher ist das Rating.
     </div>
     <div id="verlauf-body" style="margin-top:4px;max-height:240px;overflow-y:auto;">
       <span class="dim">Noch keine Spieltage.</span>
@@ -185,8 +190,8 @@ canvas { display: block; width: 100%; }
 
 <script>
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
-const GH_USER = 'herbeauslese';
-const GH_REPO = 'maptap';
+const GH_USER = 'DEIN_GITHUB_USERNAME';
+const GH_REPO = 'maptap-leaderboard';
 const GH_FILE = 'data.json';
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -589,6 +594,152 @@ function renderAll(){renderLb();renderChart();renderHist();}
 window.addEventListener('resize',renderChart);
 let toastT;
 function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.style.display='block';clearTimeout(toastT);toastT=setTimeout(()=>el.style.display='none',2500);}
+
+// ─── RETRO GLOBE ─────────────────────────────────────────────────────────────
+(function(){
+  const canvas = document.getElementById('globe');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = 40, H = 40, R = 18, cx = W/2, cy = H/2;
+  let angle = 0;
+
+  // Continent polygons [lat, lon] – simplified but recognizable
+  const lands = [
+    // Europe
+    [[71,28],[60,25],[55,24],[52,21],[48,18],[44,28],[42,35],[38,28],[36,5],[38,-9],[43,-9],[44,-8],[46,-2],[49,-2],[51,2],[52,5],[54,9],[55,10],[57,9],[58,5],[59,5],[60,5],[62,6],[63,7],[65,14],[68,16],[70,20],[71,28]],
+    // Africa
+    [[37,10],[37,36],[20,38],[12,43],[5,40],[-5,40],[-15,37],[-25,33],[-35,18],[-35,25],[-28,32],[-26,33],[-20,35],[-10,37],[0,42],[10,44],[12,44],[15,40],[20,38],[30,33],[32,30],[30,25],[35,25],[37,20],[37,10]],
+    // Asia (west + central + east)
+    [[12,44],[25,56],[20,60],[12,44]],
+    [[70,30],[70,180],[55,180],[50,142],[45,140],[40,130],[35,120],[22,114],[20,110],[10,104],[5,100],[5,103],[1,104],[-5,105],[-8,115],[-10,124],[10,123],[15,120],[20,110],[25,121],[30,122],[35,120],[40,124],[45,135],[50,142],[55,135],[60,130],[65,143],[70,170],[70,180]],
+    [[70,30],[65,30],[62,30],[60,30],[55,30],[55,60],[60,60],[65,65],[70,70],[70,30]],
+    [[60,30],[55,30],[50,30],[45,38],[40,44],[38,44],[36,36],[37,36],[37,38],[38,44],[45,50],[50,57],[55,60],[60,60],[60,30]],
+    [[45,50],[45,80],[55,80],[60,80],[65,87],[70,90],[70,80],[65,73],[60,65],[55,60],[50,57],[45,50]],
+    [[45,80],[45,135],[50,142],[55,135],[60,130],[65,143],[70,170],[70,100],[65,87],[60,80],[55,80],[45,80]],
+    // North America
+    [[70,-140],[72,-100],[72,-80],[65,-65],[58,-62],[50,-55],[44,-66],[40,-74],[35,-76],[30,-81],[25,-80],[24,-110],[20,-105],[22,-108],[30,-115],[40,-124],[50,-127],[55,-130],[60,-145],[65,-168],[70,-160],[70,-140]],
+    // Greenland
+    [[60,-45],[65,-37],[70,-24],[75,-18],[83,-30],[83,-50],[78,-68],[72,-68],[66,-55],[60,-45]],
+    // South America
+    [[10,-75],[8,-62],[5,-52],[5,-36],[0,-35],[-5,-35],[-10,-37],[-15,-39],[-23,-43],[-30,-51],[-35,-57],[-42,-63],[-52,-68],[-55,-66],[-55,-70],[-45,-65],[-35,-60],[-25,-48],[-18,-40],[-10,-38],[-5,-35],[0,-50],[5,-52],[8,-62],[10,-75]],
+    // Australia
+    [[-15,130],[-13,136],[-12,142],[-16,145],[-24,151],[-32,152],[-38,146],[-39,143],[-37,139],[-35,136],[-32,134],[-32,130],[-22,114],[-20,118],[-16,124],[-15,130]],
+    // Japan (simplified)
+    [[31,130],[33,131],[34,132],[34,135],[35,136],[36,137],[37,137],[38,141],[40,141],[41,140],[40,139],[38,141],[37,139],[36,137],[35,136],[34,135],[33,131],[31,130]],
+    // UK
+    [[50,-5],[51,-4],[51,0],[52,1],[53,-4],[54,-6],[55,-3],[56,-3],[57,-2],[58,-5],[57,-6],[56,-5],[55,-3],[54,-6],[53,-4],[51,0],[51,-4],[50,-5]],
+    // Antarctica (approximate)
+    [[-70,0],[-70,90],[-70,180],[-70,-90],[-70,0]],
+  ];
+
+  function project(lat, lon, rot) {
+    const phi = lat * Math.PI / 180;
+    const lam = ((lon + rot + 360) % 360 - 180) * Math.PI / 180;
+    const x = R * Math.cos(phi) * Math.sin(lam);
+    const y = -R * Math.sin(phi);
+    const z = R * Math.cos(phi) * Math.cos(lam);
+    return { x: cx + x, y: cy + y, z };
+  }
+
+  function drawGlobe() {
+    ctx.clearRect(0, 0, W, H);
+
+    // Ocean gradient
+    const grad = ctx.createRadialGradient(cx - 5, cy - 5, 2, cx, cy, R);
+    grad.addColorStop(0, '#6ab4f5');
+    grad.addColorStop(1, '#1a6bb5');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Clip all drawing to globe circle
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.clip();
+
+    // Grid lines
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.lineWidth = 0.4;
+    for (let lat = -60; lat <= 60; lat += 30) {
+      ctx.beginPath(); let first = true;
+      for (let lon = -180; lon <= 180; lon += 4) {
+        const p = project(lat, lon, angle);
+        if (p.z < 0) { first = true; continue; }
+        first ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
+        first = false;
+      }
+      ctx.stroke();
+    }
+    for (let lon = 0; lon < 360; lon += 30) {
+      ctx.beginPath(); let first = true;
+      for (let lat = -90; lat <= 90; lat += 4) {
+        const p = project(lat, lon, angle);
+        if (p.z < 0) { first = true; continue; }
+        first ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
+        first = false;
+      }
+      ctx.stroke();
+    }
+
+    // Landmasses
+    lands.forEach(poly => {
+      ctx.beginPath();
+      let started = false;
+      poly.forEach(([lat, lon]) => {
+        const p = project(lat, lon, angle);
+        if (p.z < 0) { started = false; return; }
+        started ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y);
+        started = true;
+      });
+      ctx.closePath();
+      ctx.fillStyle = '#5a9e50';
+      ctx.fill();
+      ctx.strokeStyle = '#3d7a35';
+      ctx.lineWidth = 0.4;
+      ctx.stroke();
+    });
+
+    // Antarctica white
+    ctx.beginPath();
+    let aFirst = true;
+    for (let lon = -180; lon <= 180; lon += 5) {
+      const p = project(-70, lon, angle);
+      if (p.z < 0) { aFirst = true; continue; }
+      aFirst ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
+      aFirst = false;
+    }
+    const pBot = project(-90, 0, angle);
+    if (pBot.z >= 0) ctx.lineTo(pBot.x, pBot.y);
+    ctx.closePath();
+    ctx.fillStyle = '#e8e8e8';
+    ctx.fill();
+
+    // Specular highlight
+    const shine = ctx.createRadialGradient(cx - 6, cy - 6, 1, cx - 4, cy - 4, R * 0.6);
+    shine.addColorStop(0, 'rgba(255,255,255,0.22)');
+    shine.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = shine;
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+
+    // Outline
+    ctx.strokeStyle = '#1a4a80';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.stroke();
+
+    angle += 0.3;
+    requestAnimationFrame(drawGlobe);
+  }
+
+  drawGlobe();
+})();
 
 (async()=>{STATE=await ghLoad();renderAll();})();
 </script>
