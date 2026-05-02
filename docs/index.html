@@ -4,96 +4,93 @@
 <meta charset="UTF-8">
 <title>Maptap Leaderboard</title>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Linux+Libertine+Display+O&display=swap');
 * { box-sizing: border-box; }
 
 body {
-  font-family: 'Times New Roman', Times, serif;
+  font-family: 'Linux Libertine', Georgia, 'Times New Roman', serif;
   font-size: 14px;
   background: #fff;
-  color: #000;
+  color: #202122;
   margin: 0 auto;
-  width: 72%;
+  width: 74%;
   max-width: 960px;
-  padding: 8px 0 48px;
+  padding: 6px 0 40px;
+  line-height: 1.5;
 }
 
 /* ── PAGE TITLE ── */
 #page-title {
-  font-family: 'Linux Libertine', 'Georgia', serif;
-  font-size: 28px;
+  font-family: 'Linux Libertine', 'Linux Libertine Display O', Georgia, serif;
+  font-size: 26px;
   font-weight: normal;
   border-bottom: 2px solid #a2a9b1;
-  padding-bottom: 4px;
-  margin-bottom: 4px;
+  padding-bottom: 3px;
+  margin-bottom: 3px;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
+  color: #000;
 }
 .page-subtitle {
-  font-size: 12px;
+  font-size: 11px;
   font-family: sans-serif;
-  color: #555;
+  color: #54595d;
   font-style: italic;
   margin-bottom: 10px;
 }
 
 /* ── SECTION HEADINGS ── */
 h2 {
-  font-family: 'Linux Libertine', 'Georgia', serif;
-  font-size: 20px;
+  font-family: 'Linux Libertine', Georgia, serif;
+  font-size: 19px;
   font-weight: normal;
   border-bottom: 1px solid #a2a9b1;
-  margin: 18px 0 8px;
-  padding-bottom: 3px;
+  margin: 14px 0 6px;
+  padding-bottom: 2px;
   clear: both;
-}
-h3 {
-  font-family: sans-serif;
-  font-size: 14px;
-  font-weight: bold;
-  margin: 12px 0 5px;
+  color: #000;
 }
 
 /* ── TOC ── */
 #toc {
-  background: #f9f9f9;
-  border: 1px solid #aaa;
-  padding: 8px 14px 10px;
+  background: #f8f9fa;
+  border: 1px solid #a2a9b1;
+  padding: 7px 12px 8px;
   display: inline-block;
-  margin: 0 0 14px 0;
-  font-size: 13px;
+  margin: 0 0 10px 0;
+  font-size: 12px;
   font-family: sans-serif;
-  min-width: 160px;
+  min-width: 150px;
 }
-#toc-title { text-align: center; font-weight: bold; font-size: 13px; margin-bottom: 5px; }
-#toc ol { margin: 0; padding-left: 22px; }
-#toc li { margin: 2px 0; color: #000; }
+#toc-title { text-align: center; font-weight: bold; font-size: 12px; margin-bottom: 4px; }
+#toc ol { margin: 0; padding-left: 18px; }
+#toc li { margin: 1px 0; color: #202122; }
 #toc a { color: #0645ad; text-decoration: none; }
 #toc a:hover { text-decoration: underline; }
 
-/* ── INFOBOX float right ── */
+/* ── INFOBOX ── */
 .infobox {
   float: right;
   clear: right;
-  margin: 0 0 12px 20px;
-  border: 1px solid #aaa;
-  background: #f9f9f9;
+  margin: 0 0 10px 18px;
+  border: 1px solid #a2a9b1;
+  background: #f8f9fa;
   font-size: 12px;
   font-family: sans-serif;
-  width: 220px;
+  width: 200px;
 }
 .infobox-title {
-  background: #cce;
+  background: #cee0f2;
   text-align: center;
   font-weight: bold;
-  font-size: 13px;
-  padding: 5px 6px;
-  border-bottom: 1px solid #aaa;
-  font-family: sans-serif;
+  font-size: 12px;
+  padding: 4px 6px;
+  border-bottom: 1px solid #a2a9b1;
 }
-.infobox table { width: 100%; border-collapse: collapse; font-size: 12px; }
-.infobox td { padding: 3px 6px; border-top: 1px solid #ddd; vertical-align: top; }
-.infobox td:first-child { font-weight: bold; white-space: nowrap; background: #eef; }
+.infobox table { width: 100%; border-collapse: collapse; }
+.infobox td { padding: 3px 6px; border-top: 1px solid #eaecf0; vertical-align: top; font-size: 12px; }
+.infobox td:first-child { font-weight: bold; white-space: nowrap; background: #eaf3fb; }
 
 /* ── WIKITABLE ── */
 table.wikitable {
@@ -101,124 +98,113 @@ table.wikitable {
   width: 100%;
   font-size: 13px;
   font-family: sans-serif;
-  background: #f9f9f9;
-  border: 1px solid #aaa;
-  margin-bottom: 8px;
+  background: #f8f9fa;
+  border: 1px solid #a2a9b1;
+  margin-bottom: 6px;
 }
 table.wikitable th {
-  background: #d3d3d3;
-  border: 1px solid #aaa;
-  padding: 5px 8px;
+  background: #eaecf0;
+  border: 1px solid #a2a9b1;
+  padding: 4px 8px;
   font-weight: bold;
   font-size: 12px;
   text-align: left;
+  color: #202122;
 }
 table.wikitable th a { color: #0645ad; font-weight: normal; font-size: 11px; cursor: pointer; margin-left: 3px; }
 table.wikitable th a:hover { text-decoration: underline; }
-table.wikitable td { border: 1px solid #aaa; padding: 4px 8px; background: #fff; }
-table.wikitable tr:nth-child(even) td { background: #f9f9f9; }
-table.wikitable tr:hover td { background: #fff8dc; }
+table.wikitable td { border: 1px solid #a2a9b1; padding: 3px 8px; background: #fff; }
+table.wikitable tr:nth-child(even) td { background: #f8f9fa; }
+table.wikitable tr:hover td { background: #eaf3fb; }
 
-/* ── RATING CHART full width ── */
-#chart-wrap {
-  border: 1px solid #aaa;
-  background: #fff;
-  padding: 0;
-  margin: 6px 0;
-  clear: both;
-}
+/* ── CHART ── */
+#chart-wrap { border: 1px solid #a2a9b1; background: #fff; margin: 5px 0; clear: both; }
 
 /* ── VERLAUF ── */
 .day-block { margin: 2px 0; }
 .day-header {
-  background: #d3d3d3;
-  border: 1px solid #aaa;
-  padding: 3px 8px;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  user-select: none;
-  font-size: 12px;
-  font-weight: bold;
-  font-family: sans-serif;
+  background: #eaecf0; border: 1px solid #a2a9b1;
+  padding: 3px 8px; cursor: pointer;
+  display: flex; justify-content: space-between;
+  user-select: none; font-size: 12px; font-family: sans-serif; color: #202122;
 }
-.day-header:hover { background: #bbb; }
-.day-body { display: none; border: 1px solid #aaa; border-top: none; background: #fff; font-family: sans-serif; }
+.day-header:hover { background: #cee0f2; }
+.day-body { display: none; border: 1px solid #a2a9b1; border-top: none; background: #fff; font-family: sans-serif; }
 .day-body.open { display: block; }
 .player-summary {
   display: flex; gap: 10px; align-items: center;
   padding: 3px 8px; cursor: pointer;
-  border-bottom: 1px solid #eee; font-size: 12px;
+  border-bottom: 1px solid #eaecf0; font-size: 12px;
 }
 .player-summary:last-child { border-bottom: none; }
-.player-summary:hover { background: #fff8dc; }
-.player-detail { display: none; padding: 5px 10px; background: #f9f9f9; border-top: 1px solid #ddd; font-size: 11px; font-family: sans-serif; }
+.player-summary:hover { background: #eaf3fb; }
+.player-detail { display: none; padding: 5px 10px; background: #f8f9fa; border-top: 1px solid #eaecf0; font-size: 11px; font-family: sans-serif; }
 .player-detail.open { display: block; }
 .duel-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 3px; }
-.duel-table th { background: #d3d3d3; padding: 2px 5px; border: 1px solid #aaa; font-weight: bold; font-size: 11px; }
-.duel-table td { padding: 2px 5px; border: 1px solid #ddd; }
+.duel-table th { background: #eaecf0; padding: 2px 6px; border: 1px solid #a2a9b1; font-weight: bold; font-size: 11px; }
+.duel-table td { padding: 2px 6px; border: 1px solid #eaecf0; }
 
 /* ── ADMIN ── */
-.admin-sec { border: 1px solid #aaa; margin-top: 5px; }
+.admin-sec { border: 1px solid #a2a9b1; margin-top: 4px; }
 .admin-sec-head {
-  background: #d3d3d3; border-bottom: 1px solid #aaa;
+  background: #eaecf0; border-bottom: 1px solid #a2a9b1;
   padding: 3px 8px; cursor: pointer;
-  font-size: 12px; font-weight: bold; font-family: sans-serif;
+  font-size: 12px; font-weight: bold; font-family: sans-serif; color: #202122;
   user-select: none;
 }
-.admin-sec-head:hover { background: #bbb; }
-.admin-sec-body { display: none; padding: 7px 9px; background: #fff; font-family: sans-serif; font-size: 12px; }
+.admin-sec-head:hover { background: #cee0f2; }
+.admin-sec-body { display: none; padding: 6px 8px; background: #fff; font-family: sans-serif; font-size: 12px; }
 .admin-sec-body.open { display: block; }
 
 /* ── INPUTS ── */
 input[type=text], input[type=number], input[type=date], input[type=password] {
-  border: 1px solid #aaa; padding: 2px 5px;
-  font-size: 12px; font-family: sans-serif; background: #fff;
+  border: 1px solid #a2a9b1; padding: 2px 5px;
+  font-size: 12px; font-family: sans-serif; background: #fff; color: #202122;
 }
-input:focus { outline: 1px dotted #0645ad; }
+input:focus { outline: 1px solid #3366cc; border-color: #3366cc; }
 button {
-  border: 1px solid #aaa; background: #f9f9f9;
+  border: 1px solid #a2a9b1; background: #f8f9fa;
   padding: 2px 8px; cursor: pointer;
-  font-size: 12px; font-family: sans-serif; color: #000;
+  font-size: 12px; font-family: sans-serif; color: #202122;
 }
-button:hover { background: #d3d3d3; }
-button.danger { color: #900; }
-button.danger:hover { background: #fcc; }
+button:hover { background: #eaecf0; border-color: #72777d; }
+button.danger { color: #b32424; }
+button.danger:hover { background: #fee7e6; }
 textarea {
-  border: 1px solid #aaa; padding: 4px; width: 100%; height: 80px;
-  font-family: monospace; font-size: 11px; margin-top: 5px;
-  display: block; background: #f9f9f9;
+  border: 1px solid #a2a9b1; padding: 4px; width: 100%; height: 75px;
+  font-family: monospace; font-size: 11px; margin-top: 4px;
+  display: block; background: #f8f9fa;
 }
 
 /* ── MISC ── */
 canvas { display: block; width: 100%; }
-.pos { color: #006400; font-weight: bold; }
-.neg { color: #900; font-weight: bold; }
-.dim { color: #777; font-size: 11px; font-family: sans-serif; }
-.chip { display: inline-block; border: 1px solid #aaa; padding: 1px 5px; margin: 2px; font-size: 12px; font-family: sans-serif; background: #f9f9f9; }
-.chip button { padding: 0 3px; font-size: 10px; border: 1px solid #aaa; cursor: pointer; margin-left: 2px; background: #fdd; color: #900; }
+.pos { color: #14866d; font-weight: bold; }
+.neg { color: #b32424; font-weight: bold; }
+.dim { color: #72777d; font-size: 11px; font-family: sans-serif; }
+.chip { display: inline-block; border: 1px solid #a2a9b1; padding: 1px 5px; margin: 2px; font-size: 12px; font-family: sans-serif; background: #f8f9fa; }
+.chip button { padding: 0 3px; font-size: 10px; border: 1px solid #ffa0a0; cursor: pointer; margin-left: 2px; background: #fee7e6; color: #b32424; }
 .row { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; margin: 4px 0; }
-.lockbar { border: 1px solid #aaa; padding: 5px 8px; margin-top: 6px; font-size: 12px; font-family: sans-serif; background: #f9f9f9; }
-.prow { display: flex; align-items: center; gap: 10px; padding: 3px 0; border-bottom: 1px solid #eee; font-size: 12px; font-family: sans-serif; }
+.lockbar { border: 1px solid #a2a9b1; padding: 5px 8px; margin-top: 5px; font-size: 12px; font-family: sans-serif; background: #f8f9fa; }
+.prow { display: flex; align-items: center; gap: 10px; padding: 3px 0; border-bottom: 1px solid #eaecf0; font-size: 12px; font-family: sans-serif; }
 .prow:last-child { border-bottom: none; }
 .prow b { min-width: 80px; }
-#chart-legend { margin-top: 4px; font-size: 11px; display: flex; flex-wrap: wrap; gap: 8px; font-family: sans-serif; }
+#chart-legend { margin-top: 4px; font-size: 11px; display: flex; flex-wrap: wrap; gap: 8px; font-family: sans-serif; color: #54595d; }
 a { color: #0645ad; text-decoration: none; }
 a:hover { text-decoration: underline; }
-.infobox-glicko { font-size: 12px; font-family: sans-serif; color: #333; line-height: 1.6; }
-#statusbar { font-size: 11px; font-family: sans-serif; color: #555; font-style: italic; }
-#statusbar.err { color: #c00; font-style: normal; font-weight: bold; }
-#toast { position: fixed; bottom: 10px; right: 10px; background: #f9f9f9; color: #000; border: 1px solid #aaa; padding: 4px 12px; font-size: 12px; display: none; z-index: 999; font-family: sans-serif; }
+.glicko-note { font-size: 12px; font-family: sans-serif; color: #54595d; line-height: 1.6; border: 1px solid #a2a9b1; background: #f8f9fa; padding: 7px 10px; margin-top: 5px; }
+#statusbar { font-size: 11px; font-family: sans-serif; color: #72777d; font-style: italic; }
+#statusbar.err { color: #b32424; font-style: normal; font-weight: bold; }
+#toast { position: fixed; bottom: 10px; right: 10px; background: #f8f9fa; color: #202122; border: 1px solid #a2a9b1; padding: 4px 12px; font-size: 12px; display: none; z-index: 999; font-family: sans-serif; }
 </style>
 </head>
 <body>
 
 <div id="page-title">
   <span>Maptap &ndash; Leaderboard</span>
-  <canvas id="globe" width="40" height="40" style="display:block;width:36px;height:36px;flex-shrink:0;border:1px solid #aaa;"></canvas>
+  <canvas id="globe" width="40" height="40" style="display:block;width:34px;height:34px;flex-shrink:0;border:1px solid #a2a9b1;"></canvas>
 </div>
 <div class="page-subtitle">
-  Aus dem Bereich: Geografie-Quiz &middot; Glicko-2-Ratingsystem &middot;
+  Geografie-Quiz &middot; Glicko-2-Ratingsystem &middot;
   <span id="statusbar">Lade&hellip;</span>
 </div>
 
@@ -238,16 +224,17 @@ a:hover { text-decoration: underline; }
   <table>
     <tr><td>Startwert</td><td>1500</td></tr>
     <tr><td>Start-RD</td><td>350</td></tr>
-    <tr><td>K-Faktor</td><td>variabel</td></tr>
+    <tr><td>Methode</td><td>paarweise</td></tr>
     <tr><td>DNP</td><td>kein Verlust</td></tr>
-    <tr><td>Duelle</td><td>paarweise</td></tr>
+    <tr><td>RD-Farbe</td><td><span style="color:#14866d">●</span> gut &nbsp;<span style="color:#b32424">●</span> unsicher</td></tr>
   </table>
 </div>
 
-<p style="margin-bottom:10px;line-height:1.6;">
-  Das <b>Maptap Leaderboard</b> zeichnet die Ergebnisse des t&auml;glichen Geografie-Quiz auf
-  und berechnet daraus ein Ranking nach dem <i>Glicko-2-Ratingsystem</i>. Jeder Spieler erh&auml;lt
-  ein Rating, das sich nach jedem Spieltag auf Basis paarweiser Vergleiche anpasst.
+<p style="margin-bottom:8px;font-size:13px;line-height:1.6;">
+  Das <b>Maptap Leaderboard</b> dokumentiert die Ergebnisse des t&auml;glichen Geografie-Quiz
+  und berechnet daraus ein Ranking nach dem <i>Glicko-2-Ratingsystem</i>.
+  Jeder Spieler erh&auml;lt ein <i>Rating</i> sowie eine <i>Rating Deviation</i> (RD),
+  die nach jedem Spieltag durch paarweise Vergleiche aktualisiert werden.
 </p>
 
 <h2>1 Rangliste</h2>
@@ -274,7 +261,7 @@ a:hover { text-decoration: underline; }
     &nbsp;<a href="#" onclick="toggleInfo();return false;" id="info-toggle">&#9658; Glicko-2 erkl&auml;rt</a>
   </span>
 </h2>
-<div id="info-box" style="display:none;margin-bottom:8px;" class="infobox-glicko">
+<div id="info-box" style="display:none;margin-bottom:6px;" class="glicko-note">
   <div style="border:1px solid #aaa;background:#f9f9f9;padding:8px 10px;">
     Jeder Spieler hat drei Werte: <b>Rating</b> (Startwert 1500 &ndash; h&ouml;her ist besser), <b>RD</b> (Rating Deviation, Startwert 350 &ndash; zeigt wie sicher das Rating ist; sinkt je mehr man spielt) und <b>Volatility</b> (wie unbest&auml;ndig jemand spielt).<br><br>
     Nach jedem Spieltag wird jeder gegen jeden verglichen: wer einen h&ouml;heren Score hat, gewinnt das Duell. Wer gegen einen starken Gegner gewinnt, steigt mehr. Alle Duelle werden zusammengerechnet und das Rating angepasst.<br><br>
