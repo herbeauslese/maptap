@@ -4,325 +4,321 @@
 <meta charset="UTF-8">
 <title>Maptap Leaderboard</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=IM+Fell+English:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: 13px;
-  background: #f7f3ec;
-  color: #111;
+  font-family: 'VT323', 'Courier New', monospace;
+  font-size: 16px;
+  background: #0a0a0a;
+  color: #33ff33;
   margin: 0 auto;
   width: 74%;
   max-width: 880px;
-  padding-bottom: 48px;
+  padding: 20px 0 48px;
+  position: relative;
 }
 
-/* ── MASTHEAD ── */
+/* CRT scanline overlay */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.08) 2px,
+    rgba(0,0,0,0.08) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ── HEADER ── */
 .masthead {
-  border-top: 4px solid #111;
-  border-bottom: 1px solid #111;
-  padding: 10px 0 8px;
-  text-align: center;
-  position: relative;
-  margin-bottom: 2px;
-}
-.masthead-title {
-  font-family: 'UnifrakturMaguntia', 'Times New Roman', serif;
-  font-size: 42px;
-  line-height: 1;
-  color: #111;
-  letter-spacing: 0.02em;
-}
-.masthead-rule { border: none; border-top: 1px solid #111; margin: 6px 0 5px; }
-.masthead-sub {
-  font-family: Georgia, serif;
-  font-size: 10px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: #444;
+  border: 1px solid #33ff33;
+  padding: 12px 16px 10px;
+  margin-bottom: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 4px;
+  background: #0d1a0d;
+  position: relative;
 }
-.masthead-globe { position: absolute; right: 0; top: 8px; }
-#statusbar { font-size: 10px; color: #888; font-style: italic; font-family: Georgia, serif; }
-#statusbar.err { color: #c00; font-style: normal; font-weight: bold; }
+.masthead::before {
+  content: '┌──────────────────────────────────────────────────┐';
+  position: absolute; top: -1px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px; color: #1a8c1a; letter-spacing: 0;
+  white-space: nowrap; overflow: hidden;
+}
+h1 {
+  font-family: 'VT323', monospace;
+  font-size: 32px;
+  color: #33ff33;
+  text-shadow: 0 0 8px #33ff33, 0 0 20px #33ff3366;
+  letter-spacing: 0.08em;
+}
+.header-sub {
+  font-size: 12px;
+  color: #1aaa1a;
+  margin-top: 2px;
+  letter-spacing: 0.05em;
+}
+#statusbar { color: #1a661a; font-style: normal; }
+#statusbar.err { color: #ff3333; text-shadow: 0 0 6px #ff3333; }
 
-/* ── COLUMNS ── */
-.col-rule { border: none; border-top: 2px solid #111; margin: 12px 0 0; }
-.col-rule-thin { border: none; border-top: 1px solid #aaa; margin: 12px 0 0; }
-
-.page { padding: 0; margin-top: 10px; }
-.two-col {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0;
-  border-left: 1px solid #bbb;
+/* ── LAYOUT ── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.panel {
+  border: 1px solid #1a8c1a;
+  padding: 12px 14px;
+  background: #050f05;
 }
-.two-col > div {
-  padding: 0 18px;
-  border-right: 1px solid #bbb;
-}
-.full-col {
-  border-left: 1px solid #bbb;
-  border-right: 1px solid #bbb;
-  padding: 0 18px;
-  margin-top: 0;
+.panel-full {
+  border: 1px solid #1a8c1a;
+  padding: 12px 14px;
+  background: #050f05;
+  margin-bottom: 16px;
 }
 
-/* ── SECTION HEADS ── */
+/* ── SECTION TITLES ── */
 .rubrik {
-  font-family: Georgia, serif;
-  font-size: 9px;
+  font-size: 12px;
+  color: #1aaa1a;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  letter-spacing: 0.22em;
-  color: #666;
-  border-top: 2px solid #111;
-  border-bottom: 1px solid #aaa;
-  padding: 3px 0 3px;
+  border-bottom: 1px solid #1a8c1a;
+  padding-bottom: 4px;
   margin-bottom: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 14px;
 }
-.rubrik:first-child { margin-top: 0; }
-.rubrik a { font-size: 9px; letter-spacing: 0; text-transform: none; color: #555; cursor: pointer; }
+.rubrik::before { content: '> '; color: #33ff33; }
+.rubrik a { font-size: 12px; letter-spacing: 0; text-transform: none; color: #1aaa1a; cursor: pointer; }
+.rubrik a:hover { color: #33ff33; }
 
 /* ── TABLES ── */
-table { border-collapse: collapse; width: 100%; font-size: 12px; font-family: Georgia, serif; }
+table { border-collapse: collapse; width: 100%; font-size: 15px; font-family: 'VT323', monospace; }
 th {
-  font-family: Georgia, serif;
-  font-size: 9px; font-weight: bold;
-  text-transform: uppercase; letter-spacing: 0.14em;
-  padding: 4px 7px; text-align: left;
-  border-bottom: 1px solid #111;
-  background: none; color: #111;
+  color: #1aaa1a;
+  padding: 3px 8px; text-align: left;
+  font-size: 12px; font-weight: normal;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  border-bottom: 1px solid #1a8c1a;
+  background: none;
 }
-th a { color: #555; cursor: pointer; margin-left: 3px; font-size: 9px; }
-td { padding: 4px 7px; border-bottom: 1px solid #ddd; font-size: 12px; }
+th a { color: #1aaa1a; cursor: pointer; margin-left: 3px; }
+th a:hover { color: #33ff33; }
+td { padding: 3px 8px; border-bottom: 1px solid #0d2b0d; color: #33ff33; }
 tr:last-child td { border-bottom: none; }
-tr:hover td { background: #f0ead8; }
-
-/* rank medals inline */
-.medal-1 { color: #b8860b; font-weight: bold; }
-.medal-2 { color: #777; font-weight: bold; }
-.medal-3 { color: #8b4513; font-weight: bold; }
+tr:hover td { background: #0d2b0d; color: #66ff66; text-shadow: 0 0 4px #33ff33; }
 
 /* ── INPUTS ── */
 input[type=text], input[type=number], input[type=date], input[type=password] {
-  border: 1px solid #aaa; border-radius: 0;
-  padding: 3px 6px; font-size: 12px;
-  font-family: Georgia, serif;
-  background: #fffef9;
+  border: 1px solid #1a8c1a;
+  padding: 3px 6px; font-size: 15px;
+  font-family: 'VT323', monospace;
+  background: #050f05; color: #33ff33;
+  caret-color: #33ff33;
 }
-input:focus { outline: none; border-color: #111; }
+input:focus { outline: none; border-color: #33ff33; box-shadow: 0 0 4px #33ff3344; }
+input::placeholder { color: #1a661a; }
 button {
-  border: 1px solid #aaa; background: #f0ead8;
-  padding: 3px 10px; cursor: pointer;
-  font-size: 12px; font-family: Georgia, serif;
+  border: 1px solid #1a8c1a; background: #050f05;
+  padding: 3px 12px; cursor: pointer;
+  font-size: 15px; font-family: 'VT323', monospace;
+  color: #33ff33; letter-spacing: 0.05em;
 }
-button:hover { background: #e0d8c4; border-color: #555; }
-button.danger { color: #800; }
+button:hover { border-color: #33ff33; background: #0d2b0d; box-shadow: 0 0 6px #33ff3333; }
+button.danger { color: #ff4444; border-color: #882222; }
+button.danger:hover { background: #1a0505; border-color: #ff4444; }
 textarea {
-  border: 1px solid #aaa; padding: 6px; width: 100%; height: 80px;
-  font-family: 'Courier New', monospace; font-size: 11px;
-  display: block; margin-top: 6px; background: #fffef9;
+  border: 1px solid #1a8c1a; padding: 6px; width: 100%; height: 80px;
+  font-family: 'VT323', monospace; font-size: 13px;
+  display: block; margin-top: 6px;
+  background: #050f05; color: #33ff33; resize: none;
 }
 
 /* ── ENTRY ── */
 .prow {
   display: flex; align-items: center; gap: 12px;
-  padding: 5px 0; border-bottom: 1px solid #ddd; font-size: 12px;
-  font-family: Georgia, serif;
+  padding: 4px 0; border-bottom: 1px solid #0d2b0d; font-size: 15px;
 }
 .prow:last-child { border-bottom: none; }
-.prow b { min-width: 80px; }
+.prow b { min-width: 80px; color: #66ff66; }
 
 /* ── VERLAUF ── */
-.day-block { margin-bottom: 4px; }
+.day-block { margin-bottom: 3px; }
 .day-header {
-  background: none;
-  border-top: 1px solid #aaa; border-bottom: 1px solid #aaa;
-  padding: 4px 0; cursor: pointer;
+  background: #0d1a0d; border: 1px solid #1a8c1a;
+  padding: 4px 8px; cursor: pointer;
   display: flex; justify-content: space-between;
-  user-select: none; font-size: 11px;
-  font-family: Georgia, serif; font-style: italic;
-  color: #333;
+  user-select: none; font-size: 14px; color: #1aaa1a;
+  letter-spacing: 0.03em;
 }
-.day-header:hover { color: #000; background: #f0ead8; }
-.day-body { display: none; border-left: 2px solid #bbb; padding-left: 10px; margin: 4px 0 4px 4px; }
+.day-header:hover { background: #0d2b0d; color: #33ff33; }
+.day-body { display: none; border: 1px solid #1a8c1a; border-top: none; padding: 4px 8px; }
 .day-body.open { display: block; }
 .player-summary {
   display: flex; gap: 10px; align-items: center;
   padding: 3px 0; cursor: pointer;
-  border-bottom: 1px dotted #ccc; font-size: 12px; font-family: Georgia, serif;
+  border-bottom: 1px solid #0d2b0d; font-size: 14px;
 }
 .player-summary:last-child { border-bottom: none; }
-.player-summary:hover { color: #555; }
-.player-detail { display: none; padding: 6px 0 6px 12px; border-left: 1px solid #ccc; font-size: 11px; margin: 2px 0 4px; }
+.player-summary:hover { color: #66ff66; }
+.player-detail { display: none; padding: 6px 0 4px 12px; border-left: 1px solid #1a8c1a; font-size: 13px; margin: 2px 0 4px; color: #1aaa1a; }
 .player-detail.open { display: block; }
-.duel-table { width: 100%; border-collapse: collapse; font-size: 10px; margin-top: 4px; font-family: Georgia, serif; }
-.duel-table th { font-size: 9px; font-weight: bold; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 5px; border-bottom: 1px solid #aaa; background: none; color: #333; }
-.duel-table td { padding: 2px 5px; border-bottom: 1px dotted #ddd; }
+.duel-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 4px; }
+.duel-table th { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; padding: 2px 6px; border-bottom: 1px solid #1a8c1a; color: #1aaa1a; background: none; }
+.duel-table td { padding: 2px 6px; border-bottom: 1px solid #0d2b0d; color: #33ff33; }
 
 /* ── MISC ── */
 canvas { display: block; width: 100%; }
-.pos { color: #176317; font-weight: bold; }
-.neg { color: #900; font-weight: bold; }
-.dim { color: #888; font-size: 11px; font-style: italic; }
-.chip { display: inline-block; border: 1px solid #bbb; padding: 1px 6px; margin: 2px; font-size: 12px; font-family: Georgia, serif; background: #f0ead8; }
-.chip button { padding: 0 3px; font-size: 10px; border: 1px solid #bbb; cursor: pointer; margin-left: 3px; background: #f5c8c8; }
+.pos { color: #66ff66; font-weight: normal; text-shadow: 0 0 4px #33ff33; }
+.neg { color: #ff4444; text-shadow: 0 0 4px #ff444466; }
+.dim { color: #1a661a; font-size: 13px; }
+.chip { display: inline-block; border: 1px solid #1a8c1a; padding: 1px 6px; margin: 2px; font-size: 14px; background: #050f05; color: #33ff33; }
+.chip button { padding: 0 4px; font-size: 13px; border: 1px solid #882222; cursor: pointer; margin-left: 3px; background: #1a0505; color: #ff4444; }
 .row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin: 5px 0; }
-.lockbar { border: 1px solid #bbb; padding: 7px 10px; margin-top: 8px; font-size: 12px; font-family: Georgia, serif; background: #fffef9; }
-.admin-sec { margin-top: 6px; }
+.lockbar { border: 1px solid #1a8c1a; padding: 7px 10px; margin-top: 8px; font-size: 15px; background: #050f05; }
+.admin-sec { margin-top: 6px; border: 1px solid #0d3d0d; }
 .admin-sec-head {
-  font-family: Georgia, serif; font-size: 9px;
-  text-transform: uppercase; letter-spacing: 0.18em;
-  border-top: 1px solid #aaa; border-bottom: 1px solid #ddd;
-  padding: 3px 0; cursor: pointer; color: #444;
-  user-select: none; margin-top: 8px;
+  background: #0d1a0d; padding: 4px 8px; cursor: pointer;
+  font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: #1aaa1a; user-select: none;
 }
-.admin-sec-head:hover { color: #000; }
-.admin-sec-body { display: none; padding: 8px 0 4px; }
+.admin-sec-head::before { content: '[+] '; }
+.admin-sec-head:hover { color: #33ff33; background: #0d2b0d; }
+.admin-sec-body { display: none; padding: 8px 10px; }
 .admin-sec-body.open { display: block; }
-.infobox { font-family: Georgia, serif; font-size: 11px; line-height: 1.8; color: #444; font-style: italic; padding: 6px 0 6px 12px; border-left: 2px solid #bbb; margin-top: 6px; }
-#chart-legend { margin-top: 6px; font-size: 11px; display: flex; flex-wrap: wrap; gap: 10px; font-family: Georgia, serif; font-style: italic; }
-#toast { position: fixed; bottom: 14px; right: 14px; background: #111; color: #f7f3ec; padding: 5px 14px; font-size: 11px; display: none; z-index: 999; font-family: Georgia, serif; font-style: italic; }
+.infobox { font-size: 13px; line-height: 1.7; color: #1aaa1a; padding: 6px 0 6px 12px; border-left: 1px solid #1a8c1a; margin-top: 6px; }
+#chart-legend { margin-top: 6px; font-size: 13px; display: flex; flex-wrap: wrap; gap: 10px; color: #1aaa1a; }
+#toast { position: fixed; bottom: 14px; right: 14px; background: #050f05; color: #33ff33; border: 1px solid #33ff33; padding: 5px 14px; font-size: 15px; display: none; z-index: 10000; text-shadow: 0 0 6px #33ff33; letter-spacing: 0.05em; }
 </style>
 </head>
 <body>
 
 <div class="masthead">
-  <canvas id="globe" width="40" height="40" class="masthead-globe" style="width:34px;height:34px;"></canvas>
-  <div class="masthead-title">Maptap</div>
-  <hr class="masthead-rule">
-  <div class="masthead-sub">
-    <span>Geografie-Quiz &middot; Glicko-2-Ratingsystem</span>
-    <span id="statusbar">Lade&hellip;</span>
-    <span>gegr&uuml;ndet 2026</span>
+  <div>
+    <h1>MAPTAP LEADERBOARD</h1>
+    <div class="header-sub">GEOGRAFIE-QUIZ / GLICKO-2 / <span id="statusbar">INITIALIZING...</span></div>
+  </div>
+  <canvas id="globe" width="40" height="40" style="display:block;width:40px;height:40px;flex-shrink:0;border:1px solid #1a8c1a;"></canvas>
+</div>
+
+<div class="two-col">
+
+  <div class="panel">
+    <div class="rubrik">
+      Rangliste
+      <span>
+        <a onclick="sortBy('rating')">rating&#9660;</a> &nbsp;
+        <a onclick="sortBy('avg')">score&#9660;</a>
+      </span>
+    </div>
+    <table>
+      <thead><tr><th>#</th><th>Name</th><th>Rating</th><th>RD</th><th>&#216; Score</th><th>Spiele</th></tr></thead>
+      <tbody id="lb-body"></tbody>
+    </table>
+  </div>
+
+  <div class="panel">
+    <div class="rubrik">Rating-Verlauf</div>
+    <canvas id="chart-rating" height="180"></canvas>
+    <div id="chart-legend"></div>
+  </div>
+
+</div>
+
+<div class="panel-full">
+  <div class="rubrik">
+    Verlauf
+    <a href="#" onclick="toggleInfo();return false;" id="info-toggle">? Glicko-2</a>
+  </div>
+  <div id="info-box" style="display:none" class="infobox">
+    Jeder Spieler hat drei Werte: RATING (Start 1500), RD (Unsicherheit, Start 350) und VOLATILITY.<br>
+    Nach jedem Tag: jeder vs. jeden. Hoeherer Score = Sieg. Sieg gegen starken Gegner = mehr Rating.<br>
+    DNP = kein Spiel. Rating bleibt. RD steigt leicht. Niedrigeres RD = verlässlicheres Rating.
+  </div>
+  <div id="verlauf-body" style="margin-top:8px;max-height:260px;overflow-y:auto;">
+    <span class="dim">_ KEINE DATEN</span>
   </div>
 </div>
 
-<div class="page">
-  <div class="two-col">
+<div class="panel-full">
+  <div class="rubrik">Admin</div>
+  <div class="lockbar">
+    <span id="admin-status">&#128274;</span>&nbsp;
+    <span id="admin-login-form">
+      <input type="password" id="pw-input" placeholder="PASSWORT" style="width:120px" onkeydown="if(event.key==='Enter')checkPassword()">
+      <button onclick="checkPassword()">ENTER</button>
+    </span>
+    <span id="admin-token-form" style="display:none">
+      <input type="password" id="token-input" placeholder="GITHUB TOKEN" style="width:185px" onkeydown="if(event.key==='Enter')tryLogin()">
+      <button onclick="tryLogin()">LOGIN</button>
+    </span>
+    <span id="admin-logout-form" style="display:none">
+      <button onclick="doLogout()">LOGOUT</button>
+    </span>
+  </div>
 
-    <!-- RANGLISTE -->
-    <div>
-      <div class="rubrik">
-        Rangliste
-        <span>
-          <a onclick="sortBy('rating')">Rating &#9660;</a> &nbsp;
-          <a onclick="sortBy('avg')">Score &#9660;</a>
-        </span>
+  <div id="admin-panel" style="display:none">
+
+    <div class="admin-sec">
+      <div class="admin-sec-head" onclick="toggleAdminSec(this)">Tag eintragen</div>
+      <div class="admin-sec-body">
+        <div class="row">
+          <label>DATE: <input type="date" id="e-date" style="width:135px"></label>
+          <label>TAG#: <input type="number" id="e-tag" style="width:55px" min="1"></label>
+          <span class="dim">_ nachtragen moeglich</span>
+        </div>
+        <div id="e-players" style="margin-top:8px;"></div>
+        <div class="row" style="margin-top:8px;">
+          <button onclick="submitDay()">SAVE</button>
+          <button onclick="renderEntryForm()">RESET</button>
+        </div>
       </div>
-      <table>
-        <thead><tr><th>#</th><th>Name</th><th>Rating</th><th>RD</th><th>&Oslash; Score</th><th>Spiele</th></tr></thead>
-        <tbody id="lb-body"></tbody>
-      </table>
     </div>
 
-    <!-- CHART -->
-    <div>
-      <div class="rubrik">Rating-Verlauf</div>
-      <canvas id="chart-rating" height="180"></canvas>
-      <div id="chart-legend"></div>
+    <div class="admin-sec">
+      <div class="admin-sec-head" onclick="toggleAdminSec(this)">Spieler verwalten</div>
+      <div class="admin-sec-body">
+        <div class="row">
+          <input type="text" id="new-name" placeholder="NAME" style="width:150px" onkeydown="if(event.key==='Enter')addPlayer()">
+          <button onclick="addPlayer()">ADD</button>
+        </div>
+        <div id="player-list" style="margin-top:6px;"></div>
+      </div>
+    </div>
+
+    <div class="admin-sec">
+      <div class="admin-sec-head" onclick="toggleAdminSec(this)">Mattermost-Export</div>
+      <div class="admin-sec-body">
+        <div class="row">
+          <button onclick="genExport('current')">RANGLISTE</button>
+          <button onclick="genExport('lastday')">LETZTER TAG</button>
+          <button onclick="copyExport()">COPY</button>
+        </div>
+        <textarea id="mm-out" readonly></textarea>
+      </div>
+    </div>
+
+    <div class="admin-sec">
+      <div class="admin-sec-head" onclick="toggleAdminSec(this)">Gefahrenzone</div>
+      <div class="admin-sec-body">
+        <div class="row">
+          <button class="danger" onclick="undoLastDay()">UNDO LAST DAY</button>
+          <button class="danger" onclick="resetAll()">RESET RATINGS</button>
+          <button class="danger" onclick="clearAll()">DELETE ALL</button>
+        </div>
+      </div>
     </div>
 
   </div>
-
-  <!-- VERLAUF -->
-  <div class="full-col" style="margin-top:0;">
-    <div class="rubrik">
-      Verlauf
-      <a href="#" onclick="toggleInfo();return false;" id="info-toggle">&#9658; Glicko-2 erkl&auml;rt</a>
-    </div>
-    <div id="info-box" style="display:none" class="infobox">
-      Jeder Spieler hat drei Werte: <b>Rating</b> (Startwert 1500 &ndash; h&ouml;her ist besser), <b>RD</b> (Rating Deviation, Startwert 350 &ndash; zeigt wie sicher das Rating ist; sinkt je mehr man spielt) und <b>Volatility</b> (wie unbest&auml;ndig jemand spielt).<br><br>
-      Nach jedem Spieltag wird jeder gegen jeden verglichen: wer einen h&ouml;heren Score hat, gewinnt das Duell. Wer gegen einen starken Gegner gewinnt, steigt mehr als wenn er einen schwachen schl&auml;gt &ndash; und umgekehrt. Alle Duelle werden zusammengerechnet und das Rating angepasst.<br><br>
-      <b>DNP</b> = nicht gespielt. Rating bleibt gleich, RD steigt leicht. Je niedriger das RD, desto verl&auml;sslicher das Rating.
-    </div>
-    <div id="verlauf-body" style="margin-top:8px;max-height:260px;overflow-y:auto;">
-      <span class="dim">Noch keine Spieltage.</span>
-    </div>
-  </div>
-
-  <!-- ADMIN -->
-  <div class="full-col">
-    <div class="rubrik">Admin</div>
-    <div class="lockbar">
-      <span id="admin-status">&#128274;</span>&nbsp;
-      <span id="admin-login-form">
-        <input type="password" id="pw-input" placeholder="Passwort" style="width:110px" onkeydown="if(event.key==='Enter')checkPassword()">
-        <button onclick="checkPassword()">Weiter</button>
-      </span>
-      <span id="admin-token-form" style="display:none">
-        <input type="password" id="token-input" placeholder="GitHub Token" style="width:180px" onkeydown="if(event.key==='Enter')tryLogin()">
-        <button onclick="tryLogin()">Anmelden</button>
-      </span>
-      <span id="admin-logout-form" style="display:none">
-        <button onclick="doLogout()">Abmelden</button>
-      </span>
-    </div>
-
-    <div id="admin-panel" style="display:none">
-
-      <div class="admin-sec">
-        <div class="admin-sec-head" onclick="toggleAdminSec(this)">&#9658; Tag eintragen</div>
-        <div class="admin-sec-body">
-          <div class="row">
-            <label>Datum: <input type="date" id="e-date" style="width:135px"></label>
-            <label>Tag #: <input type="number" id="e-tag" style="width:50px" min="1"></label>
-            <span class="dim">Nachtragen m&ouml;glich &ndash; wird nach Datum sortiert</span>
-          </div>
-          <div id="e-players" style="margin-top:8px;"></div>
-          <div class="row" style="margin-top:8px;">
-            <button onclick="submitDay()">Speichern</button>
-            <button onclick="renderEntryForm()">Zur&uuml;cksetzen</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="admin-sec">
-        <div class="admin-sec-head" onclick="toggleAdminSec(this)">&#9658; Spieler verwalten</div>
-        <div class="admin-sec-body">
-          <div class="row">
-            <input type="text" id="new-name" placeholder="Name" style="width:150px" onkeydown="if(event.key==='Enter')addPlayer()">
-            <button onclick="addPlayer()">+ Hinzuf&uuml;gen</button>
-          </div>
-          <div id="player-list" style="margin-top:6px;"></div>
-        </div>
-      </div>
-
-      <div class="admin-sec">
-        <div class="admin-sec-head" onclick="toggleAdminSec(this)">&#9658; Mattermost-Export</div>
-        <div class="admin-sec-body">
-          <div class="row">
-            <button onclick="genExport('current')">Rangliste</button>
-            <button onclick="genExport('lastday')">Letzter Tag</button>
-            <button onclick="copyExport()">Kopieren</button>
-          </div>
-          <textarea id="mm-out" readonly></textarea>
-        </div>
-      </div>
-
-      <div class="admin-sec">
-        <div class="admin-sec-head" onclick="toggleAdminSec(this)">&#9658; Gef&auml;hrliche Zone</div>
-        <div class="admin-sec-body">
-          <div class="row">
-            <button class="danger" onclick="undoLastDay()">&larr; Letzten Tag r&uuml;ckg&auml;ngig</button>
-            <button class="danger" onclick="resetAll()">Rating-Reset</button>
-            <button class="danger" onclick="clearAll()">Alle Daten l&ouml;schen</button>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
 </div>
 
 <div id="toast"></div>
@@ -335,7 +331,7 @@ const GH_FILE = 'data.json';
 // ─────────────────────────────────────────────────────────────────────────────
 
 const G2_R0=1500, G2_RD0=350, G2_VOL0=0.06, G2_TAU=0.5, G2_SCALE=173.7178;
-const COLORS=['#00c','#c00','#080','#c60','#60c','#088','#c06','#660','#048','#840'];
+const COLORS=['#33ff33','#66ffff','#ffff33','#ff6666','#ff99ff','#99ff99','#ffaa33','#aaffff','#ff33ff','#33ffaa'];
 let loggedIn=false, sortMode='rating', ghSha=null, GH_TOKEN='';
 let STATE={players:[],days:[]};
 const GH_API=`https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/${GH_FILE}`;
@@ -524,59 +520,56 @@ function renderChart(){
   const toX=i=>PAD.l+(nd>1?i*cW/(nd-1):cW/2);
   const toY=v=>PAD.t+cH-((v-minV)/(maxV-minV))*cH;
 
-  // plain white background
-  ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
+  // plain dark background
+  ctx.fillStyle='#050f05';ctx.fillRect(0,0,W,H);
 
-  // axis lines – just two simple lines, no box
-  ctx.strokeStyle='#000';ctx.lineWidth=1;
+  // axis lines
+  ctx.strokeStyle='#1a8c1a';ctx.lineWidth=1;
   ctx.beginPath();ctx.moveTo(PAD.l,PAD.t);ctx.lineTo(PAD.l,H-PAD.b);ctx.lineTo(W-PAD.r,H-PAD.b);ctx.stroke();
 
-  // sparse y gridlines – dotted, very light
-  ctx.setLineDash([2,4]);ctx.strokeStyle='#ccc';ctx.lineWidth=1;
+  // sparse y gridlines
+  ctx.setLineDash([2,4]);ctx.strokeStyle='#0d2b0d';ctx.lineWidth=1;
   const yTicks=4;
   for(let i=0;i<=yTicks;i++){
     const v=minV+(maxV-minV)*i/yTicks,y=toY(v);
     ctx.beginPath();ctx.moveTo(PAD.l+1,y);ctx.lineTo(W-PAD.r,y);ctx.stroke();
     ctx.setLineDash([]);
-    ctx.fillStyle='#555';ctx.font='9px Arial';ctx.textAlign='right';
+    ctx.fillStyle='#1a8c1a';ctx.font='9px VT323, monospace';ctx.textAlign='right';
     ctx.fillText(Math.round(v),PAD.l-3,y+3);
     ctx.setLineDash([2,4]);
   }
   ctx.setLineDash([]);
 
-  // x tick labels only – no vertical gridlines
+  // x tick labels
   for(let i=0;i<nd;i++){
     const x=toX(i);
-    // small tick on axis
-    ctx.strokeStyle='#000';ctx.lineWidth=1;
+    ctx.strokeStyle='#1a8c1a';ctx.lineWidth=1;
     ctx.beginPath();ctx.moveTo(x,H-PAD.b);ctx.lineTo(x,H-PAD.b+3);ctx.stroke();
-    ctx.fillStyle='#555';ctx.font='9px Arial';ctx.textAlign='center';
+    ctx.fillStyle='#1a8c1a';ctx.font='9px VT323, monospace';ctx.textAlign='center';
     ctx.fillText('T'+s.days[i].tag,x,H-PAD.b+11);
   }
 
-  // lines per player – clean, no fills
+  // lines per player – phosphor glow
   pids.forEach((id,ci)=>{
     const color=COLORS[ci%COLORS.length],pts=hist[id];
-    // line
+    ctx.shadowColor=color; ctx.shadowBlur=3;
     ctx.strokeStyle=color;ctx.lineWidth=1.5;ctx.beginPath();
     pts.forEach((v,i)=>{i===0?ctx.moveTo(toX(i),toY(v)):ctx.lineTo(toX(i),toY(v));});
     ctx.stroke();
-    // small hollow circles at data points
     pts.forEach((v,i)=>{
-      ctx.strokeStyle=color;ctx.lineWidth=1;
-      ctx.beginPath();ctx.arc(toX(i),toY(v),2.5,0,Math.PI*2);ctx.stroke();
+      ctx.fillStyle=color;
+      ctx.beginPath();ctx.arc(toX(i),toY(v),2,0,Math.PI*2);ctx.fill();
     });
-    // end label
+    ctx.shadowBlur=0;
     const name=(s.players.find(p=>p.id===id)||{}).name||id;
-    ctx.fillStyle=color;ctx.font='9px Arial';ctx.textAlign='left';
+    ctx.fillStyle=color;ctx.font='9px VT323, monospace';ctx.textAlign='left';
     ctx.fillText(name,toX(nd-1)+5,toY(pts[pts.length-1])+3);
   });
 
-  // legend: simple dashes + names
   document.getElementById('chart-legend').innerHTML=pids.map((id,ci)=>{
     const color=COLORS[ci%COLORS.length],name=(s.players.find(p=>p.id===id)||{}).name||id;
-    return`<span style="color:${color};">— ${name}</span>`;
-  }).join(' &nbsp; ');
+    return`<span style="color:${color};">&#9632; ${name}</span>`;
+  }).join(' ');
 }
 
 // ─── VERLAUF ──────────────────────────────────────────────────────────────────
@@ -783,10 +776,10 @@ function toast(msg){const el=document.getElementById('toast');el.textContent=msg
   function drawGlobe() {
     ctx.clearRect(0, 0, W, H);
 
-    // Ocean gradient
+    // Ocean – terminal green dark
     const grad = ctx.createRadialGradient(cx - 5, cy - 5, 2, cx, cy, R);
-    grad.addColorStop(0, '#6ab4f5');
-    grad.addColorStop(1, '#1a6bb5');
+    grad.addColorStop(0, '#0d2b0d');
+    grad.addColorStop(1, '#050f05');
     ctx.fillStyle = grad;
     ctx.beginPath();
     ctx.arc(cx, cy, R, 0, Math.PI * 2);
@@ -799,7 +792,7 @@ function toast(msg){const el=document.getElementById('toast');el.textContent=msg
     ctx.clip();
 
     // Grid lines
-    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.strokeStyle = 'rgba(51,255,51,0.15)';
     ctx.lineWidth = 0.4;
     for (let lat = -60; lat <= 60; lat += 30) {
       ctx.beginPath(); let first = true;
@@ -833,9 +826,9 @@ function toast(msg){const el=document.getElementById('toast');el.textContent=msg
         started = true;
       });
       ctx.closePath();
-      ctx.fillStyle = '#5a9e50';
+      ctx.fillStyle = '#1a8c1a';
       ctx.fill();
-      ctx.strokeStyle = '#3d7a35';
+      ctx.strokeStyle = '#33ff33';
       ctx.lineWidth = 0.4;
       ctx.stroke();
     });
@@ -855,23 +848,17 @@ function toast(msg){const el=document.getElementById('toast');el.textContent=msg
     ctx.fillStyle = '#e8e8e8';
     ctx.fill();
 
-    // Specular highlight
-    const shine = ctx.createRadialGradient(cx - 6, cy - 6, 1, cx - 4, cy - 4, R * 0.6);
-    shine.addColorStop(0, 'rgba(255,255,255,0.22)');
-    shine.addColorStop(1, 'rgba(255,255,255,0)');
-    ctx.fillStyle = shine;
-    ctx.beginPath();
-    ctx.arc(cx, cy, R, 0, Math.PI * 2);
-    ctx.fill();
-
     ctx.restore();
 
-    // Outline
-    ctx.strokeStyle = '#1a4a80';
+    // Phosphor glow outline
+    ctx.strokeStyle = '#33ff33';
     ctx.lineWidth = 1;
+    ctx.shadowColor = '#33ff33';
+    ctx.shadowBlur = 4;
     ctx.beginPath();
     ctx.arc(cx, cy, R, 0, Math.PI * 2);
     ctx.stroke();
+    ctx.shadowBlur = 0;
 
     angle += 0.3;
     requestAnimationFrame(drawGlobe);
