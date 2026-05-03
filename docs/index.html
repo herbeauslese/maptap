@@ -4,343 +4,334 @@
 <meta charset="UTF-8">
 <title>Maptap Leaderboard</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Linux+Libertine+Display+O&display=swap');
-* { box-sizing: border-box; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: 'Linux Libertine', Georgia, 'Times New Roman', serif;
-  font-size: 14px;
-  background: #fff;
-  color: #202122;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13px;
+  background: #e8e8e8;
+  color: #000;
   margin: 0 auto;
   width: 74%;
-  max-width: 960px;
-  padding: 6px 0 40px;
-  line-height: 1.5;
+  max-width: 980px;
+  padding-bottom: 40px;
 }
 
+/* ── SITE HEADER ── */
+.site-header {
+  background: #1e3a5f;
+  color: #fff;
+  padding: 0;
+}
+.site-header-top {
+  padding: 6px 10px 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #c8a84b;
+}
+.site-name {
+  font-size: 22px;
+  font-weight: bold;
+  letter-spacing: 0.02em;
+  color: #fff;
+  line-height: 1;
+}
+.site-name span { color: #c8a84b; }
+.site-tagline {
+  font-size: 10px;
+  color: #a0b4c8;
+  margin-top: 2px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.site-nav {
+  background: #163050;
+  padding: 3px 10px;
+  font-size: 11px;
+  color: #8aafc8;
+  border-bottom: 1px solid #0a1e30;
+  display: flex;
+  justify-content: space-between;
+}
+#statusbar { font-size: 11px; color: #8aafc8; font-style: italic; }
+#statusbar.err { color: #ff8888; font-style: normal; font-weight: bold; }
+
+/* ── PAGE BODY ── */
+.page-body { background: #fff; border: 1px solid #bbb; border-top: none; padding: 10px 12px; }
+
 /* ── PAGE TITLE ── */
-#page-title {
-  font-family: 'Linux Libertine', 'Linux Libertine Display O', Georgia, serif;
-  font-size: 26px;
-  font-weight: normal;
-  border-bottom: 2px solid #a2a9b1;
+.page-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #1e3a5f;
+  border-bottom: 2px solid #1e3a5f;
   padding-bottom: 3px;
-  margin-bottom: 3px;
+  margin-bottom: 8px;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  color: #000;
-}
-.page-subtitle {
-  font-size: 11px;
-  font-family: sans-serif;
-  color: #54595d;
-  font-style: italic;
-  margin-bottom: 10px;
 }
 
 /* ── SECTION HEADINGS ── */
 h2 {
-  font-family: 'Linux Libertine', Georgia, serif;
-  font-size: 19px;
-  font-weight: normal;
-  border-bottom: 1px solid #a2a9b1;
-  margin: 14px 0 6px;
-  padding-bottom: 2px;
-  clear: both;
-  color: #000;
-}
-
-/* ── TOC ── */
-#toc {
-  background: #f8f9fa;
-  border: 1px solid #a2a9b1;
-  padding: 7px 12px 8px;
-  display: inline-block;
-  margin: 0 0 10px 0;
-  font-size: 12px;
-  font-family: sans-serif;
-  min-width: 150px;
-}
-#toc-title { text-align: center; font-weight: bold; font-size: 12px; margin-bottom: 4px; }
-#toc ol { margin: 0; padding-left: 18px; }
-#toc li { margin: 1px 0; color: #202122; }
-#toc a { color: #0645ad; text-decoration: none; }
-#toc a:hover { text-decoration: underline; }
-
-/* ── INFOBOX ── */
-.infobox {
-  float: right;
-  clear: right;
-  margin: 0 0 10px 18px;
-  border: 1px solid #a2a9b1;
-  background: #f8f9fa;
-  font-size: 12px;
-  font-family: sans-serif;
-  width: 200px;
-}
-.infobox-title {
-  background: #cee0f2;
-  text-align: center;
+  font-size: 14px;
   font-weight: bold;
-  font-size: 12px;
-  padding: 4px 6px;
-  border-bottom: 1px solid #a2a9b1;
+  color: #fff;
+  background: #1e3a5f;
+  padding: 3px 8px;
+  margin: 12px 0 5px;
+  clear: both;
+  letter-spacing: 0.03em;
 }
-.infobox table { width: 100%; border-collapse: collapse; }
-.infobox td { padding: 3px 6px; border-top: 1px solid #eaecf0; vertical-align: top; font-size: 12px; }
-.infobox td:first-child { font-weight: bold; white-space: nowrap; background: #eaf3fb; }
+h2 a { color: #c8a84b; font-weight: normal; font-size: 11px; float: right; margin-top: 2px; cursor: pointer; }
+h2 a:hover { text-decoration: underline; }
 
-/* ── WIKITABLE ── */
-table.wikitable {
+/* ── STAT TABLE ── */
+table.sr-table {
   border-collapse: collapse;
   width: 100%;
-  font-size: 13px;
-  font-family: sans-serif;
-  background: #f8f9fa;
-  border: 1px solid #a2a9b1;
-  margin-bottom: 6px;
-}
-table.wikitable th {
-  background: #eaecf0;
-  border: 1px solid #a2a9b1;
-  padding: 4px 8px;
-  font-weight: bold;
   font-size: 12px;
-  text-align: left;
-  color: #202122;
 }
-table.wikitable th a { color: #0645ad; font-weight: normal; font-size: 11px; cursor: pointer; margin-left: 3px; }
-table.wikitable th a:hover { text-decoration: underline; }
-table.wikitable td { border: 1px solid #a2a9b1; padding: 3px 8px; background: #fff; }
-table.wikitable tr:nth-child(even) td { background: #f8f9fa; }
-table.wikitable tr:hover td { background: #eaf3fb; }
+table.sr-table th {
+  background: #1e3a5f;
+  color: #fff;
+  padding: 3px 6px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: bold;
+  border: 1px solid #0a1e30;
+  white-space: nowrap;
+}
+table.sr-table th.name-col { text-align: left; }
+table.sr-table th a { color: #c8a84b; cursor: pointer; font-weight: bold; }
+table.sr-table th a:hover { text-decoration: underline; }
+table.sr-table td {
+  padding: 2px 6px;
+  border: 1px solid #ddd;
+  text-align: center;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+}
+table.sr-table td.name-col { text-align: left; font-family: Arial, sans-serif; font-weight: bold; }
+table.sr-table tr:nth-child(even) td { background: #f0f4f8; }
+table.sr-table tr:hover td { background: #d8e8f4; }
+table.sr-table tr.rank-1 td { background: #fff7cc; font-weight: bold; }
+table.sr-table tr.rank-1:hover td { background: #ffe880; }
 
 /* ── CHART ── */
-#chart-wrap { border: 1px solid #a2a9b1; background: #fff; margin: 5px 0; clear: both; }
+#chart-wrap {
+  border: 1px solid #bbb;
+  background: #fff;
+  margin: 0 0 4px;
+}
 
 /* ── VERLAUF ── */
 .day-block { margin: 2px 0; }
 .day-header {
-  background: #eaecf0; border: 1px solid #a2a9b1;
-  padding: 3px 8px; cursor: pointer;
-  display: flex; justify-content: space-between;
-  user-select: none; font-size: 12px; font-family: sans-serif; color: #202122;
+  background: #2a4a6f;
+  color: #e8e8e8;
+  padding: 3px 8px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  user-select: none;
+  font-size: 12px;
+  font-weight: bold;
 }
-.day-header:hover { background: #cee0f2; }
-.day-body { display: none; border: 1px solid #a2a9b1; border-top: none; background: #fff; font-family: sans-serif; }
+.day-header:hover { background: #1e3a5f; }
+.day-body { display: none; border: 1px solid #bbb; border-top: none; background: #fff; }
 .day-body.open { display: block; }
 .player-summary {
   display: flex; gap: 10px; align-items: center;
-  padding: 3px 8px; cursor: pointer;
-  border-bottom: 1px solid #eaecf0; font-size: 12px;
+  padding: 2px 8px; cursor: pointer;
+  border-bottom: 1px solid #eee;
+  font-size: 12px; font-family: 'Courier New', monospace;
 }
+.player-summary .pname { font-family: Arial, sans-serif; font-weight: bold; min-width: 80px; }
 .player-summary:last-child { border-bottom: none; }
-.player-summary:hover { background: #eaf3fb; }
-.player-detail { display: none; padding: 5px 10px; background: #f8f9fa; border-top: 1px solid #eaecf0; font-size: 11px; font-family: sans-serif; }
+.player-summary:hover { background: #d8e8f4; }
+.player-detail { display: none; padding: 5px 10px; background: #f0f4f8; border-top: 1px solid #ddd; font-size: 11px; }
 .player-detail.open { display: block; }
 .duel-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 3px; }
-.duel-table th { background: #eaecf0; padding: 2px 6px; border: 1px solid #a2a9b1; font-weight: bold; font-size: 11px; }
-.duel-table td { padding: 2px 6px; border: 1px solid #eaecf0; }
+.duel-table th { background: #1e3a5f; color: #fff; padding: 2px 5px; border: 1px solid #0a1e30; font-size: 11px; }
+.duel-table td { padding: 2px 5px; border: 1px solid #ddd; font-family: 'Courier New', monospace; }
 
 /* ── ADMIN ── */
-.admin-sec { border: 1px solid #a2a9b1; margin-top: 4px; }
+.admin-sec { border: 1px solid #bbb; margin-top: 4px; }
 .admin-sec-head {
-  background: #eaecf0; border-bottom: 1px solid #a2a9b1;
+  background: #2a4a6f; color: #e8e8e8;
   padding: 3px 8px; cursor: pointer;
-  font-size: 12px; font-weight: bold; font-family: sans-serif; color: #202122;
+  font-size: 11px; font-weight: bold; letter-spacing: 0.05em; text-transform: uppercase;
   user-select: none;
 }
-.admin-sec-head:hover { background: #cee0f2; }
-.admin-sec-body { display: none; padding: 6px 8px; background: #fff; font-family: sans-serif; font-size: 12px; }
+.admin-sec-head:hover { background: #1e3a5f; }
+.admin-sec-body { display: none; padding: 6px 8px; background: #fff; font-size: 12px; }
 .admin-sec-body.open { display: block; }
 
 /* ── INPUTS ── */
 input[type=text], input[type=number], input[type=date], input[type=password] {
-  border: 1px solid #a2a9b1; padding: 2px 5px;
-  font-size: 12px; font-family: sans-serif; background: #fff; color: #202122;
+  border: 1px solid #aaa; padding: 2px 5px;
+  font-size: 12px; font-family: Arial, sans-serif; background: #fff;
 }
-input:focus { outline: 1px solid #3366cc; border-color: #3366cc; }
+input:focus { outline: 1px solid #1e3a5f; border-color: #1e3a5f; }
 button {
-  border: 1px solid #a2a9b1; background: #f8f9fa;
+  border: 1px solid #aaa; background: #e8e8e8;
   padding: 2px 8px; cursor: pointer;
-  font-size: 12px; font-family: sans-serif; color: #202122;
+  font-size: 12px; font-family: Arial, sans-serif;
 }
-button:hover { background: #eaecf0; border-color: #72777d; }
-button.danger { color: #b32424; }
-button.danger:hover { background: #fee7e6; }
+button:hover { background: #1e3a5f; color: #fff; border-color: #1e3a5f; }
+button.danger { color: #900; border-color: #c88; }
+button.danger:hover { background: #900; color: #fff; border-color: #900; }
 textarea {
-  border: 1px solid #a2a9b1; padding: 4px; width: 100%; height: 75px;
-  font-family: monospace; font-size: 11px; margin-top: 4px;
-  display: block; background: #f8f9fa;
+  border: 1px solid #aaa; padding: 4px; width: 100%; height: 75px;
+  font-family: 'Courier New', monospace; font-size: 11px; margin-top: 4px;
+  display: block; background: #f8f8f8;
 }
 
 /* ── MISC ── */
 canvas { display: block; width: 100%; }
-.pos { color: #14866d; font-weight: bold; }
-.neg { color: #b32424; font-weight: bold; }
-.dim { color: #72777d; font-size: 11px; font-family: sans-serif; }
-.chip { display: inline-block; border: 1px solid #a2a9b1; padding: 1px 5px; margin: 2px; font-size: 12px; font-family: sans-serif; background: #f8f9fa; }
-.chip button { padding: 0 3px; font-size: 10px; border: 1px solid #ffa0a0; cursor: pointer; margin-left: 2px; background: #fee7e6; color: #b32424; }
+.pos { color: #006600; font-weight: bold; }
+.neg { color: #990000; font-weight: bold; }
+.dim { color: #888; font-size: 11px; }
+.chip { display: inline-block; border: 1px solid #bbb; padding: 1px 5px; margin: 2px; font-size: 12px; background: #e8e8e8; }
+.chip button { padding: 0 3px; font-size: 10px; border: 1px solid #c88; cursor: pointer; margin-left: 2px; background: #fee; color: #900; }
 .row { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; margin: 4px 0; }
-.lockbar { border: 1px solid #a2a9b1; padding: 5px 8px; margin-top: 5px; font-size: 12px; font-family: sans-serif; background: #f8f9fa; }
-.prow { display: flex; align-items: center; gap: 10px; padding: 3px 0; border-bottom: 1px solid #eaecf0; font-size: 12px; font-family: sans-serif; }
+.lockbar { border: 1px solid #bbb; padding: 5px 8px; margin-top: 5px; font-size: 12px; background: #f0f4f8; }
+.prow { display: flex; align-items: center; gap: 10px; padding: 3px 0; border-bottom: 1px solid #eee; font-size: 12px; }
 .prow:last-child { border-bottom: none; }
 .prow b { min-width: 80px; }
-#chart-legend { margin-top: 4px; font-size: 11px; display: flex; flex-wrap: wrap; gap: 8px; font-family: sans-serif; color: #54595d; }
-a { color: #0645ad; text-decoration: none; }
+#chart-legend { margin-top: 3px; font-size: 11px; display: flex; flex-wrap: wrap; gap: 8px; color: #555; }
+a { color: #1e3a5f; text-decoration: none; }
 a:hover { text-decoration: underline; }
-.glicko-note { font-size: 12px; font-family: sans-serif; color: #54595d; line-height: 1.6; border: 1px solid #a2a9b1; background: #f8f9fa; padding: 7px 10px; margin-top: 5px; }
-#statusbar { font-size: 11px; font-family: sans-serif; color: #72777d; font-style: italic; }
-#statusbar.err { color: #b32424; font-style: normal; font-weight: bold; }
-#toast { position: fixed; bottom: 10px; right: 10px; background: #f8f9fa; color: #202122; border: 1px solid #a2a9b1; padding: 4px 12px; font-size: 12px; display: none; z-index: 999; font-family: sans-serif; }
+.glicko-note { font-size: 12px; color: #444; line-height: 1.6; border-left: 3px solid #1e3a5f; background: #f0f4f8; padding: 6px 10px; margin-top: 5px; }
+#toast { position: fixed; bottom: 10px; right: 10px; background: #1e3a5f; color: #fff; border: 1px solid #0a1e30; padding: 4px 12px; font-size: 12px; display: none; z-index: 999; }
 </style>
 </head>
 <body>
 
-<div id="page-title">
-  <span>Maptap &ndash; Leaderboard</span>
-  <canvas id="globe" width="40" height="40" style="display:block;width:34px;height:34px;flex-shrink:0;border:1px solid #a2a9b1;"></canvas>
-</div>
-<div class="page-subtitle">
-  Geografie-Quiz &middot; Glicko-2-Ratingsystem &middot;
-  <span id="statusbar">Lade&hellip;</span>
-</div>
-
-<div id="toc">
-  <div id="toc-title">Inhalt</div>
-  <ol>
-    <li>Rangliste</li>
-    <li>Rating-Verlauf</li>
-    <li>Verlauf</li>
-    <li>Admin</li>
-  </ol>
+<div class="site-header">
+  <div class="site-header-top">
+    <div>
+      <div class="site-name">Map<span>tap</span></div>
+      <div class="site-tagline">Geografie-Quiz &middot; Statistiken &amp; Ranglisten</div>
+    </div>
+    <canvas id="globe" width="40" height="40" style="display:block;width:36px;height:36px;border:1px solid #c8a84b;flex-shrink:0;"></canvas>
+  </div>
+  <div class="site-nav">
+    <span>Leaderboard &rsaquo; Gesamtrangliste</span>
+    <span id="statusbar">Lade&hellip;</span>
+  </div>
 </div>
 
-<!-- INFOBOX right float -->
-<div class="infobox">
-  <div class="infobox-title">Glicko-2 System</div>
-  <table>
-    <tr><td>Startwert</td><td>1500</td></tr>
-    <tr><td>Start-RD</td><td>350</td></tr>
-    <tr><td>Methode</td><td>paarweise</td></tr>
-    <tr><td>DNP</td><td>kein Verlust</td></tr>
-    <tr><td>RD-Farbe</td><td><span style="color:#14866d">●</span> gut &nbsp;<span style="color:#b32424">●</span> unsicher</td></tr>
+<div class="page-body">
+
+  <div class="page-title">
+    Gesamtrangliste &ndash; Alle Spieler
+    <span style="font-size:11px;color:#888;font-weight:normal;">Glicko-2 &middot; paarweise</span>
+  </div>
+
+  <h2>Rangliste <a onclick="sortBy('rating')">Rating &#9660;</a></h2>
+
+  <table class="sr-table">
+    <thead><tr>
+      <th style="width:28px;">#</th>
+      <th class="name-col">Name</th>
+      <th>Rating <a onclick="sortBy('rating')">&#9660;</a></th>
+      <th>RD</th>
+      <th>&Oslash;&nbsp;Score <a onclick="sortBy('avg')">&#9660;</a></th>
+      <th>Spiele</th>
+    </tr></thead>
+    <tbody id="lb-body"></tbody>
   </table>
-</div>
 
-<p style="margin-bottom:8px;font-size:13px;line-height:1.6;">
-  Das <b>Maptap Leaderboard</b> dokumentiert die Ergebnisse des t&auml;glichen Geografie-Quiz
-  und berechnet daraus ein Ranking nach dem <i>Glicko-2-Ratingsystem</i>.
-  Jeder Spieler erh&auml;lt ein <i>Rating</i> sowie eine <i>Rating Deviation</i> (RD),
-  die nach jedem Spieltag durch paarweise Vergleiche aktualisiert werden.
-</p>
+  <h2>Rating-Verlauf</h2>
+  <div id="chart-wrap">
+    <canvas id="chart-rating" height="170"></canvas>
+  </div>
+  <div id="chart-legend"></div>
 
-<h2>1 Rangliste</h2>
-
-<table class="wikitable">
-  <thead><tr>
-    <th>#</th><th>Name</th>
-    <th>Rating <a onclick="sortBy('rating')">&#9660;</a></th>
-    <th>RD</th>
-    <th>&Oslash;&nbsp;Score <a onclick="sortBy('avg')">&#9660;</a></th>
-    <th>Spiele</th>
-  </tr></thead>
-  <tbody id="lb-body"></tbody>
-</table>
-
-<h2>2 Rating-Verlauf</h2>
-<div id="chart-wrap">
-  <canvas id="chart-rating" height="180"></canvas>
-</div>
-<div id="chart-legend"></div>
-
-<h2>3 Verlauf
-  <span style="font-size:13px;font-family:sans-serif;">
-    &nbsp;<a href="#" onclick="toggleInfo();return false;" id="info-toggle">&#9658; Glicko-2 erkl&auml;rt</a>
-  </span>
-</h2>
-<div id="info-box" style="display:none;margin-bottom:6px;" class="glicko-note">
-  <div style="border:1px solid #aaa;background:#f9f9f9;padding:8px 10px;">
+  <h2>Spieltag-Verlauf <a href="#" onclick="toggleInfo();return false;" id="info-toggle">&#9658; Glicko-2 erkl&auml;rt</a></h2>
+  <div id="info-box" style="display:none;" class="glicko-note">
     Jeder Spieler hat drei Werte: <b>Rating</b> (Startwert 1500 &ndash; h&ouml;her ist besser), <b>RD</b> (Rating Deviation, Startwert 350 &ndash; zeigt wie sicher das Rating ist; sinkt je mehr man spielt) und <b>Volatility</b> (wie unbest&auml;ndig jemand spielt).<br><br>
     Nach jedem Spieltag wird jeder gegen jeden verglichen: wer einen h&ouml;heren Score hat, gewinnt das Duell. Wer gegen einen starken Gegner gewinnt, steigt mehr. Alle Duelle werden zusammengerechnet und das Rating angepasst.<br><br>
-    <b>DNP</b> = nicht gespielt. Rating bleibt gleich, RD steigt leicht.
+    <b>DNP</b> = nicht gespielt. Rating bleibt gleich, RD steigt leicht. Je niedriger das RD, desto verl&auml;sslicher das Rating.
   </div>
-</div>
-<div id="verlauf-body" style="margin-top:6px;max-height:260px;overflow-y:auto;">
-  <span class="dim">Noch keine Spieltage.</span>
-</div>
-
-<h2>4 Admin</h2>
-<div class="lockbar">
-  <span id="admin-status">&#128274;</span>&nbsp;
-  <span id="admin-login-form">
-    <input type="password" id="pw-input" placeholder="Passwort" style="width:115px" onkeydown="if(event.key==='Enter')checkPassword()">
-    <button onclick="checkPassword()">Weiter</button>
-  </span>
-  <span id="admin-token-form" style="display:none">
-    <input type="password" id="token-input" placeholder="GitHub Token" style="width:185px" onkeydown="if(event.key==='Enter')tryLogin()">
-    <button onclick="tryLogin()">Anmelden</button>
-  </span>
-  <span id="admin-logout-form" style="display:none">
-    <button onclick="doLogout()">Abmelden</button>
-  </span>
-</div>
-
-<div id="admin-panel" style="display:none">
-
-  <div class="admin-sec">
-    <div class="admin-sec-head" onclick="toggleAdminSec(this)">&#9658; Tag eintragen</div>
-    <div class="admin-sec-body">
-      <div class="row">
-        <label>Datum: <input type="date" id="e-date" style="width:135px"></label>
-        <label>Tag #: <input type="number" id="e-tag" style="width:52px" min="1"></label>
-        <span class="dim">Nachtragen m&ouml;glich &ndash; nach Datum sortiert</span>
-      </div>
-      <div id="e-players" style="margin-top:7px;"></div>
-      <div class="row" style="margin-top:7px;">
-        <button onclick="submitDay()">Speichern</button>
-        <button onclick="renderEntryForm()">Zur&uuml;cksetzen</button>
-      </div>
-    </div>
+  <div id="verlauf-body" style="margin-top:5px;max-height:260px;overflow-y:auto;">
+    <span class="dim">Noch keine Spieltage.</span>
   </div>
 
-  <div class="admin-sec">
-    <div class="admin-sec-head" onclick="toggleAdminSec(this)">&#9658; Spieler verwalten</div>
-    <div class="admin-sec-body">
-      <div class="row">
-        <input type="text" id="new-name" placeholder="Name" style="width:150px" onkeydown="if(event.key==='Enter')addPlayer()">
-        <button onclick="addPlayer()">+ Hinzuf&uuml;gen</button>
-      </div>
-      <div id="player-list" style="margin-top:5px;"></div>
-    </div>
+  <h2>Admin</h2>
+  <div class="lockbar">
+    <span id="admin-status">&#128274;</span>&nbsp;
+    <span id="admin-login-form">
+      <input type="password" id="pw-input" placeholder="Passwort" style="width:115px" onkeydown="if(event.key==='Enter')checkPassword()">
+      <button onclick="checkPassword()">Weiter</button>
+    </span>
+    <span id="admin-token-form" style="display:none">
+      <input type="password" id="token-input" placeholder="GitHub Token" style="width:185px" onkeydown="if(event.key==='Enter')tryLogin()">
+      <button onclick="tryLogin()">Anmelden</button>
+    </span>
+    <span id="admin-logout-form" style="display:none">
+      <button onclick="doLogout()">Abmelden</button>
+    </span>
   </div>
 
-  <div class="admin-sec">
-    <div class="admin-sec-head" onclick="toggleAdminSec(this)">&#9658; Mattermost-Export</div>
-    <div class="admin-sec-body">
-      <div class="row">
-        <button onclick="genExport('current')">Rangliste</button>
-        <button onclick="genExport('lastday')">Letzter Tag</button>
-        <button onclick="copyExport()">Kopieren</button>
-      </div>
-      <textarea id="mm-out" readonly></textarea>
-    </div>
-  </div>
+  <div id="admin-panel" style="display:none">
 
-  <div class="admin-sec">
-    <div class="admin-sec-head" onclick="toggleAdminSec(this)">&#9658; Gef&auml;hrliche Zone</div>
-    <div class="admin-sec-body">
-      <div class="row">
-        <button class="danger" onclick="undoLastDay()">&larr; Letzten Tag r&uuml;ckg&auml;ngig</button>
-        <button class="danger" onclick="resetAll()">Rating-Reset</button>
-        <button class="danger" onclick="clearAll()">Alle Daten l&ouml;schen</button>
+    <div class="admin-sec">
+      <div class="admin-sec-head" onclick="toggleAdminSec(this)">&#9658; Tag eintragen</div>
+      <div class="admin-sec-body">
+        <div class="row">
+          <label>Datum: <input type="date" id="e-date" style="width:135px"></label>
+          <label>Tag #: <input type="number" id="e-tag" style="width:52px" min="1"></label>
+          <span class="dim">Nachtragen m&ouml;glich &ndash; nach Datum sortiert</span>
+        </div>
+        <div id="e-players" style="margin-top:7px;"></div>
+        <div class="row" style="margin-top:7px;">
+          <button onclick="submitDay()">Speichern</button>
+          <button onclick="renderEntryForm()">Zur&uuml;cksetzen</button>
+        </div>
       </div>
     </div>
+
+    <div class="admin-sec">
+      <div class="admin-sec-head" onclick="toggleAdminSec(this)">&#9658; Spieler verwalten</div>
+      <div class="admin-sec-body">
+        <div class="row">
+          <input type="text" id="new-name" placeholder="Name" style="width:150px" onkeydown="if(event.key==='Enter')addPlayer()">
+          <button onclick="addPlayer()">+ Hinzuf&uuml;gen</button>
+        </div>
+        <div id="player-list" style="margin-top:5px;"></div>
+      </div>
+    </div>
+
+    <div class="admin-sec">
+      <div class="admin-sec-head" onclick="toggleAdminSec(this)">&#9658; Mattermost-Export</div>
+      <div class="admin-sec-body">
+        <div class="row">
+          <button onclick="genExport('current')">Rangliste</button>
+          <button onclick="genExport('lastday')">Letzter Tag</button>
+          <button onclick="copyExport()">Kopieren</button>
+        </div>
+        <textarea id="mm-out" readonly></textarea>
+      </div>
+    </div>
+
+    <div class="admin-sec">
+      <div class="admin-sec-head" onclick="toggleAdminSec(this)">&#9658; Gef&auml;hrliche Zone</div>
+      <div class="admin-sec-body">
+        <div class="row">
+          <button class="danger" onclick="undoLastDay()">&larr; Letzten Tag r&uuml;ckg&auml;ngig</button>
+          <button class="danger" onclick="resetAll()">Rating-Reset</button>
+          <button class="danger" onclick="clearAll()">Alle Daten l&ouml;schen</button>
+        </div>
+      </div>
+    </div>
+
   </div>
 
-</div>
+</div><!-- /page-body -->
 
 <div id="toast"></div>
 
@@ -352,7 +343,7 @@ const GH_FILE = 'data.json';
 // ─────────────────────────────────────────────────────────────────────────────
 
 const G2_R0=1500, G2_RD0=350, G2_VOL0=0.06, G2_TAU=0.5, G2_SCALE=173.7178;
-const COLORS=['#0645ad','#d33','#14866d','#ac6600','#7941b5','#0d7a7a','#993344','#5d5d00','#004c73','#7a4400'];
+const COLORS=['#c8a84b','#4a90d9','#e05c2a','#5ab85a','#9b59b6','#1abc9c','#e74c3c','#f39c12','#2980b9','#8e44ad'];
 let loggedIn=false, sortMode='rating', ghSha=null, GH_TOKEN='';
 let STATE={players:[],days:[]};
 const GH_API=`https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/${GH_FILE}`;
@@ -503,11 +494,12 @@ function renderLb(){
   const sorted=[...s.players].sort((a,b)=>
     sortMode==='avg'?(b.games>0?b.total/b.games:0)-(a.games>0?a.total/a.games:0):b.rating-a.rating
   );
-  const rdCol=rd=>rd<80?'#14866d':rd<150?'#ac6600':'#d33';
+  const rdCol=rd=>rd<80?'#006600':rd<150?'#cc6600':'#990000';
   document.getElementById('lb-body').innerHTML=sorted.map((p,i)=>{
     const avg=p.games>0?Math.round(p.total/p.games):'&mdash;';
-    const m=['🥇','🥈','🥉'][i]||`${i+1}.`;
-    return`<tr><td>${m}</td><td><b>${p.name}</b></td><td><b>${Math.round(p.rating)}</b></td><td style="color:${rdCol(p.rd)}">${Math.round(p.rd)}</td><td>${avg}</td><td>${p.games}</td></tr>`;
+    const rankClass=i===0?'rank-1':'';
+    const m=i===0?'1':i===1?'2':i===2?'3':`${i+1}`;
+    return`<tr class="${rankClass}"><td>${m}</td><td class="name-col">${p.name}</td><td><b>${Math.round(p.rating)}</b></td><td style="color:${rdCol(p.rd)}">${Math.round(p.rd)}</td><td>${avg}</td><td>${p.games}</td></tr>`;
   }).join('')||'<tr><td colspan="6" style="color:#bbb;text-align:center;padding:16px;">Keine Spieler.</td></tr>';
 }
 
