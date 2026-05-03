@@ -9,82 +9,122 @@
 body {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 13px;
-  background: #e8e8e8;
+  background: #c8c8c8;
   color: #000;
   margin: 0 auto;
-  width: 74%;
-  max-width: 980px;
-  padding-bottom: 40px;
+  width: 76%;
+  max-width: 1000px;
 }
 
 /* ── SITE HEADER ── */
 .site-header {
   background: #1e3a5f;
-  color: #fff;
-  padding: 0;
+  border-bottom: 3px solid #c8a84b;
 }
 .site-header-top {
-  padding: 6px 10px 4px;
+  padding: 7px 12px 5px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 2px solid #c8a84b;
 }
 .site-name {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: bold;
-  letter-spacing: 0.02em;
   color: #fff;
+  letter-spacing: 0.01em;
   line-height: 1;
 }
 .site-name span { color: #c8a84b; }
 .site-tagline {
   font-size: 10px;
-  color: #a0b4c8;
+  color: #8aafc8;
   margin-top: 2px;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
-.site-nav {
-  background: #163050;
-  padding: 3px 10px;
+.breadcrumb {
+  background: #152d4a;
+  padding: 3px 12px;
   font-size: 11px;
-  color: #8aafc8;
-  border-bottom: 1px solid #0a1e30;
+  color: #7aaabb;
   display: flex;
   justify-content: space-between;
+  border-top: 1px solid #0a1e30;
 }
-#statusbar { font-size: 11px; color: #8aafc8; font-style: italic; }
+#statusbar { color: #7aaabb; font-style: italic; }
 #statusbar.err { color: #ff8888; font-style: normal; font-weight: bold; }
 
-/* ── PAGE BODY ── */
-.page-body { background: #fff; border: 1px solid #bbb; border-top: none; padding: 10px 12px; }
+/* ── TWO COLUMN LAYOUT ── */
+.content-wrap {
+  display: flex;
+  gap: 0;
+  background: #c8c8c8;
+}
+.sidebar {
+  width: 200px;
+  min-width: 200px;
+  background: #e8e8e8;
+  border-right: 1px solid #aaa;
+  border-left: 1px solid #aaa;
+  padding-bottom: 20px;
+}
+.sidebar-section {
+  border-bottom: 1px solid #bbb;
+  margin-bottom: 0;
+}
+.sidebar-head {
+  background: #1e3a5f;
+  color: #fff;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 3px 7px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.sidebar-body { padding: 5px 7px; font-size: 11px; }
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 1px 0;
+  border-bottom: 1px dotted #ccc;
+  font-size: 11px;
+}
+.stat-row:last-child { border-bottom: none; }
+.stat-label { color: #555; }
+.stat-val { font-family: 'Courier New', monospace; font-weight: bold; }
+
+.main-col {
+  flex: 1;
+  background: #fff;
+  border-right: 1px solid #aaa;
+  padding: 8px 12px 20px;
+  min-width: 0;
+}
 
 /* ── PAGE TITLE ── */
 .page-title {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: bold;
   color: #1e3a5f;
   border-bottom: 2px solid #1e3a5f;
   padding-bottom: 3px;
-  margin-bottom: 8px;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
+  margin-bottom: 7px;
 }
 
 /* ── SECTION HEADINGS ── */
 h2 {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: bold;
   color: #fff;
   background: #1e3a5f;
   padding: 3px 8px;
-  margin: 12px 0 5px;
+  margin: 10px 0 4px;
   clear: both;
-  letter-spacing: 0.03em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-h2 a { color: #c8a84b; font-weight: normal; font-size: 11px; float: right; margin-top: 2px; cursor: pointer; }
+h2 a { color: #c8a84b; font-weight: normal; font-size: 11px; cursor: pointer; }
 h2 a:hover { text-decoration: underline; }
 
 /* ── STAT TABLE ── */
@@ -93,98 +133,89 @@ table.sr-table {
   width: 100%;
   font-size: 12px;
 }
-table.sr-table th {
+table.sr-table thead th {
   background: #1e3a5f;
   color: #fff;
-  padding: 3px 6px;
+  padding: 3px 5px;
   text-align: center;
   font-size: 11px;
-  font-weight: bold;
   border: 1px solid #0a1e30;
   white-space: nowrap;
 }
-table.sr-table th.name-col { text-align: left; }
-table.sr-table th a { color: #c8a84b; cursor: pointer; font-weight: bold; }
-table.sr-table th a:hover { text-decoration: underline; }
-table.sr-table td {
-  padding: 2px 6px;
+table.sr-table thead th.left { text-align: left; }
+table.sr-table thead th a { color: #c8a84b; cursor: pointer; }
+table.sr-table thead th a:hover { text-decoration: underline; }
+table.sr-table tbody td {
+  padding: 2px 5px;
   border: 1px solid #ddd;
   text-align: center;
   font-family: 'Courier New', monospace;
   font-size: 12px;
+  white-space: nowrap;
 }
-table.sr-table td.name-col { text-align: left; font-family: Arial, sans-serif; font-weight: bold; }
-table.sr-table tr:nth-child(even) td { background: #f0f4f8; }
-table.sr-table tr:hover td { background: #d8e8f4; }
-table.sr-table tr.rank-1 td { background: #fff7cc; font-weight: bold; }
-table.sr-table tr.rank-1:hover td { background: #ffe880; }
+table.sr-table tbody td.left { text-align: left; font-family: Arial, sans-serif; font-weight: bold; color: #1e3a5f; }
+table.sr-table tbody tr:nth-child(even) td { background: #f0f4f8; }
+table.sr-table tbody tr:hover td { background: #d4e8f8; }
+table.sr-table tbody tr.p1 td { background: #fff7cc; }
+table.sr-table tbody tr.p1:hover td { background: #ffe888; }
 
 /* ── CHART ── */
-#chart-wrap {
-  border: 1px solid #bbb;
-  background: #fff;
-  margin: 0 0 4px;
-}
+#chart-wrap { border: 1px solid #ccc; margin: 0; background: #fff; }
 
 /* ── VERLAUF ── */
 .day-block { margin: 2px 0; }
 .day-header {
-  background: #2a4a6f;
-  color: #e8e8e8;
-  padding: 3px 8px;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  user-select: none;
-  font-size: 12px;
-  font-weight: bold;
+  background: #2a4a6f; color: #e0e8f0;
+  padding: 3px 8px; cursor: pointer;
+  display: flex; justify-content: space-between;
+  user-select: none; font-size: 11px; font-weight: bold;
 }
-.day-header:hover { background: #1e3a5f; }
-.day-body { display: none; border: 1px solid #bbb; border-top: none; background: #fff; }
+.day-header:hover { background: #1e3a5f; color: #fff; }
+.day-body { display: none; border: 1px solid #ccc; border-top: none; }
 .day-body.open { display: block; }
 .player-summary {
-  display: flex; gap: 10px; align-items: center;
+  display: flex; gap: 8px; align-items: center;
   padding: 2px 8px; cursor: pointer;
-  border-bottom: 1px solid #eee;
-  font-size: 12px; font-family: 'Courier New', monospace;
+  border-bottom: 1px solid #eee; font-size: 11px;
+  font-family: 'Courier New', monospace;
 }
-.player-summary .pname { font-family: Arial, sans-serif; font-weight: bold; min-width: 80px; }
+.player-summary .pname { font-family: Arial, sans-serif; font-weight: bold; min-width: 75px; color: #1e3a5f; }
 .player-summary:last-child { border-bottom: none; }
-.player-summary:hover { background: #d8e8f4; }
-.player-detail { display: none; padding: 5px 10px; background: #f0f4f8; border-top: 1px solid #ddd; font-size: 11px; }
+.player-summary:hover { background: #d4e8f8; }
+.player-detail { display: none; padding: 5px 8px; background: #f0f4f8; border-top: 1px solid #ddd; font-size: 11px; }
 .player-detail.open { display: block; }
 .duel-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 3px; }
-.duel-table th { background: #1e3a5f; color: #fff; padding: 2px 5px; border: 1px solid #0a1e30; font-size: 11px; }
-.duel-table td { padding: 2px 5px; border: 1px solid #ddd; font-family: 'Courier New', monospace; }
+.duel-table th { background: #1e3a5f; color: #fff; padding: 2px 5px; border: 1px solid #0a1e30; font-size: 10px; }
+.duel-table td { padding: 2px 5px; border: 1px solid #ddd; font-family: 'Courier New', monospace; font-size: 11px; }
 
 /* ── ADMIN ── */
 .admin-sec { border: 1px solid #bbb; margin-top: 4px; }
 .admin-sec-head {
-  background: #2a4a6f; color: #e8e8e8;
+  background: #2a4a6f; color: #e0e8f0;
   padding: 3px 8px; cursor: pointer;
-  font-size: 11px; font-weight: bold; letter-spacing: 0.05em; text-transform: uppercase;
+  font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em;
   user-select: none;
 }
-.admin-sec-head:hover { background: #1e3a5f; }
+.admin-sec-head:hover { background: #1e3a5f; color: #fff; }
 .admin-sec-body { display: none; padding: 6px 8px; background: #fff; font-size: 12px; }
 .admin-sec-body.open { display: block; }
 
 /* ── INPUTS ── */
 input[type=text], input[type=number], input[type=date], input[type=password] {
-  border: 1px solid #aaa; padding: 2px 5px;
+  border: 1px solid #999; padding: 2px 5px;
   font-size: 12px; font-family: Arial, sans-serif; background: #fff;
 }
 input:focus { outline: 1px solid #1e3a5f; border-color: #1e3a5f; }
 button {
-  border: 1px solid #aaa; background: #e8e8e8;
+  border: 1px solid #999; background: #e0e0e0;
   padding: 2px 8px; cursor: pointer;
-  font-size: 12px; font-family: Arial, sans-serif;
+  font-size: 12px; font-family: Arial, sans-serif; color: #000;
 }
 button:hover { background: #1e3a5f; color: #fff; border-color: #1e3a5f; }
 button.danger { color: #900; border-color: #c88; }
 button.danger:hover { background: #900; color: #fff; border-color: #900; }
 textarea {
-  border: 1px solid #aaa; padding: 4px; width: 100%; height: 75px;
+  border: 1px solid #999; padding: 4px; width: 100%; height: 75px;
   font-family: 'Courier New', monospace; font-size: 11px; margin-top: 4px;
   display: block; background: #f8f8f8;
 }
@@ -202,10 +233,10 @@ canvas { display: block; width: 100%; }
 .prow:last-child { border-bottom: none; }
 .prow b { min-width: 80px; }
 #chart-legend { margin-top: 3px; font-size: 11px; display: flex; flex-wrap: wrap; gap: 8px; color: #555; }
-a { color: #1e3a5f; text-decoration: none; }
+a { color: #1e3a5f; }
 a:hover { text-decoration: underline; }
-.glicko-note { font-size: 12px; color: #444; line-height: 1.6; border-left: 3px solid #1e3a5f; background: #f0f4f8; padding: 6px 10px; margin-top: 5px; }
-#toast { position: fixed; bottom: 10px; right: 10px; background: #1e3a5f; color: #fff; border: 1px solid #0a1e30; padding: 4px 12px; font-size: 12px; display: none; z-index: 999; }
+.glicko-note { font-size: 11px; color: #444; line-height: 1.6; border-left: 3px solid #1e3a5f; background: #f0f4f8; padding: 5px 9px; margin-top: 4px; }
+#toast { position: fixed; bottom: 10px; right: 10px; background: #1e3a5f; color: #fff; border: 1px solid #0a1e30; padding: 4px 12px; font-size: 12px; display: none; z-index: 999; letter-spacing: 0.02em; }
 </style>
 </head>
 <body>
@@ -216,124 +247,151 @@ a:hover { text-decoration: underline; }
       <div class="site-name">Map<span>tap</span></div>
       <div class="site-tagline">Geografie-Quiz &middot; Statistiken &amp; Ranglisten</div>
     </div>
-    <canvas id="globe" width="40" height="40" style="display:block;width:36px;height:36px;border:1px solid #c8a84b;flex-shrink:0;"></canvas>
+    <canvas id="globe" width="40" height="40" style="display:block;width:34px;height:34px;border:1px solid #c8a84b;flex-shrink:0;"></canvas>
   </div>
-  <div class="site-nav">
-    <span>Leaderboard &rsaquo; Gesamtrangliste</span>
+  <div class="breadcrumb">
+    <span>Maptap &rsaquo; Gesamtrangliste</span>
     <span id="statusbar">Lade&hellip;</span>
   </div>
 </div>
 
-<div class="page-body">
+<div class="content-wrap">
 
-  <div class="page-title">
-    Gesamtrangliste &ndash; Alle Spieler
-    <span style="font-size:11px;color:#888;font-weight:normal;">Glicko-2 &middot; paarweise</span>
-  </div>
-
-  <h2>Rangliste <a onclick="sortBy('rating')">Rating &#9660;</a></h2>
-
-  <table class="sr-table">
-    <thead><tr>
-      <th style="width:28px;">#</th>
-      <th class="name-col">Name</th>
-      <th>Rating <a onclick="sortBy('rating')">&#9660;</a></th>
-      <th>RD</th>
-      <th>&Oslash;&nbsp;Score <a onclick="sortBy('avg')">&#9660;</a></th>
-      <th>Spiele</th>
-    </tr></thead>
-    <tbody id="lb-body"></tbody>
-  </table>
-
-  <h2>Rating-Verlauf</h2>
-  <div id="chart-wrap">
-    <canvas id="chart-rating" height="170"></canvas>
-  </div>
-  <div id="chart-legend"></div>
-
-  <h2>Spieltag-Verlauf <a href="#" onclick="toggleInfo();return false;" id="info-toggle">&#9658; Glicko-2 erkl&auml;rt</a></h2>
-  <div id="info-box" style="display:none;" class="glicko-note">
-    Jeder Spieler hat drei Werte: <b>Rating</b> (Startwert 1500 &ndash; h&ouml;her ist besser), <b>RD</b> (Rating Deviation, Startwert 350 &ndash; zeigt wie sicher das Rating ist; sinkt je mehr man spielt) und <b>Volatility</b> (wie unbest&auml;ndig jemand spielt).<br><br>
-    Nach jedem Spieltag wird jeder gegen jeden verglichen: wer einen h&ouml;heren Score hat, gewinnt das Duell. Wer gegen einen starken Gegner gewinnt, steigt mehr. Alle Duelle werden zusammengerechnet und das Rating angepasst.<br><br>
-    <b>DNP</b> = nicht gespielt. Rating bleibt gleich, RD steigt leicht. Je niedriger das RD, desto verl&auml;sslicher das Rating.
-  </div>
-  <div id="verlauf-body" style="margin-top:5px;max-height:260px;overflow-y:auto;">
-    <span class="dim">Noch keine Spieltage.</span>
-  </div>
-
-  <h2>Admin</h2>
-  <div class="lockbar">
-    <span id="admin-status">&#128274;</span>&nbsp;
-    <span id="admin-login-form">
-      <input type="password" id="pw-input" placeholder="Passwort" style="width:115px" onkeydown="if(event.key==='Enter')checkPassword()">
-      <button onclick="checkPassword()">Weiter</button>
-    </span>
-    <span id="admin-token-form" style="display:none">
-      <input type="password" id="token-input" placeholder="GitHub Token" style="width:185px" onkeydown="if(event.key==='Enter')tryLogin()">
-      <button onclick="tryLogin()">Anmelden</button>
-    </span>
-    <span id="admin-logout-form" style="display:none">
-      <button onclick="doLogout()">Abmelden</button>
-    </span>
-  </div>
-
-  <div id="admin-panel" style="display:none">
-
-    <div class="admin-sec">
-      <div class="admin-sec-head" onclick="toggleAdminSec(this)">&#9658; Tag eintragen</div>
-      <div class="admin-sec-body">
-        <div class="row">
-          <label>Datum: <input type="date" id="e-date" style="width:135px"></label>
-          <label>Tag #: <input type="number" id="e-tag" style="width:52px" min="1"></label>
-          <span class="dim">Nachtragen m&ouml;glich &ndash; nach Datum sortiert</span>
-        </div>
-        <div id="e-players" style="margin-top:7px;"></div>
-        <div class="row" style="margin-top:7px;">
-          <button onclick="submitDay()">Speichern</button>
-          <button onclick="renderEntryForm()">Zur&uuml;cksetzen</button>
-        </div>
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-head">Top 3</div>
+      <div class="sidebar-body" id="sidebar-top3"><span style="color:#888;font-size:11px;">–</span></div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-head">Saison-Stats</div>
+      <div class="sidebar-body" id="sidebar-stats">
+        <div class="stat-row"><span class="stat-label">Spieltage</span><span class="stat-val" id="ss-days">–</span></div>
+        <div class="stat-row"><span class="stat-label">Spieler</span><span class="stat-val" id="ss-players">–</span></div>
+        <div class="stat-row"><span class="stat-label">Ø Score</span><span class="stat-val" id="ss-avgscore">–</span></div>
+        <div class="stat-row"><span class="stat-label">Bester Score</span><span class="stat-val" id="ss-best">–</span></div>
+        <div class="stat-row"><span class="stat-label">Höchstes Rating</span><span class="stat-val" id="ss-toprating">–</span></div>
       </div>
     </div>
-
-    <div class="admin-sec">
-      <div class="admin-sec-head" onclick="toggleAdminSec(this)">&#9658; Spieler verwalten</div>
-      <div class="admin-sec-body">
-        <div class="row">
-          <input type="text" id="new-name" placeholder="Name" style="width:150px" onkeydown="if(event.key==='Enter')addPlayer()">
-          <button onclick="addPlayer()">+ Hinzuf&uuml;gen</button>
-        </div>
-        <div id="player-list" style="margin-top:5px;"></div>
+    <div class="sidebar-section">
+      <div class="sidebar-head">System</div>
+      <div class="sidebar-body">
+        <div class="stat-row"><span class="stat-label">Methode</span><span class="stat-val">Glicko-2</span></div>
+        <div class="stat-row"><span class="stat-label">Startwert</span><span class="stat-val">1500</span></div>
+        <div class="stat-row"><span class="stat-label">Start-RD</span><span class="stat-val">350</span></div>
+        <div class="stat-row"><span class="stat-label">DNP</span><span class="stat-val">kein -</span></div>
       </div>
     </div>
-
-    <div class="admin-sec">
-      <div class="admin-sec-head" onclick="toggleAdminSec(this)">&#9658; Mattermost-Export</div>
-      <div class="admin-sec-body">
-        <div class="row">
-          <button onclick="genExport('current')">Rangliste</button>
-          <button onclick="genExport('lastday')">Letzter Tag</button>
-          <button onclick="copyExport()">Kopieren</button>
-        </div>
-        <textarea id="mm-out" readonly></textarea>
-      </div>
-    </div>
-
-    <div class="admin-sec">
-      <div class="admin-sec-head" onclick="toggleAdminSec(this)">&#9658; Gef&auml;hrliche Zone</div>
-      <div class="admin-sec-body">
-        <div class="row">
-          <button class="danger" onclick="undoLastDay()">&larr; Letzten Tag r&uuml;ckg&auml;ngig</button>
-          <button class="danger" onclick="resetAll()">Rating-Reset</button>
-          <button class="danger" onclick="clearAll()">Alle Daten l&ouml;schen</button>
-        </div>
-      </div>
-    </div>
-
   </div>
 
-</div><!-- /page-body -->
+  <!-- MAIN COLUMN -->
+  <div class="main-col">
+    <div class="page-title">Gesamtrangliste &ndash; Alle Spieler</div>
 
-<div id="toast"></div>
+    <h2>Rangliste
+      <span><a onclick="sortBy('rating')">Rating &#9660;</a> &nbsp; <a onclick="sortBy('avg')">Score &#9660;</a></span>
+    </h2>
+    <table class="sr-table">
+      <thead><tr>
+        <th style="width:26px;">#</th>
+        <th class="left">Name</th>
+        <th>Rating</th>
+        <th>RD</th>
+        <th>&Oslash;&nbsp;Score</th>
+        <th>Spiele</th>
+      </tr></thead>
+      <tbody id="lb-body"></tbody>
+    </table>
+
+    <h2>Rating-Verlauf</h2>
+    <div id="chart-wrap">
+      <canvas id="chart-rating" height="165"></canvas>
+    </div>
+    <div id="chart-legend"></div>
+
+    <h2>Spieltag-Verlauf
+      <a href="#" onclick="toggleInfo();return false;" id="info-toggle">&#9658; Glicko-2 erkl&auml;rt</a>
+    </h2>
+    <div id="info-box" style="display:none;" class="glicko-note">
+      Jeder Spieler hat drei Werte: <b>Rating</b> (Start 1500), <b>RD</b> (Unsicherheit, Start 350 &ndash; sinkt mit mehr Spielen) und <b>Volatility</b>. Nach jedem Tag wird jeder gegen jeden verglichen (h&ouml;herer Score = Sieg). Wer gegen Starke gewinnt, steigt mehr. <b>DNP</b> = Rating bleibt, RD steigt leicht.
+    </div>
+    <div id="verlauf-body" style="margin-top:4px;max-height:260px;overflow-y:auto;">
+      <span class="dim">Noch keine Spieltage.</span>
+    </div>
+
+    <h2>Admin</h2>
+    <div class="lockbar">
+      <span id="admin-status">&#128274;</span>&nbsp;
+      <span id="admin-login-form">
+        <input type="password" id="pw-input" placeholder="Passwort" style="width:115px" onkeydown="if(event.key==='Enter')checkPassword()">
+        <button onclick="checkPassword()">Weiter</button>
+      </span>
+      <span id="admin-token-form" style="display:none">
+        <input type="password" id="token-input" placeholder="GitHub Token" style="width:185px" onkeydown="if(event.key==='Enter')tryLogin()">
+        <button onclick="tryLogin()">Anmelden</button>
+      </span>
+      <span id="admin-logout-form" style="display:none">
+        <button onclick="doLogout()">Abmelden</button>
+      </span>
+    </div>
+
+    <div id="admin-panel" style="display:none">
+
+      <div class="admin-sec">
+        <div class="admin-sec-head" onclick="toggleAdminSec(this)">&#9658; Tag eintragen</div>
+        <div class="admin-sec-body">
+          <div class="row">
+            <label>Datum: <input type="date" id="e-date" style="width:135px"></label>
+            <label>Tag #: <input type="number" id="e-tag" style="width:52px" min="1"></label>
+            <span class="dim">Nachtragen m&ouml;glich &ndash; nach Datum sortiert</span>
+          </div>
+          <div id="e-players" style="margin-top:7px;"></div>
+          <div class="row" style="margin-top:7px;">
+            <button onclick="submitDay()">Speichern</button>
+            <button onclick="renderEntryForm()">Zur&uuml;cksetzen</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-sec">
+        <div class="admin-sec-head" onclick="toggleAdminSec(this)">&#9658; Spieler verwalten</div>
+        <div class="admin-sec-body">
+          <div class="row">
+            <input type="text" id="new-name" placeholder="Name" style="width:150px" onkeydown="if(event.key==='Enter')addPlayer()">
+            <button onclick="addPlayer()">+ Hinzuf&uuml;gen</button>
+          </div>
+          <div id="player-list" style="margin-top:5px;"></div>
+        </div>
+      </div>
+
+      <div class="admin-sec">
+        <div class="admin-sec-head" onclick="toggleAdminSec(this)">&#9658; Mattermost-Export</div>
+        <div class="admin-sec-body">
+          <div class="row">
+            <button onclick="genExport('current')">Rangliste</button>
+            <button onclick="genExport('lastday')">Letzter Tag</button>
+            <button onclick="copyExport()">Kopieren</button>
+          </div>
+          <textarea id="mm-out" readonly></textarea>
+        </div>
+      </div>
+
+      <div class="admin-sec">
+        <div class="admin-sec-head" onclick="toggleAdminSec(this)">&#9658; Gef&auml;hrliche Zone</div>
+        <div class="admin-sec-body">
+          <div class="row">
+            <button class="danger" onclick="undoLastDay()">&larr; Letzten Tag r&uuml;ckg&auml;ngig</button>
+            <button class="danger" onclick="resetAll()">Rating-Reset</button>
+            <button class="danger" onclick="clearAll()">Alle Daten l&ouml;schen</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div><!-- /main-col -->
+
+</div><!-- /content-wrap -->
 
 <script>
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
@@ -497,10 +555,22 @@ function renderLb(){
   const rdCol=rd=>rd<80?'#006600':rd<150?'#cc6600':'#990000';
   document.getElementById('lb-body').innerHTML=sorted.map((p,i)=>{
     const avg=p.games>0?Math.round(p.total/p.games):'&mdash;';
-    const rankClass=i===0?'rank-1':'';
-    const m=i===0?'1':i===1?'2':i===2?'3':`${i+1}`;
-    return`<tr class="${rankClass}"><td>${m}</td><td class="name-col">${p.name}</td><td><b>${Math.round(p.rating)}</b></td><td style="color:${rdCol(p.rd)}">${Math.round(p.rd)}</td><td>${avg}</td><td>${p.games}</td></tr>`;
+    const rowClass=i===0?'p1':'';
+    return`<tr class="${rowClass}"><td>${i+1}</td><td class="left">${p.name}</td><td><b>${Math.round(p.rating)}</b></td><td style="color:${rdCol(p.rd)}">${Math.round(p.rd)}</td><td>${avg}</td><td>${p.games}</td></tr>`;
   }).join('')||'<tr><td colspan="6" style="color:#bbb;text-align:center;padding:16px;">Keine Spieler.</td></tr>';
+
+  // update sidebar
+  const s2=load();
+  const top3=sorted.slice(0,3);
+  const t3el=document.getElementById('sidebar-top3');
+  if(t3el) t3el.innerHTML=top3.map((p,i)=>`<div class="stat-row"><span class="stat-label">${['🥇','🥈','🥉'][i]} ${p.name}</span><span class="stat-val">${Math.round(p.rating)}</span></div>`).join('')||'<span style="color:#888;font-size:11px;">–</span>';
+  const el=id=>document.getElementById(id);
+  if(el('ss-days')) el('ss-days').textContent=s2.days.length||'–';
+  if(el('ss-players')) el('ss-players').textContent=s2.players.length||'–';
+  const allScores=s2.days.flatMap(d=>d.entries.filter(e=>!e.dnp&&e.score!=null).map(e=>e.score));
+  if(el('ss-avgscore')) el('ss-avgscore').textContent=allScores.length?Math.round(allScores.reduce((a,b)=>a+b,0)/allScores.length):'–';
+  if(el('ss-best')) el('ss-best').textContent=allScores.length?Math.max(...allScores):'–';
+  if(el('ss-toprating')) el('ss-toprating').textContent=sorted.length?Math.round(sorted[0].rating):'–';
 }
 
 // ─── CHART ────────────────────────────────────────────────────────────────────
