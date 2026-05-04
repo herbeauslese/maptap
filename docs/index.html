@@ -242,7 +242,9 @@ a:hover { color: #000; }
       <a href="#" onclick="toggleInfo();return false;" id="info-toggle">&#9658; Glicko-2 erkl&auml;rt</a>
     </div>
     <div id="info-box" style="display:none;" class="glicko-note">
-      <b>Rating</b> (Start 1500), <b>RD</b> (Unsicherheit, Start 350), <b>Volatility</b>. Jeder gegen jeden pro Tag. H&ouml;herer Score = Sieg. Wer gegen Starke gewinnt, steigt mehr. <b>DNP</b> = Rating bleibt, RD steigt leicht.
+      Jeder Spieler hat drei Werte: <b>Rating</b> (Startwert 1500 &ndash; h&ouml;her ist besser), <b>RD</b> (Rating Deviation, Startwert 350 &ndash; gibt an, in welchem Unsicherheitsbereich das Rating liegt; ein RD von 50 bedeutet, das echte St&auml;rkeniveau liegt mit hoher Wahrscheinlichkeit zwischen Rating &minus;50 und Rating +50; sinkt je mehr man spielt) und <b>Volatility</b> (wie unbest&auml;ndig jemand spielt).<br><br>
+Nach jedem Spieltag wird jeder gegen jeden verglichen: wer einen h&ouml;heren Score hat, gewinnt das Duell. Wer gegen einen starken Gegner gewinnt, steigt mehr als gegen einen schwachen &ndash; und umgekehrt. Alle Duelle des Tages werden zusammengerechnet und das Rating entsprechend angepasst.<br><br>
+<b>DNP</b> (Did Not Play) = nicht gespielt. Das Rating bleibt unver&auml;ndert, aber das RD steigt leicht an &ndash; das System wird etwas unsicherer &uuml;ber diesen Spieler. Je niedriger das RD, desto verl&auml;sslicher ist das Rating.
     </div>
     <div id="verlauf-body" style="margin-top:4px;max-height:260px;overflow-y:auto;">
       <span class="dim">Noch keine Spieltage.</span>
