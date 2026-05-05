@@ -323,8 +323,8 @@ a:hover { color: #000; }
 
 <script>
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
-const GH_USER = 'herbeauslese';
-const GH_REPO = 'maptap';
+const GH_USER = 'DEIN_GITHUB_USERNAME';
+const GH_REPO = 'maptap-leaderboard';
 const GH_FILE = 'data.json';
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -383,14 +383,17 @@ function glicko2Update(player,results){
   return{rating:mN*G2_SCALE+1500,rd:Math.max(pN*G2_SCALE,15),vol:sN};
 }
 
-// Score-proportional outcome: statt binär 0/1 gibt der Score-Abstand
-// das tatsächliche Ergebnis vor. Wer 900 macht und jemanden mit 400 schlägt
-// bekommt kaum Punkte – wer mit 400 jemanden mit 900 schlägt, sehr viele.
-// s = anteil des eigenen Scores am total der beiden scores (0..1)
+// Score-proportional outcome mit Verstärkung:
+// Kleiner Abstand → fair proportional, großer Abstand → fast binär
 function scoreToOutcome(scoreA, scoreB){
   const total = scoreA + scoreB;
   if(total === 0) return 0.5;
-  return scoreA / total; // z.B. 900/(900+400) = 0.692 statt 1.0
+  const raw = scoreA / total; // 0..1
+  // Verstärken: raw^0.4 streckt die Mitte, komprimiert die Extreme nicht so stark
+  // raw=0.5 → 0.5, raw=0.69 → 0.80, raw=0.3 → 0.20
+  const sign = raw >= 0.5 ? 1 : -1;
+  const dist = Math.abs(raw - 0.5);
+  return 0.5 + sign * Math.pow(dist * 2, 0.55) * 0.5;
 }
 
 // ─── MIGRATE + RECOMPUTE ──────────────────────────────────────────────────────
