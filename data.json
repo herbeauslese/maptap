@@ -3,92 +3,92 @@
     {
       "id": "p_1777533282032",
       "name": "Domenik",
-      "rating": 2054.0173757231796,
-      "rd": 89.2111305768559,
-      "vol": 0.060010177954467475,
-      "games": 6,
-      "total": 5621
+      "rating": 2079.19683434415,
+      "rd": 84.3603481916752,
+      "vol": 0.06000819506146352,
+      "games": 7,
+      "total": 6489
     },
     {
       "id": "p_1777533288456",
       "name": "Erik",
-      "rating": 1846.8523031168068,
-      "rd": 77.44279730703575,
-      "vol": 0.06001600815118953,
-      "games": 6,
-      "total": 5323
+      "rating": 1840.357060268901,
+      "rd": 71.96638652590953,
+      "vol": 0.060006336502984946,
+      "games": 7,
+      "total": 6128
     },
     {
       "id": "p_1777533292348",
       "name": "Marco",
-      "rating": 1491.2188388032162,
-      "rd": 66.24565521470183,
-      "vol": 0.06004458940245655,
-      "games": 6,
-      "total": 4444
+      "rating": 1463.7180455339317,
+      "rd": 61.225497798458356,
+      "vol": 0.0600447421430439,
+      "games": 7,
+      "total": 5165
     },
     {
       "id": "p_1777533294586",
       "name": "Heiner",
-      "rating": 1391.844763079648,
-      "rd": 67.7265608040627,
-      "vol": 0.06014109704551522,
-      "games": 6,
-      "total": 4459
+      "rating": 1317.9981191689553,
+      "rd": 62.40103825526134,
+      "vol": 0.0602279005455954,
+      "games": 7,
+      "total": 5010
     },
     {
       "id": "p_1777533304937",
       "name": "Burak",
-      "rating": 1124.1312510020828,
-      "rd": 76.6765455611101,
-      "vol": 0.060028508083949696,
-      "games": 5,
-      "total": 3004
+      "rating": 1146.7131905796919,
+      "rd": 71.54454056883307,
+      "vol": 0.06002441868756736,
+      "games": 6,
+      "total": 3722
     },
     {
       "id": "p_1777533307547",
       "name": "Thomi",
-      "rating": 1523.7962241513194,
-      "rd": 76.2008037108001,
-      "vol": 0.059979849427553446,
-      "games": 4,
-      "total": 3187
+      "rating": 1560.5233757619478,
+      "rd": 68.50633579957503,
+      "vol": 0.05998132522820883,
+      "games": 5,
+      "total": 3976
     },
     {
       "id": "p_1777533312021",
       "name": "Gulzina",
-      "rating": 1804.7657593898589,
-      "rd": 73.97890634032169,
-      "vol": 0.060107810264762904,
-      "games": 5,
-      "total": 4289
+      "rating": 1833.0175645133052,
+      "rd": 68.87089843985282,
+      "vol": 0.06010727729800929,
+      "games": 6,
+      "total": 5118
     },
     {
       "id": "p_1777533316368",
       "name": "Janek",
-      "rating": 1297.5345643595974,
-      "rd": 70.89176655166835,
-      "vol": 0.06001138647505361,
-      "games": 6,
-      "total": 3695
+      "rating": 1332.537065951964,
+      "rd": 65.20030196873964,
+      "vol": 0.06001667455639701,
+      "games": 7,
+      "total": 4417
     },
     {
       "id": "p_1777533343282",
       "name": "Jan",
-      "rating": 1180.717663693368,
-      "rd": 73.50102221740904,
-      "vol": 0.06004484287702256,
-      "games": 6,
-      "total": 3467
+      "rating": 1165.0091228305366,
+      "rd": 68.29932741973619,
+      "vol": 0.06003678425376867,
+      "games": 7,
+      "total": 4173
     },
     {
       "id": "p_1777533352238",
       "name": "Reiko",
-      "rating": 1546.6519992128797,
-      "rd": 67.21115545913854,
-      "vol": 0.060181511738146086,
-      "games": 6,
-      "total": 4490
+      "rating": 1550.6361812730038,
+      "rd": 62.07272262639748,
+      "vol": 0.06016696688223802,
+      "games": 7,
+      "total": 5236
     }
   ],
   "days": [
@@ -3658,6 +3658,672 @@
               "oppId": "p_1777533343282",
               "oppRating": 1217,
               "oppRD": 79,
+              "score": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tag": 7,
+      "date": "2026-05-05",
+      "entries": [
+        {
+          "id": "p_1777533282032",
+          "dnp": false,
+          "score": 868,
+          "before": 2054,
+          "after": 2079,
+          "delta": 25,
+          "rdBefore": 89,
+          "rdAfter": 84,
+          "duels": [
+            {
+              "oppId": "p_1777533288456",
+              "oppRating": 1847,
+              "oppRD": 77,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533292348",
+              "oppRating": 1491,
+              "oppRD": 66,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533294586",
+              "oppRating": 1392,
+              "oppRD": 68,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533304937",
+              "oppRating": 1124,
+              "oppRD": 77,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533307547",
+              "oppRating": 1524,
+              "oppRD": 76,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533312021",
+              "oppRating": 1805,
+              "oppRD": 74,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533316368",
+              "oppRating": 1298,
+              "oppRD": 71,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533343282",
+              "oppRating": 1181,
+              "oppRD": 74,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533352238",
+              "oppRating": 1547,
+              "oppRD": 67,
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": "p_1777533288456",
+          "dnp": false,
+          "score": 805,
+          "before": 1847,
+          "after": 1840,
+          "delta": -7,
+          "rdBefore": 77,
+          "rdAfter": 72,
+          "duels": [
+            {
+              "oppId": "p_1777533282032",
+              "oppRating": 2054,
+              "oppRD": 89,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533292348",
+              "oppRating": 1491,
+              "oppRD": 66,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533294586",
+              "oppRating": 1392,
+              "oppRD": 68,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533304937",
+              "oppRating": 1124,
+              "oppRD": 77,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533307547",
+              "oppRating": 1524,
+              "oppRD": 76,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533312021",
+              "oppRating": 1805,
+              "oppRD": 74,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533316368",
+              "oppRating": 1298,
+              "oppRD": 71,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533343282",
+              "oppRating": 1181,
+              "oppRD": 74,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533352238",
+              "oppRating": 1547,
+              "oppRD": 67,
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": "p_1777533292348",
+          "dnp": false,
+          "score": 721,
+          "before": 1491,
+          "after": 1464,
+          "delta": -27,
+          "rdBefore": 66,
+          "rdAfter": 61,
+          "duels": [
+            {
+              "oppId": "p_1777533282032",
+              "oppRating": 2054,
+              "oppRD": 89,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533288456",
+              "oppRating": 1847,
+              "oppRD": 77,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533294586",
+              "oppRating": 1392,
+              "oppRD": 68,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533304937",
+              "oppRating": 1124,
+              "oppRD": 77,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533307547",
+              "oppRating": 1524,
+              "oppRD": 76,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533312021",
+              "oppRating": 1805,
+              "oppRD": 74,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533316368",
+              "oppRating": 1298,
+              "oppRD": 71,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533343282",
+              "oppRating": 1181,
+              "oppRD": 74,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533352238",
+              "oppRating": 1547,
+              "oppRD": 67,
+              "score": 0
+            }
+          ]
+        },
+        {
+          "id": "p_1777533294586",
+          "dnp": false,
+          "score": 551,
+          "before": 1392,
+          "after": 1318,
+          "delta": -74,
+          "rdBefore": 68,
+          "rdAfter": 62,
+          "duels": [
+            {
+              "oppId": "p_1777533282032",
+              "oppRating": 2054,
+              "oppRD": 89,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533288456",
+              "oppRating": 1847,
+              "oppRD": 77,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533292348",
+              "oppRating": 1491,
+              "oppRD": 66,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533304937",
+              "oppRating": 1124,
+              "oppRD": 77,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533307547",
+              "oppRating": 1524,
+              "oppRD": 76,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533312021",
+              "oppRating": 1805,
+              "oppRD": 74,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533316368",
+              "oppRating": 1298,
+              "oppRD": 71,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533343282",
+              "oppRating": 1181,
+              "oppRD": 74,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533352238",
+              "oppRating": 1547,
+              "oppRD": 67,
+              "score": 0
+            }
+          ]
+        },
+        {
+          "id": "p_1777533304937",
+          "dnp": false,
+          "score": 718,
+          "before": 1124,
+          "after": 1147,
+          "delta": 23,
+          "rdBefore": 77,
+          "rdAfter": 72,
+          "duels": [
+            {
+              "oppId": "p_1777533282032",
+              "oppRating": 2054,
+              "oppRD": 89,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533288456",
+              "oppRating": 1847,
+              "oppRD": 77,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533292348",
+              "oppRating": 1491,
+              "oppRD": 66,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533294586",
+              "oppRating": 1392,
+              "oppRD": 68,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533307547",
+              "oppRating": 1524,
+              "oppRD": 76,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533312021",
+              "oppRating": 1805,
+              "oppRD": 74,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533316368",
+              "oppRating": 1298,
+              "oppRD": 71,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533343282",
+              "oppRating": 1181,
+              "oppRD": 74,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533352238",
+              "oppRating": 1547,
+              "oppRD": 67,
+              "score": 0
+            }
+          ]
+        },
+        {
+          "id": "p_1777533307547",
+          "dnp": false,
+          "score": 789,
+          "before": 1524,
+          "after": 1561,
+          "delta": 37,
+          "rdBefore": 76,
+          "rdAfter": 69,
+          "duels": [
+            {
+              "oppId": "p_1777533282032",
+              "oppRating": 2054,
+              "oppRD": 89,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533288456",
+              "oppRating": 1847,
+              "oppRD": 77,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533292348",
+              "oppRating": 1491,
+              "oppRD": 66,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533294586",
+              "oppRating": 1392,
+              "oppRD": 68,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533304937",
+              "oppRating": 1124,
+              "oppRD": 77,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533312021",
+              "oppRating": 1805,
+              "oppRD": 74,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533316368",
+              "oppRating": 1298,
+              "oppRD": 71,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533343282",
+              "oppRating": 1181,
+              "oppRD": 74,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533352238",
+              "oppRating": 1547,
+              "oppRD": 67,
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": "p_1777533312021",
+          "dnp": false,
+          "score": 829,
+          "before": 1805,
+          "after": 1833,
+          "delta": 28,
+          "rdBefore": 74,
+          "rdAfter": 69,
+          "duels": [
+            {
+              "oppId": "p_1777533282032",
+              "oppRating": 2054,
+              "oppRD": 89,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533288456",
+              "oppRating": 1847,
+              "oppRD": 77,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533292348",
+              "oppRating": 1491,
+              "oppRD": 66,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533294586",
+              "oppRating": 1392,
+              "oppRD": 68,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533304937",
+              "oppRating": 1124,
+              "oppRD": 77,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533307547",
+              "oppRating": 1524,
+              "oppRD": 76,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533316368",
+              "oppRating": 1298,
+              "oppRD": 71,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533343282",
+              "oppRating": 1181,
+              "oppRD": 74,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533352238",
+              "oppRating": 1547,
+              "oppRD": 67,
+              "score": 1
+            }
+          ]
+        },
+        {
+          "id": "p_1777533316368",
+          "dnp": false,
+          "score": 722,
+          "before": 1298,
+          "after": 1333,
+          "delta": 35,
+          "rdBefore": 71,
+          "rdAfter": 65,
+          "duels": [
+            {
+              "oppId": "p_1777533282032",
+              "oppRating": 2054,
+              "oppRD": 89,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533288456",
+              "oppRating": 1847,
+              "oppRD": 77,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533292348",
+              "oppRating": 1491,
+              "oppRD": 66,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533294586",
+              "oppRating": 1392,
+              "oppRD": 68,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533304937",
+              "oppRating": 1124,
+              "oppRD": 77,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533307547",
+              "oppRating": 1524,
+              "oppRD": 76,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533312021",
+              "oppRating": 1805,
+              "oppRD": 74,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533343282",
+              "oppRating": 1181,
+              "oppRD": 74,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533352238",
+              "oppRating": 1547,
+              "oppRD": 67,
+              "score": 0
+            }
+          ]
+        },
+        {
+          "id": "p_1777533343282",
+          "dnp": false,
+          "score": 706,
+          "before": 1181,
+          "after": 1165,
+          "delta": -16,
+          "rdBefore": 74,
+          "rdAfter": 68,
+          "duels": [
+            {
+              "oppId": "p_1777533282032",
+              "oppRating": 2054,
+              "oppRD": 89,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533288456",
+              "oppRating": 1847,
+              "oppRD": 77,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533292348",
+              "oppRating": 1491,
+              "oppRD": 66,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533294586",
+              "oppRating": 1392,
+              "oppRD": 68,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533304937",
+              "oppRating": 1124,
+              "oppRD": 77,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533307547",
+              "oppRating": 1524,
+              "oppRD": 76,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533312021",
+              "oppRating": 1805,
+              "oppRD": 74,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533316368",
+              "oppRating": 1298,
+              "oppRD": 71,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533352238",
+              "oppRating": 1547,
+              "oppRD": 67,
+              "score": 0
+            }
+          ]
+        },
+        {
+          "id": "p_1777533352238",
+          "dnp": false,
+          "score": 746,
+          "before": 1547,
+          "after": 1551,
+          "delta": 4,
+          "rdBefore": 67,
+          "rdAfter": 62,
+          "duels": [
+            {
+              "oppId": "p_1777533282032",
+              "oppRating": 2054,
+              "oppRD": 89,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533288456",
+              "oppRating": 1847,
+              "oppRD": 77,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533292348",
+              "oppRating": 1491,
+              "oppRD": 66,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533294586",
+              "oppRating": 1392,
+              "oppRD": 68,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533304937",
+              "oppRating": 1124,
+              "oppRD": 77,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533307547",
+              "oppRating": 1524,
+              "oppRD": 76,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533312021",
+              "oppRating": 1805,
+              "oppRD": 74,
+              "score": 0
+            },
+            {
+              "oppId": "p_1777533316368",
+              "oppRating": 1298,
+              "oppRD": 71,
+              "score": 1
+            },
+            {
+              "oppId": "p_1777533343282",
+              "oppRating": 1181,
+              "oppRD": 74,
               "score": 1
             }
           ]
