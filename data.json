@@ -1113,7 +1113,7 @@
     "rdFloor": 20,
     "outcomeExp": 0.4,
     "duelWeightStart": 9999,
-    "duelWeightMin": 1,
+    "duelWeightMin": 0.1,
     "dnpWeight": 0.5,
     "kBase": 40,
     "mode": "ranking"
