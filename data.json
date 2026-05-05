@@ -1110,7 +1110,7 @@
   "cfg": {
     "vol": 0.15,
     "tau": 1.2,
-    "rdFloor": 20,
+    "rdFloor": 70,
     "outcomeExp": 0.4,
     "duelWeightStart": 9999,
     "duelWeightMin": 1,
