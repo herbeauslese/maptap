@@ -744,14 +744,20 @@ function renderChart(){
   pids.forEach((id,ci)=>{
     const color=COLORS[ci%COLORS.length],pts=hist[id];
     ctx.strokeStyle=color;ctx.lineWidth=1.5;ctx.beginPath();
+    // Catmull-Rom spline – uses prev+next point to determine tangent
     pts.forEach((v,i)=>{
-      if(i===0){ctx.moveTo(toX(i),toY(v));}
-      else{
-        const t=0.35;
-        const cp1x=toX(i-1)+(toX(i)-toX(i-1))*t;
-        const cp2x=toX(i)  -(toX(i)-toX(i-1))*t;
-        ctx.bezierCurveTo(cp1x,toY(pts[i-1]),cp2x,toY(v),toX(i),toY(v));
-      }
+      if(i===0){ctx.moveTo(toX(0),toY(pts[0]));return;}
+      const p0=i>1?i-2:0, p1=i-1, p2=i, p3=i<pts.length-1?i+1:i;
+      const x0=toX(p0),y0=toY(pts[p0]);
+      const x1=toX(p1),y1=toY(pts[p1]);
+      const x2=toX(p2),y2=toY(pts[p2]);
+      const x3=toX(p3),y3=toY(pts[p3]);
+      const alpha=0.5; // tension
+      const cp1x=x1+(x2-x0)*alpha/3;
+      const cp1y=y1+(y2-y0)*alpha/3;
+      const cp2x=x2-(x3-x1)*alpha/3;
+      const cp2y=y2-(y3-y1)*alpha/3;
+      ctx.bezierCurveTo(cp1x,cp1y,cp2x,cp2y,x2,y2);
     });ctx.stroke();
     pts.forEach((v,i)=>{
       ctx.strokeStyle=color;ctx.fillStyle='#fff';ctx.lineWidth=1;
@@ -1138,13 +1144,16 @@ function exportImage(){
       const color=COLORS[ci%COLORS.length], pts=hist[id];
       ctx.strokeStyle=color; ctx.lineWidth=1.5; ctx.beginPath();
       pts.forEach((v,i)=>{
-        if(i===0){ctx.moveTo(toX(i),toYc(v));}
-        else{
-          const t=0.35;
-          const cp1x=toX(i-1)+(toX(i)-toX(i-1))*t;
-          const cp2x=toX(i)  -(toX(i)-toX(i-1))*t;
-          ctx.bezierCurveTo(cp1x,toYc(pts[i-1]),cp2x,toYc(v),toX(i),toYc(v));
-        }
+        if(i===0){ctx.moveTo(toX(0),toYc(pts[0]));return;}
+        const p0=i>1?i-2:0, p1=i-1, p2=i, p3=i<pts.length-1?i+1:i;
+        const x0=toX(p0),y0=toYc(pts[p0]);
+        const x1=toX(p1),y1=toYc(pts[p1]);
+        const x2=toX(p2),y2=toYc(pts[p2]);
+        const x3=toX(p3),y3=toYc(pts[p3]);
+        const alpha=0.5;
+        const cp1x=x1+(x2-x0)*alpha/3, cp1y=y1+(y2-y0)*alpha/3;
+        const cp2x=x2-(x3-x1)*alpha/3, cp2y=y2-(y3-y1)*alpha/3;
+        ctx.bezierCurveTo(cp1x,cp1y,cp2x,cp2y,x2,y2);
       });
       ctx.stroke();
       pts.forEach((v,i)=>{
