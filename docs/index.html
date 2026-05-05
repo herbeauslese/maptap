@@ -323,8 +323,8 @@ a:hover { color: #000; }
 
 <script>
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
-const GH_USER = 'herbeauslese';
-const GH_REPO = 'maptap';
+const GH_USER = 'DEIN_GITHUB_USERNAME';
+const GH_REPO = 'maptap-leaderboard';
 const GH_FILE = 'data.json';
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -383,6 +383,16 @@ function glicko2Update(player,results){
   return{rating:mN*G2_SCALE+1500,rd:Math.max(pN*G2_SCALE,15),vol:sN};
 }
 
+// Score-proportional outcome: statt binär 0/1 gibt der Score-Abstand
+// das tatsächliche Ergebnis vor. Wer 900 macht und jemanden mit 400 schlägt
+// bekommt kaum Punkte – wer mit 400 jemanden mit 900 schlägt, sehr viele.
+// s = anteil des eigenen Scores am total der beiden scores (0..1)
+function scoreToOutcome(scoreA, scoreB){
+  const total = scoreA + scoreB;
+  if(total === 0) return 0.5;
+  return scoreA / total; // z.B. 900/(900+400) = 0.692 statt 1.0
+}
+
 // ─── MIGRATE + RECOMPUTE ──────────────────────────────────────────────────────
 function migrate(data){
   // Check for old ELO format BEFORE mapping strips the field
@@ -414,24 +424,23 @@ function applyDay(players,day){
   // build pairwise results – DNP plays against everyone with avg score, half weight
   const results={};players.forEach(p=>{results[p.id]=[];});
 
-  // active vs active
+  // active vs active – score-proportional outcome
   for(let i=0;i<active.length;i++)for(let j=i+1;j<active.length;j++){
     const a=active[i],b=active[j];
     const pA=players.find(p=>p.id===a.id),pB=players.find(p=>p.id===b.id);
     if(!pA||!pB)continue;
-    const sA=a.score>b.score?1:a.score<b.score?0:0.5;
+    const sA=scoreToOutcome(a.score||0, b.score||0);
     results[a.id].push({r:pB.rating,rd:pB.rd,s:sA,oppId:b.id,w:1});
     results[b.id].push({r:pA.rating,rd:pA.rd,s:1-sA,oppId:a.id,w:1});
   }
 
-  // DNP vs active – with half weight
+  // DNP vs active – with half weight, score-proportional
   dnp.forEach(de=>{
     const pD=players.find(p=>p.id===de.id);if(!pD)return;
     active.forEach(ae=>{
       const pA=players.find(p=>p.id===ae.id);if(!pA)return;
-      const sD=avgScore>ae.score?1:avgScore<ae.score?0:0.5;
+      const sD=scoreToOutcome(avgScore, ae.score||0);
       results[de.id].push({r:pA.rating,rd:pA.rd,s:sD,oppId:ae.id,w:0.5});
-      // active doesn't get results from DNP players
     });
   });
 
@@ -662,7 +671,7 @@ function renderHist(){
   const html=[...s.days].reverse().map(day=>{
     const sorted=[...day.entries].sort((a,b)=>a.dnp-b.dnp||(b.score||0)-(a.score||0));
     const best=sorted.find(e=>!e.dnp);
-    const header=`Tag ${day.tag} &mdash; ${day.date}`;
+    const header=`Tag ${day.tag} &mdash; ${day.date} &mdash; Bester: ${best?playerName(s,best.id):''}`;
     const rows=sorted.map(e=>{
       const name=playerName(s,e.id);
       const dStr=e.dnp
