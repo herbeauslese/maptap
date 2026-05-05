@@ -4344,5 +4344,5 @@
     "duelWeightMin": 0.3,
     "dnpWeight": 0.5
   },
-  "cfgLocked": true
+  "cfgLocked": false
 }
