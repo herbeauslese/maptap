@@ -307,8 +307,8 @@ a:hover { color: #000; }
         <div class="admin-sec-body">
           <div class="row">
             <button class="danger" onclick="undoLastDay()">&larr; Letzten Tag r&uuml;ckg&auml;ngig</button>
-            <button class="danger" onclick="resetAll()">Rating-Reset</button>
-            <button class="danger" onclick="clearAll()">Alle Daten l&ouml;schen</button>
+            <button class="danger" onclick="resetAll()">&#9851; Ratings neu berechnen</button>
+            <button class="danger" onclick="clearAll()">&#9888; Alle Daten l&ouml;schen</button>
           </div>
         </div>
       </div>
@@ -328,7 +328,7 @@ const GH_REPO = 'maptap';
 const GH_FILE = 'data.json';
 // ─────────────────────────────────────────────────────────────────────────────
 
-const G2_R0=1500, G2_RD0=350, G2_VOL0=0.08, G2_TAU=0.9, G2_SCALE=173.7178;
+const G2_R0=1500, G2_RD0=350, G2_VOL0=0.15, G2_TAU=1.4, G2_SCALE=173.7178;
 const COLORS=['#1e3a5f','#c00','#2a7a2a','#884400','#6644aa','#007788','#886600','#445588','#aa3366','#558800'];
 let loggedIn=false, sortMode='rating', ghSha=null, GH_TOKEN='';
 let STATE={players:[],days:[]};
@@ -747,9 +747,11 @@ async function undoLastDay(){
   const ok=await save(s);if(ok){toast('Rückgängig.');renderAll();}
 }
 async function resetAll(){
-  if(!confirm('Ratings zurücksetzen + Verlauf löschen?'))return;
-  const s=load();s.players=s.players.map(p=>({...p,rating:G2_R0,rd:G2_RD0,vol:G2_VOL0,games:0,total:0}));s.days=[];
-  const ok=await save(s);if(ok){renderAll();toast('Reset.');}
+  if(!confirm('Alle Ratings neu berechnen?'))return;
+  const s=load();
+  s.players=s.players.map(p=>({...p,rating:G2_R0,rd:G2_RD0,vol:G2_VOL0,games:0,total:0}));
+  recompute(s);
+  const ok=await save(s);if(ok){renderAll();toast('Neu berechnet.');}
 }
 async function clearAll(){
   if(!confirm('Alle Daten löschen?'))return;
