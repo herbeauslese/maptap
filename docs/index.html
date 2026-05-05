@@ -532,60 +532,61 @@ function applyDayRanking(players, day){
   const n=active.length;
   if(n<2) return;
 
-  // Sort by score descending → actual rank (1 = best)
+  // Sort by score → actual rank (1 = best)
   const ranked=[...active].sort((a,b)=>(b.score||0)-(a.score||0));
   ranked.forEach((e,i)=>{ e._actualRank=i+1; });
 
-  // Expected rank for each player based on Elo rating
-  // Use logistic: for each pair, expected win prob, sum = expected rank
+  // Expected rank from ratings via pairwise Elo win probability
   active.forEach(e=>{
     const p=players.find(x=>x.id===e.id); if(!p) return;
-    // expected wins against each other active player
     let expectedWins=0;
     active.forEach(f=>{
       if(f.id===e.id) return;
       const pF=players.find(x=>x.id===f.id); if(!pF) return;
       expectedWins += 1/(1+Math.pow(10,(pF.rating-p.rating)/400));
     });
-    // expected rank = n - expectedWins (more expected wins = lower rank number)
-    e._expectedRank = n - expectedWins;
+    e._expectedRank = n - expectedWins; // high wins → low rank number
   });
 
-  // Apply rating changes
+  // Raw deltas: K * (expectedRank - actualRank) / n
+  // + score performance bonus vs group avg
+  const avgScore=active.reduce((s,x)=>s+(x.score||0),0)/n;
+  active.forEach(e=>{
+    const rankDelta = K * (e._expectedRank - e._actualRank) / n;
+    const scoreRatio=(e.score||0)/Math.max(avgScore,1);
+    const scoreMult=0.6+0.4*Math.min(scoreRatio,1.8);
+    e._rawDelta = rankDelta * scoreMult;
+  });
+
+  // ── ZERO-SUM: subtract mean so total = 0
+  const mean = active.reduce((s,e)=>s+e._rawDelta,0)/n;
+  active.forEach(e=>{ e._rawDelta -= mean; });
+
+  // Apply
   active.forEach(e=>{
     const p=players.find(x=>x.id===e.id); if(!p) return;
     const before=Math.round(p.rating);
-    // delta = K * (expectedRank - actualRank) / n
-    // positive when actual < expected (did better than expected)
-    const delta = K * (e._expectedRank - e._actualRank) / n;
-
-    // Scale by score performance bonus: actual score vs avg
-    const avgScore=active.reduce((s,x)=>s+(x.score||0),0)/n;
-    const scoreRatio=(e.score||0)/Math.max(avgScore,1);
-    const scoreMult=0.5+0.5*Math.min(scoreRatio,2.0); // 0.5..1.5
-    const totalDelta=Math.round(delta*scoreMult);
-
-    p.rating=Math.max(100,p.rating+totalDelta);
-    p.rd=Math.max(cfg.rdFloor, p.rd*0.98); // RD decays slowly
+    const delta=Math.round(e._rawDelta);
+    p.rating=Math.max(100, p.rating+delta);
+    p.rd=Math.max(cfg.rdFloor, p.rd*0.98);
     p.games++; p.total+=e.score||0;
     const after=Math.round(p.rating);
     e.before=before; e.after=after; e.delta=after-before;
-    e.rdBefore=before; e.rdAfter=Math.round(p.rd);
-    e.duels=[{oppId:'ranking',oppRating:0,oppRD:0,score:0}]; // placeholder
+    e.rdBefore=before; e.rdAfter=Math.round(p.rd); e.duels=[];
   });
 
-  // DNP: small rating decay toward mean
+  // DNP: tiny pull toward group mean rating
+  const avgRating=players.filter(p=>p.games>0).reduce((s,p)=>s+p.rating,0)/Math.max(players.filter(p=>p.games>0).length,1);
   day.entries.filter(e=>e.dnp).forEach(e=>{
     const p=players.find(x=>x.id===e.id); if(!p) return;
     const before=Math.round(p.rating);
-    const avgRating=players.reduce((s,x)=>s+x.rating,0)/players.length;
-    const decay=Math.round((p.rating-avgRating)*0.02*cfg.dnpWeight);
-    p.rating=Math.max(100,p.rating-Math.abs(decay)*0.5);
+    const pull=Math.round((avgRating-p.rating)*0.03*cfg.dnpWeight);
+    p.rating=Math.max(100, p.rating+pull);
     p.rd=Math.min(G2_RD0, p.rd*1.02);
     const after=Math.round(p.rating);
     e.before=before; e.after=after; e.delta=after-before;
     e.rdBefore=before; e.rdAfter=Math.round(p.rd); e.duels=[];
-    e.avgScore=Math.round(active.reduce((s,x)=>s+(x.score||0),0)/Math.max(active.length,1));
+    e.avgScore=Math.round(avgScore);
   });
 }
 
