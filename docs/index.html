@@ -313,6 +313,7 @@ a:hover { color: #000; }
               <button onclick="applyProfile('dynamic')">Dynamisch</button>
               <button onclick="applyProfile('chaotic')">Chaotisch</button>
               <button onclick="applyProfile('flat')">Flach</button>
+              <button onclick="applyProfile('ranking')" style="border-color:#1e3a5f;font-weight:bold;">&#9733; Ranking-Elo</button>
             </div>
           </div>
 
@@ -353,6 +354,11 @@ a:hover { color: #000; }
               <div style="color:#888;font-size:10px;margin-top:2px;">Wie stark ein DNP-Tag ins Rating eingeht. DNP-Spieler bekommen den Tagesdurchschnitt als virtuellen Score. <strong>0.5</strong> = halber Einfluss. <strong>1.0</strong> = voller Einfluss wie normale Teilnahme. <em>Empfohlen: 0.4–0.6</em></div>
             </div>
 
+            <div>
+              <label style="font-weight:bold;">K-Faktor (nur Ranking-Elo) <input type="number" id="cfg-kbase" step="5" min="10" max="200" style="width:65px;margin-left:5px;"></label>
+              <div style="color:#888;font-size:10px;margin-top:2px;">Maximale Punktänderung pro Tag im Ranking-Elo Modus. Höher = mehr Dramatik. <em>Empfohlen: 32–64. Standard Elo: 32</em></div>
+            </div>
+
           </div>
 
           <div class="row" style="margin-top:10px;align-items:center;">
@@ -364,6 +370,7 @@ a:hover { color: #000; }
               </label>
             </span>
             <span id="cfg-locked-badge" style="display:none;font-size:10px;color:#c00;font-weight:bold;margin-left:8px;">&#128274; GESPERRT</span>
+            <span id="cfg-mode-badge" style="font-size:10px;font-weight:bold;margin-left:auto;"></span>
           </div>
           <div style="font-size:10px;color:#aaa;margin-top:4px;" id="cfg-status"></div>
 
@@ -401,10 +408,11 @@ const GH_API=`https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/${GH_F
 
 // Runtime params – read from STATE.cfg or defaults
 const PROFILES = {
-  standard: { label:'Standard',      vol:0.06, tau:0.5,  rdFloor:30,  outcomeExp:0.5,  duelWeightMin:1.0, duelWeightStart:99999, dnpWeight:0.5 },
-  dynamic:  { label:'Dynamisch',     vol:0.12, tau:1.0,  rdFloor:20,  outcomeExp:0.4,  duelWeightMin:0.3, duelWeightStart:300,   dnpWeight:0.5 },
-  chaotic:  { label:'Chaotisch',     vol:0.2,  tau:1.8,  rdFloor:15,  outcomeExp:0.25, duelWeightMin:0.15,duelWeightStart:300,   dnpWeight:0.5 },
-  flat:     { label:'Flach (fair)',   vol:0.06, tau:0.5,  rdFloor:30,  outcomeExp:1.0,  duelWeightMin:1.0, duelWeightStart:99999, dnpWeight:0.5 },
+  standard: { label:'Standard',      vol:0.06, tau:0.5,  rdFloor:30,  outcomeExp:0.5,  duelWeightMin:1.0, duelWeightStart:99999, dnpWeight:0.5, mode:'glicko2' },
+  dynamic:  { label:'Dynamisch',     vol:0.12, tau:1.0,  rdFloor:20,  outcomeExp:0.4,  duelWeightMin:0.3, duelWeightStart:300,   dnpWeight:0.5, mode:'glicko2' },
+  chaotic:  { label:'Chaotisch',     vol:0.2,  tau:1.8,  rdFloor:15,  outcomeExp:0.25, duelWeightMin:0.15,duelWeightStart:300,   dnpWeight:0.5, mode:'glicko2' },
+  flat:     { label:'Flach (fair)',   vol:0.06, tau:0.5,  rdFloor:30,  outcomeExp:1.0,  duelWeightMin:1.0, duelWeightStart:99999, dnpWeight:0.5, mode:'glicko2' },
+  ranking:  { label:'Ranking-Elo',   vol:0.15, tau:1.2,  rdFloor:20,  outcomeExp:0.4,  duelWeightMin:1.0, duelWeightStart:99999, dnpWeight:0.5, mode:'ranking', kBase:40 },
 };
 function getCfg(){
   const d=PROFILES.dynamic;
@@ -417,6 +425,8 @@ function getCfg(){
     duelWeightStart: c.duelWeightStart ?? d.duelWeightStart,
     duelWeightMin: c.duelWeightMin ?? d.duelWeightMin,
     dnpWeight:     c.dnpWeight     ?? d.dnpWeight,
+    mode:          c.mode          ?? 'glicko2',
+    kBase:         c.kBase         ?? 40,
   };
 }
 function G2_VOL(){ return getCfg().vol; }
@@ -512,7 +522,76 @@ function recompute(data){
   data.days.forEach(day=>applyDay(data.players,day));
 }
 
+// ─── RANKING-ELO MODE ─────────────────────────────────────────────────────────
+// Score → actual rank. Expected rank from ratings. Delta = K * (expected - actual) / n
+// Platz 1 always gains, last always loses. Consistent performance = steady rise.
+function applyDayRanking(players, day){
+  const cfg=getCfg();
+  const K=cfg.kBase||40;
+  const active=day.entries.filter(e=>!e.dnp);
+  const n=active.length;
+  if(n<2) return;
+
+  // Sort by score descending → actual rank (1 = best)
+  const ranked=[...active].sort((a,b)=>(b.score||0)-(a.score||0));
+  ranked.forEach((e,i)=>{ e._actualRank=i+1; });
+
+  // Expected rank for each player based on Elo rating
+  // Use logistic: for each pair, expected win prob, sum = expected rank
+  active.forEach(e=>{
+    const p=players.find(x=>x.id===e.id); if(!p) return;
+    // expected wins against each other active player
+    let expectedWins=0;
+    active.forEach(f=>{
+      if(f.id===e.id) return;
+      const pF=players.find(x=>x.id===f.id); if(!pF) return;
+      expectedWins += 1/(1+Math.pow(10,(pF.rating-p.rating)/400));
+    });
+    // expected rank = n - expectedWins (more expected wins = lower rank number)
+    e._expectedRank = n - expectedWins;
+  });
+
+  // Apply rating changes
+  active.forEach(e=>{
+    const p=players.find(x=>x.id===e.id); if(!p) return;
+    const before=Math.round(p.rating);
+    // delta = K * (expectedRank - actualRank) / n
+    // positive when actual < expected (did better than expected)
+    const delta = K * (e._expectedRank - e._actualRank) / n;
+
+    // Scale by score performance bonus: actual score vs avg
+    const avgScore=active.reduce((s,x)=>s+(x.score||0),0)/n;
+    const scoreRatio=(e.score||0)/Math.max(avgScore,1);
+    const scoreMult=0.5+0.5*Math.min(scoreRatio,2.0); // 0.5..1.5
+    const totalDelta=Math.round(delta*scoreMult);
+
+    p.rating=Math.max(100,p.rating+totalDelta);
+    p.rd=Math.max(cfg.rdFloor, p.rd*0.98); // RD decays slowly
+    p.games++; p.total+=e.score||0;
+    const after=Math.round(p.rating);
+    e.before=before; e.after=after; e.delta=after-before;
+    e.rdBefore=before; e.rdAfter=Math.round(p.rd);
+    e.duels=[{oppId:'ranking',oppRating:0,oppRD:0,score:0}]; // placeholder
+  });
+
+  // DNP: small rating decay toward mean
+  day.entries.filter(e=>e.dnp).forEach(e=>{
+    const p=players.find(x=>x.id===e.id); if(!p) return;
+    const before=Math.round(p.rating);
+    const avgRating=players.reduce((s,x)=>s+x.rating,0)/players.length;
+    const decay=Math.round((p.rating-avgRating)*0.02*cfg.dnpWeight);
+    p.rating=Math.max(100,p.rating-Math.abs(decay)*0.5);
+    p.rd=Math.min(G2_RD0, p.rd*1.02);
+    const after=Math.round(p.rating);
+    e.before=before; e.after=after; e.delta=after-before;
+    e.rdBefore=before; e.rdAfter=Math.round(p.rd); e.duels=[];
+    e.avgScore=Math.round(active.reduce((s,x)=>s+(x.score||0),0)/Math.max(active.length,1));
+  });
+}
+
 function applyDay(players,day){
+  if(getCfg().mode==='ranking'){ applyDayRanking(players,day); return; }
+
   const active=day.entries.filter(e=>!e.dnp);
   const dnp=day.entries.filter(e=>e.dnp);
 
@@ -1190,8 +1269,8 @@ function exportImage(){
 function renderCfgPanel(){
   const cfg=getCfg();
   const locked=STATE.cfgLocked||false;
-  const fields=['vol','tau','rdfloor','exp','dwstart','dwmin','dnp'];
-  const keys =['vol','tau','rdFloor','outcomeExp','duelWeightStart','duelWeightMin','dnpWeight'];
+  const fields=['vol','tau','rdfloor','exp','dwstart','dwmin','dnp','kbase'];
+  const keys =['vol','tau','rdFloor','outcomeExp','duelWeightStart','duelWeightMin','dnpWeight','kBase'];
   fields.forEach((f,i)=>{
     const el=document.getElementById('cfg-'+f);
     if(!el)return;
@@ -1205,6 +1284,12 @@ function renderCfgPanel(){
   if(lockEl) lockEl.checked=locked;
   const badge=document.getElementById('cfg-locked-badge');
   if(badge) badge.style.display=locked?'':'none';
+  const modeEl=document.getElementById('cfg-mode-badge');
+  if(modeEl){
+    const cfg2=getCfg();
+    modeEl.textContent=cfg2.mode==='ranking'?'★ RANKING-ELO AKTIV':'GLICKO-2 AKTIV';
+    modeEl.style.color=cfg2.mode==='ranking'?'#1e3a5f':'#666';
+  }
   // highlight active profile
   Object.keys(PROFILES).forEach(k=>{
     const btn=document.querySelector(`[onclick="applyProfile('${k}')"]`);
@@ -1237,6 +1322,8 @@ async function saveCfg(){
     duelWeightStart:Math.min(9999,Math.max(100,parse('dwstart',cfg.duelWeightStart))),
     duelWeightMin: Math.min(1.0, Math.max(0.05, parse('dwmin', cfg.duelWeightMin))),
     dnpWeight: Math.min(1.0,  Math.max(0.1,  parse('dnp',    cfg.dnpWeight))),
+    kBase:     Math.min(200,  Math.max(10,   parse('kbase',  cfg.kBase))),
+    mode:      cfg.mode || 'glicko2',
   };
   recompute(STATE);
   const ok=await save(STATE);
