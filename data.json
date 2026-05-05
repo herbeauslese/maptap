@@ -1118,5 +1118,5 @@
     "kBase": 40,
     "mode": "ranking"
   },
-  "cfgLocked": false
+  "cfgLocked": true
 }
