@@ -404,21 +404,48 @@ function recompute(data){
 
 function applyDay(players,day){
   const active=day.entries.filter(e=>!e.dnp);
+  const dnp=day.entries.filter(e=>e.dnp);
+
+  // avg score of present players → DNP virtual score
+  const avgScore=active.length>0
+    ? active.reduce((s,e)=>s+(e.score||0),0)/active.length
+    : 0;
+
+  // build pairwise results – DNP plays against everyone with avg score, half weight
   const results={};players.forEach(p=>{results[p.id]=[];});
+
+  // active vs active
   for(let i=0;i<active.length;i++)for(let j=i+1;j<active.length;j++){
     const a=active[i],b=active[j];
     const pA=players.find(p=>p.id===a.id),pB=players.find(p=>p.id===b.id);
     if(!pA||!pB)continue;
     const sA=a.score>b.score?1:a.score<b.score?0:0.5;
-    results[a.id].push({r:pB.rating,rd:pB.rd,s:sA,oppId:b.id});
-    results[b.id].push({r:pA.rating,rd:pA.rd,s:1-sA,oppId:a.id});
+    results[a.id].push({r:pB.rating,rd:pB.rd,s:sA,oppId:b.id,w:1});
+    results[b.id].push({r:pA.rating,rd:pA.rd,s:1-sA,oppId:a.id,w:1});
   }
+
+  // DNP vs active – with half weight
+  dnp.forEach(de=>{
+    const pD=players.find(p=>p.id===de.id);if(!pD)return;
+    active.forEach(ae=>{
+      const pA=players.find(p=>p.id===ae.id);if(!pA)return;
+      const sD=avgScore>ae.score?1:avgScore<ae.score?0:0.5;
+      results[de.id].push({r:pA.rating,rd:pA.rd,s:sD,oppId:ae.id,w:0.5});
+      // active doesn't get results from DNP players
+    });
+  });
+
   players.forEach(p=>{
     const e=day.entries.find(x=>x.id===p.id);if(!e)return;
     const before=Math.round(p.rating),rdBefore=Math.round(p.rd);
     if(e.dnp){
-      p.rd=Math.min(G2_RD0,Math.sqrt(p.rd*p.rd+p.vol*p.vol));
-      e.before=before;e.after=before;e.delta=0;e.rdBefore=rdBefore;e.rdAfter=Math.round(p.rd);e.duels=[];
+      // use half-strength glicko update with avg score
+      const halfResults=results[p.id].map(r=>({...r,rd:r.rd*1.5})); // inflate opp RD = less certainty
+      const u=glicko2Update({...p,vol:p.vol*0.5},halfResults); // half volatility
+      p.rating=u.rating;p.rd=u.rd;p.vol=Math.max(u.vol,G2_VOL0*0.5);
+      const after=Math.round(p.rating);
+      e.before=before;e.after=after;e.delta=after-before;
+      e.rdBefore=rdBefore;e.rdAfter=Math.round(p.rd);e.duels=[];e.avgScore=Math.round(avgScore);
     } else {
       const duels=results[p.id].map(r=>({oppId:r.oppId,oppRating:Math.round(r.r),oppRD:Math.round(r.rd),score:r.s}));
       const u=glicko2Update(p,results[p.id]);
@@ -638,11 +665,13 @@ function renderHist(){
     const header=`Tag ${day.tag} &mdash; ${day.date}`;
     const rows=sorted.map(e=>{
       const name=playerName(s,e.id);
-      const dStr=e.dnp?'<span class="dim">DNP</span>':e.delta>0?`<span class="pos">+${e.delta}</span>`:e.delta<0?`<span class="neg">${e.delta}</span>`:'±0';
+      const dStr=e.dnp
+        ?`<span style="color:#aaa;font-style:italic;">∅ ${e.avgScore??'?'} &rarr; <b>${e.after}</b> (${e.delta>0?'+'+e.delta:e.delta===0?'±0':e.delta})</span>`
+        :e.delta>0?`<span class="pos">+${e.delta}</span>`:e.delta<0?`<span class="neg">${e.delta}</span>`:'±0';
       // Glicko-2 detail
       let detail='';
       if(e.dnp){
-        detail=`<div class="pdetail" id="det-${day.tag}-${e.id}"><span class="dim">DNP – RD: ${e.rdBefore??'?'}→${e.rdAfter??'?'}</span></div>`;
+        detail=`<div class="pdetail" id="det-${day.tag}-${e.id}"><span class="dim" style="font-style:italic;">DNP &ndash; Tagesdurchschnitt (∅ ${e.avgScore??'?'}) als virtueller Score gewertet &ndash; halbe Gewichtung &ndash; Rating: ${e.before}&rarr;${e.after} (${e.delta>0?'+'+e.delta:e.delta}) &ndash; RD: ${e.rdBefore}→${e.rdAfter}</span></div>`;
       } else {
         const mu=((e.before-1500)/G2_SCALE).toFixed(3),phi=(e.rdBefore/G2_SCALE).toFixed(3);
         const duelRows=(e.duels||[]).map(d=>{
@@ -665,7 +694,7 @@ function renderHist(){
       return`<div class="player-result-row" style="border-bottom:1px solid #eee;">
         <div class="psummary" onclick="togglePD('det-${day.tag}-${e.id}',this)">
           <span style="min-width:70px;"><b>${name}</b></span>
-          <span class="dim">${e.dnp?'DNP':'Score: '+e.score}</span>
+          <span class="dim">${e.dnp?`DNP (∅&nbsp;${e.avgScore??'?'})`:('Score: '+e.score)}</span>
           <span>${e.before}→<b>${e.after}</b></span>
           <span>${dStr}</span>
           <span style="margin-left:auto;color:#aaa;font-size:10px;">&#9658; Detail</span>
