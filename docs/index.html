@@ -401,7 +401,7 @@ const GH_FILE = 'data.json';
 // ─────────────────────────────────────────────────────────────────────────────
 
 const G2_R0=1500, G2_RD0=350, G2_SCALE=173.7178;
-const COLORS=['#1e3a5f','#c00','#2a7a2a','#884400','#6644aa','#007788','#886600','#445588','#aa3366','#558800'];
+const COLORS=['#1e3a5f','#c00','#2a9d2a','#e07b00','#9933cc','#00999a','#cc6600','#0066cc','#cc0066','#666600'];
 let loggedIn=false, sortMode='rating', ghSha=null, GH_TOKEN='';
 let STATE={players:[],days:[]};
 const GH_API=`https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/${GH_FILE}`;
@@ -844,22 +844,30 @@ function renderChart(){
 
   pids.forEach((id,ci)=>{
     const color=COLORS[ci%COLORS.length],pts=hist[id];
-    ctx.strokeStyle=color;ctx.lineWidth=1.5;ctx.beginPath();
-    // Catmull-Rom spline – uses prev+next point to determine tangent
-    pts.forEach((v,i)=>{
-      if(i===0){ctx.moveTo(toX(0),toY(pts[0]));return;}
-      const p0=i>1?i-2:0, p1=i-1, p2=i, p3=i<pts.length-1?i+1:i;
-      const x0=toX(p0),y0=toY(pts[p0]);
-      const x1=toX(p1),y1=toY(pts[p1]);
-      const x2=toX(p2),y2=toY(pts[p2]);
-      const x3=toX(p3),y3=toY(pts[p3]);
-      const alpha=0.5; // tension
-      const cp1x=x1+(x2-x0)*alpha/3;
-      const cp1y=y1+(y2-y0)*alpha/3;
-      const cp2x=x2-(x3-x1)*alpha/3;
-      const cp2y=y2-(y3-y1)*alpha/3;
-      ctx.bezierCurveTo(cp1x,cp1y,cp2x,cp2y,x2,y2);
-    });ctx.stroke();
+    ctx.strokeStyle=color;ctx.lineWidth=1.5;
+    // Cubic B-spline – smooth, doesn't pass through control points
+    if(pts.length===1){ctx.beginPath();ctx.arc(toX(0),toY(pts[0]),2,0,Math.PI*2);ctx.fill();}
+    else if(pts.length===2){ctx.beginPath();ctx.moveTo(toX(0),toY(pts[0]));ctx.lineTo(toX(1),toY(pts[1]));ctx.stroke();}
+    else{
+      // Build extended control point array (repeat first and last)
+      const xs=pts.map((_,i)=>toX(i));
+      const ys=pts.map((v)=>toY(v));
+      ctx.beginPath();
+      ctx.moveTo(xs[0],ys[0]);
+      for(let i=0;i<pts.length-1;i++){
+        const p0=Math.max(i-1,0), p1=i, p2=i+1, p3=Math.min(i+2,pts.length-1);
+        // Chaikin-style: subdivide each segment for smooth B-spline approximation
+        const x1=xs[p1]*0.75+xs[p2]*0.25;
+        const y1=ys[p1]*0.75+ys[p2]*0.25;
+        const x2=xs[p1]*0.25+xs[p2]*0.75;
+        const y2=ys[p1]*0.25+ys[p2]*0.75;
+        const mx=xs[p2];const my=ys[p2];
+        ctx.quadraticCurveTo(xs[p2] ,ys[p2],
+          i===pts.length-2?xs[p2]:(xs[p2]+xs[p3])/2,
+          i===pts.length-2?ys[p2]:(ys[p2]+ys[p3])/2);
+      }
+      ctx.stroke();
+    }
     pts.forEach((v,i)=>{
       ctx.strokeStyle=color;ctx.fillStyle='#fff';ctx.lineWidth=1;
       ctx.beginPath();ctx.arc(toX(i),toY(v),2.5,0,Math.PI*2);ctx.fill();ctx.stroke();
@@ -1243,20 +1251,22 @@ function exportImage(){
     // draw lines + dots
     pids.forEach((id,ci)=>{
       const color=COLORS[ci%COLORS.length], pts=hist[id];
-      ctx.strokeStyle=color; ctx.lineWidth=1.5; ctx.beginPath();
-      pts.forEach((v,i)=>{
-        if(i===0){ctx.moveTo(toX(0),toYc(pts[0]));return;}
-        const p0=i>1?i-2:0, p1=i-1, p2=i, p3=i<pts.length-1?i+1:i;
-        const x0=toX(p0),y0=toYc(pts[p0]);
-        const x1=toX(p1),y1=toYc(pts[p1]);
-        const x2=toX(p2),y2=toYc(pts[p2]);
-        const x3=toX(p3),y3=toYc(pts[p3]);
-        const alpha=0.5;
-        const cp1x=x1+(x2-x0)*alpha/3, cp1y=y1+(y2-y0)*alpha/3;
-        const cp2x=x2-(x3-x1)*alpha/3, cp2y=y2-(y3-y1)*alpha/3;
-        ctx.bezierCurveTo(cp1x,cp1y,cp2x,cp2y,x2,y2);
-      });
-      ctx.stroke();
+      ctx.strokeStyle=color; ctx.lineWidth=1.5;
+      if(pts.length===1){ctx.beginPath();ctx.arc(toX(0),toYc(pts[0]),2,0,Math.PI*2);ctx.fill();}
+      else if(pts.length===2){ctx.beginPath();ctx.moveTo(toX(0),toYc(pts[0]));ctx.lineTo(toX(1),toYc(pts[1]));ctx.stroke();}
+      else{
+        const xs=pts.map((_,i)=>toX(i));
+        const ys=pts.map(v=>toYc(v));
+        ctx.beginPath();
+        ctx.moveTo(xs[0],ys[0]);
+        for(let i=0;i<pts.length-1;i++){
+          const p3=Math.min(i+2,pts.length-1);
+          ctx.quadraticCurveTo(xs[i+1],ys[i+1],
+            i===pts.length-2?xs[i+1]:(xs[i+1]+xs[p3])/2,
+            i===pts.length-2?ys[i+1]:(ys[i+1]+ys[p3])/2);
+        }
+        ctx.stroke();
+      }
       pts.forEach((v,i)=>{
         ctx.strokeStyle=color; ctx.fillStyle='#fff'; ctx.lineWidth=1;
         ctx.beginPath(); ctx.arc(toX(i),toYc(v),2.5,0,Math.PI*2); ctx.fill(); ctx.stroke();
