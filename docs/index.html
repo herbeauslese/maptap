@@ -328,7 +328,7 @@ const GH_REPO = 'maptap';
 const GH_FILE = 'data.json';
 // ─────────────────────────────────────────────────────────────────────────────
 
-const G2_R0=1500, G2_RD0=350, G2_VOL0=0.15, G2_TAU=1.4, G2_SCALE=173.7178;
+const G2_R0=1500, G2_RD0=350, G2_VOL0=0.2, G2_TAU=1.8, G2_SCALE=173.7178;
 const COLORS=['#1e3a5f','#c00','#2a7a2a','#884400','#6644aa','#007788','#886600','#445588','#aa3366','#558800'];
 let loggedIn=false, sortMode='rating', ghSha=null, GH_TOKEN='';
 let STATE={players:[],days:[]};
@@ -383,24 +383,24 @@ function glicko2Update(player,results){
   return{rating:mN*G2_SCALE+1500,rd:Math.max(pN*G2_SCALE,15),vol:sN};
 }
 
-// Outcome: binär mit leichter Proportionalität nur bei sehr knappen Ergebnissen
+// Outcome: aggressiv gestreckt – großer Abstand → fast binär
 function scoreToOutcome(scoreA, scoreB){
   const total = scoreA + scoreB;
   if(total === 0) return 0.5;
   const raw = scoreA / total;
-  // leichte Streckung: fast binär, aber knappes Ergebnis bleibt fair
   const sign = raw >= 0.5 ? 1 : -1;
   const dist = Math.abs(raw - 0.5);
-  return 0.5 + sign * Math.pow(dist * 2, 0.35) * 0.5;
+  // Exponent 0.25 = sehr aggressiv gestreckt
+  return 0.5 + sign * Math.pow(dist * 2, 0.25) * 0.5;
 }
 
 // Duelle gegen sehr schwache Gegner werden weniger gewichtet.
-// Rating-Differenz > 300 → Gewicht sinkt, max Reduktion auf 0.2
+// Erst ab 300 Punkten Unterschied beginnt die Reduktion
 function duelWeight(ratingA, ratingB){
   const diff = Math.abs(ratingA - ratingB);
-  if(diff <= 150) return 1.0;
-  if(diff >= 500) return 0.2;
-  return 1.0 - 0.8 * (diff - 150) / 350;
+  if(diff <= 300) return 1.0;
+  if(diff >= 700) return 0.15;
+  return 1.0 - 0.85 * (diff - 300) / 400;
 }
 
 // ─── MIGRATE + RECOMPUTE ──────────────────────────────────────────────────────
