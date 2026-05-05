@@ -4334,5 +4334,14 @@
         }
       ]
     }
-  ]
+  ],
+  "cfg": {
+    "vol": 0.2,
+    "tau": 1.8,
+    "rdFloor": 15,
+    "outcomeExp": 0.25,
+    "duelWeightStart": 300,
+    "duelWeightMin": 0.15,
+    "dnpWeight": 0.5
+  }
 }
