@@ -242,9 +242,7 @@ a:hover { color: #000; }
       <a href="#" onclick="toggleInfo();return false;" id="info-toggle">&#9658; Glicko-2 erkl&auml;rt</a>
     </div>
     <div id="info-box" style="display:none;" class="glicko-note">
-      Jeder Spieler hat drei Werte: <b>Rating</b> (Startwert 1500 &ndash; h&ouml;her ist besser), <b>RD</b> (Rating Deviation, Startwert 350 &ndash; gibt an, in welchem Unsicherheitsbereich das Rating liegt; ein RD von 50 bedeutet, das echte St&auml;rkeniveau liegt mit hoher Wahrscheinlichkeit zwischen Rating &minus;50 und Rating +50; sinkt je mehr man spielt) und <b>Volatility</b> (wie unbest&auml;ndig jemand spielt).<br><br>
-Nach jedem Spieltag wird jeder gegen jeden verglichen: wer einen h&ouml;heren Score hat, gewinnt das Duell. Wer gegen einen starken Gegner gewinnt, steigt mehr als gegen einen schwachen &ndash; und umgekehrt. Alle Duelle des Tages werden zusammengerechnet und das Rating entsprechend angepasst.<br><br>
-<b>DNP</b> (Did Not Play) = nicht gespielt. Das Rating bleibt unver&auml;ndert, aber das RD steigt leicht an &ndash; das System wird etwas unsicherer &uuml;ber diesen Spieler. Je niedriger das RD, desto verl&auml;sslicher ist das Rating.
+      <b>Rating</b> (Start 1500), <b>RD</b> (Unsicherheit, Start 350), <b>Volatility</b>. Jeder gegen jeden pro Tag. H&ouml;herer Score = Sieg. Wer gegen Starke gewinnt, steigt mehr. <b>DNP</b> = Rating bleibt, RD steigt leicht.
     </div>
     <div id="verlauf-body" style="margin-top:4px;max-height:260px;overflow-y:auto;">
       <span class="dim">Noch keine Spieltage.</span>
@@ -299,6 +297,7 @@ Nach jedem Spieltag wird jeder gegen jeden verglichen: wer einen h&ouml;heren Sc
             <button onclick="genExport('current')">Rangliste</button>
             <button onclick="genExport('lastday')">Letzter Tag</button>
             <button onclick="copyExport()">Kopieren</button>
+            <button onclick="exportImage()" style="font-weight:bold;">&#128247; Als Bild exportieren</button>
           </div>
           <textarea id="mm-out" readonly></textarea>
         </div>
@@ -755,6 +754,179 @@ function genExport(mode){
   document.getElementById('mm-out').value=out;
 }
 function copyExport(){const ta=document.getElementById('mm-out');if(!ta.value){toast('Erst Format wählen!');return;}ta.select();document.execCommand('copy');toast('Kopiert.');}
+
+// ─── IMAGE EXPORT ─────────────────────────────────────────────────────────────
+function exportImage(){
+  const s=load();
+  const sorted=[...s.players].sort((a,b)=>b.rating-a.rating);
+  const DPR=2; // retina
+  const W=680, PAD=20;
+  const rowH=26, headerH=22;
+  const tableH=headerH+(sorted.length*rowH)+8;
+  const chartH=200;
+  const footerH=24;
+  const H=PAD+28+PAD+tableH+PAD+chartH+PAD+footerH+PAD;
+
+  const c=document.createElement('canvas');
+  c.width=W*DPR; c.height=H*DPR;
+  const ctx=c.getContext('2d');
+  ctx.scale(DPR,DPR);
+
+  // background
+  ctx.fillStyle='#fff';
+  ctx.fillRect(0,0,W,H);
+
+  let y=PAD;
+
+  // ── title
+  ctx.fillStyle='#111';
+  ctx.font='bold 16px Arial';
+  ctx.textAlign='left';
+  ctx.fillText('Maptap — Leaderboard',PAD,y+16);
+  ctx.fillStyle='#999';
+  ctx.font='10px Arial';
+  ctx.fillText(new Date().toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'}),W-PAD,y+16);
+  ctx.textAlign='left';
+  y+=28+PAD;
+
+  // ── table header line
+  ctx.strokeStyle='#000'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(PAD,y); ctx.lineTo(W-PAD,y); ctx.stroke();
+  ctx.lineWidth=1;
+
+  const cols=[
+    {label:'#',     x:PAD,    w:28,  align:'left'},
+    {label:'Name',  x:PAD+28, w:140, align:'left'},
+    {label:'Rating',x:PAD+168,w:70,  align:'right'},
+    {label:'RD',    x:PAD+238,w:50,  align:'right'},
+    {label:'Ø Score',x:PAD+288,w:70, align:'right'},
+    {label:'Spiele',x:PAD+358,w:55,  align:'right'},
+  ];
+  y+=headerH-4;
+  ctx.fillStyle='#999'; ctx.font='bold 9px Arial';
+  cols.forEach(col=>{
+    ctx.textAlign=col.align;
+    const tx=col.align==='right'?col.x+col.w:col.x;
+    ctx.fillText(col.label.toUpperCase(),tx,y);
+  });
+  y+=6;
+  ctx.strokeStyle='#000'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(PAD,y); ctx.lineTo(W-PAD,y); ctx.stroke();
+  ctx.lineWidth=0.5;
+
+  // ── table rows
+  sorted.forEach((p,i)=>{
+    y+=rowH;
+    if(i%2===1){ctx.fillStyle='#f8f8f8';ctx.fillRect(PAD,y-rowH+4,W-PAD*2,rowH);}
+    ctx.strokeStyle='#eee';
+    ctx.beginPath();ctx.moveTo(PAD,y+4);ctx.lineTo(W-PAD,y+4);ctx.stroke();
+    const avg=p.games>0?Math.round(p.total/p.games):'—';
+    const rdColor=p.rd<80?'#060':p.rd<150?'#884400':'#900';
+    const vals=[`${i+1}.`, p.name, Math.round(p.rating), Math.round(p.rd), avg, p.games];
+    cols.forEach((col,ci)=>{
+      ctx.textAlign=col.align;
+      const tx=col.align==='right'?col.x+col.w:col.x;
+      if(ci===1){ctx.fillStyle='#111';ctx.font='bold 12px Arial';}
+      else if(ci===2){ctx.fillStyle='#1e3a5f';ctx.font='bold 12px "Courier New"';}
+      else if(ci===3){ctx.fillStyle=rdColor;ctx.font='12px "Courier New"';}
+      else{ctx.fillStyle='#444';ctx.font='12px "Courier New"';}
+      ctx.fillText(String(vals[ci]),tx,y);
+    });
+  });
+  y+=8;
+
+  // ── chart section
+  y+=PAD;
+  ctx.fillStyle='#999'; ctx.font='bold 9px Arial'; ctx.textAlign='left';
+  ctx.fillText('RATING-VERLAUF',PAD,y);
+  ctx.strokeStyle='#eee'; ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(PAD+100,y-3);ctx.lineTo(W-PAD,y-3);ctx.stroke();
+  y+=8;
+
+  // draw chart inline
+  const nd=s.days.length;
+  if(nd>0){
+    const pids=s.players.map(p=>p.id);
+    const hist={};pids.forEach(id=>{hist[id]=[];});
+    s.days.forEach(day=>{pids.forEach(id=>{
+      const e=day.entries.find(x=>x.id===id);
+      const last=hist[id].length>0?hist[id][hist[id].length-1]:1500;
+      hist[id].push(e?e.after:last);
+    });});
+
+    const cPAD={t:8,r:80,b:20,l:44};
+    const cW=W-PAD*2-cPAD.l-cPAD.r;
+    const cH=chartH-cPAD.t-cPAD.b;
+    const all=Object.values(hist).flat();
+    let minV=Math.min(...all),maxV=Math.max(...all);
+    const range=maxV-minV||60;minV-=range*.1;maxV+=range*.1;
+    const toX=i=>PAD+cPAD.l+(nd>1?i*cW/(nd-1):cW/2);
+    const toY2=v=>y+cPAD.t+cH-((v-minV)/(maxV-minV))*cH;
+
+    for(let i=0;i<=4;i++){
+      const v=minV+(maxV-minV)*i/4,yy=toY2(v);
+      ctx.strokeStyle='#eee';ctx.lineWidth=1;ctx.setLineDash([2,3]);
+      ctx.beginPath();ctx.moveTo(PAD+cPAD.l,yy);ctx.lineTo(W-PAD-cPAD.r,yy);ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle='#aaa';ctx.font='9px Arial';ctx.textAlign='right';
+      ctx.fillText(Math.round(v),PAD+cPAD.l-3,yy+3);
+    }
+    ctx.strokeStyle='#bbb';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(PAD+cPAD.l,y+cPAD.t);ctx.lineTo(PAD+cPAD.l,y+cPAD.t+cH);ctx.lineTo(W-PAD-cPAD.r,y+cPAD.t+cH);ctx.stroke();
+    for(let i=0;i<nd;i++){
+      const xx=toX(i);
+      ctx.fillStyle='#aaa';ctx.font='9px Arial';ctx.textAlign='center';
+      ctx.fillText('T'+s.days[i].tag,xx,y+cPAD.t+cH+12);
+    }
+
+    // collect label positions
+    const labels=pids.map((id,ci)=>{
+      const pts=hist[id];
+      const name=(s.players.find(p=>p.id===id)||{}).name||id;
+      return{id,ci,name,y2:toY2(pts[pts.length-1])};
+    });
+    labels.sort((a,b)=>a.y2-b.y2);
+    for(let iter=0;iter<30;iter++){
+      let moved=false;
+      for(let i=1;i<labels.length;i++){
+        const gap=labels[i].y2-labels[i-1].y2;
+        if(gap<11){const push=(11-gap)/2;labels[i-1].y2-=push;labels[i].y2+=push;moved=true;}
+      }
+      if(!moved) break;
+    }
+
+    pids.forEach((id,ci)=>{
+      const color=COLORS[ci%COLORS.length],pts=hist[id];
+      ctx.strokeStyle=color;ctx.lineWidth=1.5;ctx.beginPath();
+      pts.forEach((v,i)=>{i===0?ctx.moveTo(toX(i),toY2(v)):ctx.lineTo(toX(i),toY2(v));});ctx.stroke();
+      pts.forEach((v,i)=>{
+        ctx.strokeStyle=color;ctx.fillStyle='#fff';ctx.lineWidth=1;
+        ctx.beginPath();ctx.arc(toX(i),toY2(v),2.5,0,Math.PI*2);ctx.fill();ctx.stroke();
+      });
+    });
+    labels.forEach(({ci,name,y2})=>{
+      const color=COLORS[ci%COLORS.length];
+      ctx.fillStyle=color;ctx.font='bold 9px Arial';ctx.textAlign='left';
+      ctx.fillText(name,W-PAD-cPAD.r+5,y2+3);
+    });
+  }
+
+  y+=chartH;
+
+  // ── footer
+  y+=PAD;
+  ctx.fillStyle='#ccc';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(PAD,y);ctx.lineTo(W-PAD,y);ctx.stroke();
+  ctx.fillStyle='#aaa';ctx.font='9px Arial';ctx.textAlign='left';
+  ctx.fillText('maptap · Glicko-2 Ratingsystem · '+new Date().toLocaleDateString('de-DE'),PAD,y+14);
+
+  // download
+  const link=document.createElement('a');
+  link.download=`maptap_${new Date().toISOString().split('T')[0]}.png`;
+  link.href=c.toDataURL('image/png');
+  link.click();
+  toast('Bild gespeichert!');
+}
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 function renderTicker(){
