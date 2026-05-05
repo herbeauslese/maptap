@@ -369,9 +369,9 @@ function g2E(r,rj,rdj){return 1/(1+Math.exp(-g2g(rdj)*(r-rj)));}
 function glicko2Update(player,results){
   const mu=(player.rating-1500)/G2_SCALE,phi=player.rd/G2_SCALE,sigma=player.vol;
   if(!results.length){return{rating:player.rating,rd:Math.min(Math.sqrt(phi*phi+sigma*sigma)*G2_SCALE,G2_RD0),vol:sigma};}
-  const opps=results.map(r=>({mu:(r.r-1500)/G2_SCALE,phi:r.rd/G2_SCALE,s:r.s}));
-  let v=0;opps.forEach(o=>{const gp=g2g(o.phi),ev=g2E(mu,o.mu,o.phi);v+=gp*gp*ev*(1-ev);});v=1/v;
-  let delta=0;opps.forEach(o=>{delta+=g2g(o.phi)*(o.s-g2E(mu,o.mu,o.phi));});delta*=v;
+  const opps=results.map(r=>({mu:(r.r-1500)/G2_SCALE,phi:r.rd/G2_SCALE,s:r.s,w:r.w??1}));
+  let v=0;opps.forEach(o=>{const gp=g2g(o.phi),ev=g2E(mu,o.mu,o.phi);v+=o.w*gp*gp*ev*(1-ev);});v=1/v;
+  let delta=0;opps.forEach(o=>{delta+=o.w*g2g(o.phi)*(o.s-g2E(mu,o.mu,o.phi));});delta*=v;
   const a=Math.log(sigma*sigma),tau2=G2_TAU*G2_TAU,d2=delta*delta,p2=phi*phi;
   function f(x){const ex=Math.exp(x),dd=p2+v+ex;return(ex*(d2-dd))/(2*dd*dd)-(x-a)/tau2;}
   let A=a,B=d2>p2+v?Math.log(d2-p2-v):a-G2_TAU;
@@ -379,21 +379,28 @@ function glicko2Update(player,results){
   let fA=f(A),fB=f(B);
   for(let i=0;i<100;i++){if(Math.abs(B-A)<1e-6)break;const C=A+(A-B)*fA/(fB-fA),fC=f(C);if(fC*fB<0){A=B;fA=fB;}else fA/=2;B=C;fB=fC;}
   const sN=Math.exp(A/2),pS=Math.sqrt(phi*phi+sN*sN),pN=1/Math.sqrt(1/(pS*pS)+1/v);
-  let mN=mu;opps.forEach(o=>{mN+=pN*pN*g2g(o.phi)*(o.s-g2E(mu,o.mu,o.phi));});
+  let mN=mu;opps.forEach(o=>{mN+=o.w*pN*pN*g2g(o.phi)*(o.s-g2E(mu,o.mu,o.phi));});
   return{rating:mN*G2_SCALE+1500,rd:Math.max(pN*G2_SCALE,15),vol:sN};
 }
 
-// Score-proportional outcome mit Verstärkung:
-// Kleiner Abstand → fair proportional, großer Abstand → fast binär
+// Outcome: binär mit leichter Proportionalität nur bei sehr knappen Ergebnissen
 function scoreToOutcome(scoreA, scoreB){
   const total = scoreA + scoreB;
   if(total === 0) return 0.5;
-  const raw = scoreA / total; // 0..1
-  // Verstärken: raw^0.4 streckt die Mitte, komprimiert die Extreme nicht so stark
-  // raw=0.5 → 0.5, raw=0.69 → 0.80, raw=0.3 → 0.20
+  const raw = scoreA / total;
+  // leichte Streckung: fast binär, aber knappes Ergebnis bleibt fair
   const sign = raw >= 0.5 ? 1 : -1;
   const dist = Math.abs(raw - 0.5);
-  return 0.5 + sign * Math.pow(dist * 2, 0.55) * 0.5;
+  return 0.5 + sign * Math.pow(dist * 2, 0.35) * 0.5;
+}
+
+// Duelle gegen sehr schwache Gegner werden weniger gewichtet.
+// Rating-Differenz > 300 → Gewicht sinkt, max Reduktion auf 0.2
+function duelWeight(ratingA, ratingB){
+  const diff = Math.abs(ratingA - ratingB);
+  if(diff <= 150) return 1.0;
+  if(diff >= 500) return 0.2;
+  return 1.0 - 0.8 * (diff - 150) / 350;
 }
 
 // ─── MIGRATE + RECOMPUTE ──────────────────────────────────────────────────────
@@ -427,14 +434,15 @@ function applyDay(players,day){
   // build pairwise results – DNP plays against everyone with avg score, half weight
   const results={};players.forEach(p=>{results[p.id]=[];});
 
-  // active vs active – score-proportional outcome
+  // active vs active – gewichtet nach Rating-Nähe
   for(let i=0;i<active.length;i++)for(let j=i+1;j<active.length;j++){
     const a=active[i],b=active[j];
     const pA=players.find(p=>p.id===a.id),pB=players.find(p=>p.id===b.id);
     if(!pA||!pB)continue;
     const sA=scoreToOutcome(a.score||0, b.score||0);
-    results[a.id].push({r:pB.rating,rd:pB.rd,s:sA,oppId:b.id,w:1});
-    results[b.id].push({r:pA.rating,rd:pA.rd,s:1-sA,oppId:a.id,w:1});
+    const w=duelWeight(pA.rating, pB.rating);
+    results[a.id].push({r:pB.rating,rd:pB.rd,s:sA,oppId:b.id,w});
+    results[b.id].push({r:pA.rating,rd:pA.rd,s:1-sA,oppId:a.id,w});
   }
 
   // DNP vs active – with half weight, score-proportional
