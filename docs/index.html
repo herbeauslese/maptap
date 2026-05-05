@@ -747,8 +747,10 @@ function renderChart(){
     pts.forEach((v,i)=>{
       if(i===0){ctx.moveTo(toX(i),toY(v));}
       else{
-        const cpX=(toX(i)+toX(i-1))/2;
-        ctx.bezierCurveTo(cpX,toY(pts[i-1]),cpX,toY(v),toX(i),toY(v));
+        const t=0.35;
+        const cp1x=toX(i-1)+(toX(i)-toX(i-1))*t;
+        const cp2x=toX(i)  -(toX(i)-toX(i-1))*t;
+        ctx.bezierCurveTo(cp1x,toY(pts[i-1]),cp2x,toY(v),toX(i),toY(v));
       }
     });ctx.stroke();
     pts.forEach((v,i)=>{
@@ -1138,8 +1140,10 @@ function exportImage(){
       pts.forEach((v,i)=>{
         if(i===0){ctx.moveTo(toX(i),toYc(v));}
         else{
-          const cpX=(toX(i)+toX(i-1))/2;
-          ctx.bezierCurveTo(cpX,toYc(pts[i-1]),cpX,toYc(v),toX(i),toYc(v));
+          const t=0.35;
+          const cp1x=toX(i-1)+(toX(i)-toX(i-1))*t;
+          const cp2x=toX(i)  -(toX(i)-toX(i-1))*t;
+          ctx.bezierCurveTo(cp1x,toYc(pts[i-1]),cp2x,toYc(v),toX(i),toYc(v));
         }
       });
       ctx.stroke();
