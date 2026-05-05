@@ -328,7 +328,7 @@ const GH_REPO = 'maptap';
 const GH_FILE = 'data.json';
 // ─────────────────────────────────────────────────────────────────────────────
 
-const G2_R0=1500, G2_RD0=350, G2_VOL0=0.06, G2_TAU=0.5, G2_SCALE=173.7178;
+const G2_R0=1500, G2_RD0=350, G2_VOL0=0.08, G2_TAU=0.9, G2_SCALE=173.7178;
 const COLORS=['#1e3a5f','#c00','#2a7a2a','#884400','#6644aa','#007788','#886600','#445588','#aa3366','#558800'];
 let loggedIn=false, sortMode='rating', ghSha=null, GH_TOKEN='';
 let STATE={players:[],days:[]};
@@ -380,7 +380,7 @@ function glicko2Update(player,results){
   for(let i=0;i<100;i++){if(Math.abs(B-A)<1e-6)break;const C=A+(A-B)*fA/(fB-fA),fC=f(C);if(fC*fB<0){A=B;fA=fB;}else fA/=2;B=C;fB=fC;}
   const sN=Math.exp(A/2),pS=Math.sqrt(phi*phi+sN*sN),pN=1/Math.sqrt(1/(pS*pS)+1/v);
   let mN=mu;opps.forEach(o=>{mN+=pN*pN*g2g(o.phi)*(o.s-g2E(mu,o.mu,o.phi));});
-  return{rating:mN*G2_SCALE+1500,rd:Math.max(pN*G2_SCALE,30),vol:sN};
+  return{rating:mN*G2_SCALE+1500,rd:Math.max(pN*G2_SCALE,15),vol:sN};
 }
 
 // ─── MIGRATE + RECOMPUTE ──────────────────────────────────────────────────────
@@ -480,10 +480,32 @@ function renderLb(){
   const sorted=[...s.players].sort((a,b)=>
     sortMode==='avg'?(b.games>0?b.total/b.games:0)-(a.games>0?a.total/a.games:0):b.rating-a.rating
   );
+
+  // Compute previous ranking (before last day)
+  const prevRank={};
+  if(s.days.length>=1){
+    const prevPlayers=s.players.map(p=>{
+      const lastEntry=s.days[s.days.length-1].entries.find(e=>e.id===p.id);
+      return{id:p.id,rating:lastEntry?lastEntry.before:p.rating};
+    }).sort((a,b)=>b.rating-a.rating);
+    prevPlayers.forEach((p,i)=>{prevRank[p.id]=i+1;});
+  }
+
   const rdCol=rd=>rd<80?'#006600':rd<150?'#cc6600':'#990000';
   document.getElementById('lb-body').innerHTML=sorted.map((p,i)=>{
     const avg=p.games>0?Math.round(p.total/p.games):'&mdash;';
-    return`<tr><td>${i+1}</td><td class="l">${p.name}</td><td>${Math.round(p.rating)}</td><td style="color:${rdCol(p.rd)}">${Math.round(p.rd)}</td><td>${avg}</td><td>${p.games}</td></tr>`;
+    const curRank=i+1;
+    const prev=prevRank[p.id];
+    let badge='';
+    if(prev===undefined||s.days.length===0){
+      badge='<span style="color:#ccc;font-size:10px;">&#9135;</span>';
+    } else {
+      const diff=prev-curRank;
+      if(diff>0) badge=`<span style="color:#060;font-size:10px;">&#9650;${diff}</span>`;
+      else if(diff<0) badge=`<span style="color:#900;font-size:10px;">&#9660;${Math.abs(diff)}</span>`;
+      else badge='<span style="color:#bbb;font-size:10px;">&#9135;</span>';
+    }
+    return`<tr><td style="white-space:nowrap;">${curRank} ${badge}</td><td class="l">${p.name}</td><td>${Math.round(p.rating)}</td><td style="color:${rdCol(p.rd)}">${Math.round(p.rd)}</td><td>${avg}</td><td>${p.games}</td></tr>`;
   }).join('')||'<tr><td colspan="6" style="color:#bbb;text-align:center;padding:16px;">Keine Spieler.</td></tr>';
 
   // update sidebar
