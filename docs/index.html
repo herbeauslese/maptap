@@ -412,7 +412,7 @@ const PROFILES = {
   dynamic:  { label:'Dynamisch',     vol:0.12, tau:1.0,  rdFloor:20,  outcomeExp:0.4,  duelWeightMin:0.3, duelWeightStart:300,   dnpWeight:0.5, mode:'glicko2' },
   chaotic:  { label:'Chaotisch',     vol:0.2,  tau:1.8,  rdFloor:15,  outcomeExp:0.25, duelWeightMin:0.15,duelWeightStart:300,   dnpWeight:0.5, mode:'glicko2' },
   flat:     { label:'Flach (fair)',   vol:0.06, tau:0.5,  rdFloor:30,  outcomeExp:1.0,  duelWeightMin:1.0, duelWeightStart:99999, dnpWeight:0.5, mode:'glicko2' },
-  ranking:  { label:'Ranking-Elo',   vol:0.15, tau:1.2,  rdFloor:20,  outcomeExp:0.4,  duelWeightMin:1.0, duelWeightStart:99999, dnpWeight:0.5, mode:'ranking', kBase:40 },
+  ranking:  { label:'Ranking-Elo',   vol:0.15, tau:1.2,  rdFloor:20,  outcomeExp:0.4,  duelWeightMin:1.0, duelWeightStart:99999, dnpWeight:0.5, mode:'ranking', kBase:80 },
 };
 function getCfg(){
   const d=PROFILES.dynamic;
@@ -555,8 +555,7 @@ function applyDayRanking(players, day){
   if(n<2) return;
 
   // Sort by score → actual rank (1 = best)
-  const ranked=[...active].sort((a,b)=>(b.score||0)-(a.score||0));
-  ranked.forEach((e,i)=>{ e._actualRank=i+1; });
+  [...active].sort((a,b)=>(b.score||0)-(a.score||0)).forEach((e,i)=>{ e._actualRank=i+1; });
 
   // Expected rank from ratings via pairwise Elo win probability
   active.forEach(e=>{
@@ -567,29 +566,29 @@ function applyDayRanking(players, day){
       const pF=players.find(x=>x.id===f.id); if(!pF) return;
       expectedWins += 1/(1+Math.pow(10,(pF.rating-p.rating)/400));
     });
-    e._expectedRank = n - expectedWins; // high wins → low rank number
+    e._expectedRank = n - expectedWins;
   });
 
-  // Raw deltas: K * (expectedRank - actualRank) / n
-  // + score performance bonus vs group avg
+  // Raw deltas – use full K, not divided by n
   const avgScore=active.reduce((s,x)=>s+(x.score||0),0)/n;
   active.forEach(e=>{
-    const rankDelta = K * (e._expectedRank - e._actualRank) / n;
+    // rank performance: how many places better/worse than expected
+    const rankDelta = K * (e._expectedRank - e._actualRank) / (n-1);
+    // score bonus: multiplicative, 0.5x to 1.5x
     const scoreRatio=(e.score||0)/Math.max(avgScore,1);
-    const scoreMult=0.6+0.4*Math.min(scoreRatio,1.8);
+    const scoreMult=0.5+0.5*Math.min(Math.max(scoreRatio,0.2),1.8);
     e._rawDelta = rankDelta * scoreMult;
   });
 
-  // ── ZERO-SUM: subtract mean so total = 0
+  // ZERO-SUM: subtract mean
   const mean = active.reduce((s,e)=>s+e._rawDelta,0)/n;
   active.forEach(e=>{ e._rawDelta -= mean; });
 
-  // Apply
+  // Apply – no early rounding, apply float then round result
   active.forEach(e=>{
     const p=players.find(x=>x.id===e.id); if(!p) return;
     const before=Math.round(p.rating);
-    const delta=Math.round(e._rawDelta);
-    p.rating=Math.max(100, p.rating+delta);
+    p.rating=Math.max(100, p.rating + e._rawDelta);
     p.rd=Math.max(cfg.rdFloor, p.rd*0.98);
     p.games++; p.total+=e.score||0;
     const after=Math.round(p.rating);
@@ -597,12 +596,12 @@ function applyDayRanking(players, day){
     e.rdBefore=before; e.rdAfter=Math.round(p.rd); e.duels=[];
   });
 
-  // DNP: tiny pull toward group mean rating
+  // DNP: pull toward group mean rating
   const avgRating=players.filter(p=>p.games>0).reduce((s,p)=>s+p.rating,0)/Math.max(players.filter(p=>p.games>0).length,1);
   day.entries.filter(e=>e.dnp).forEach(e=>{
     const p=players.find(x=>x.id===e.id); if(!p) return;
     const before=Math.round(p.rating);
-    const pull=Math.round((avgRating-p.rating)*0.03*cfg.dnpWeight);
+    const pull=(avgRating-p.rating)*0.04*cfg.dnpWeight;
     p.rating=Math.max(100, p.rating+pull);
     p.rd=Math.min(G2_RD0, p.rd*1.02);
     const after=Math.round(p.rating);
