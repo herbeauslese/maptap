@@ -303,7 +303,72 @@ a:hover { color: #000; }
         </div>
       </div>
       <div class="admin-sec">
-        <div class="admin-sec-hdr" onclick="toggleAdminSec(this)">&#9658; Gef&auml;hrliche Zone</div>
+        <div class="admin-sec-hdr" onclick="toggleAdminSec(this)">&#9658; Rating-System Einstellungen</div>
+        <div class="admin-sec-body">
+
+          <div style="margin-bottom:8px;">
+            <span style="font-size:9px;font-weight:bold;text-transform:uppercase;letter-spacing:0.1em;color:#999;">Profile</span>
+            <div class="row" style="margin-top:4px;" id="profile-btns">
+              <button onclick="applyProfile('standard')">Standard</button>
+              <button onclick="applyProfile('dynamic')">Dynamisch</button>
+              <button onclick="applyProfile('chaotic')">Chaotisch</button>
+              <button onclick="applyProfile('flat')">Flach</button>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:11px;" id="cfg-fields">
+
+            <div>
+              <label style="font-weight:bold;">Volatility (Start) <input type="number" id="cfg-vol" step="0.01" min="0.02" max="0.5" style="width:65px;margin-left:5px;"></label>
+              <div style="color:#888;font-size:10px;margin-top:2px;">Wie unbeständig ein Spieler zu Beginn gilt. Höher = stärkere Ausschläge in den ersten Spieltagen. <em>Standard: 0.06 · Dynamisch: 0.12 · Chaotisch: 0.20</em></div>
+            </div>
+
+            <div>
+              <label style="font-weight:bold;">Tau (Systemdynamik) <input type="number" id="cfg-tau" step="0.1" min="0.1" max="3.0" style="width:65px;margin-left:5px;"></label>
+              <div style="color:#888;font-size:10px;margin-top:2px;">Steuert wie schnell das System auf Überraschungen reagiert. Höher = stärkere Schwankungen nach unerwarteten Ergebnissen. <em>Standard: 0.5 · Empfohlen: 0.5–1.5</em></div>
+            </div>
+
+            <div>
+              <label style="font-weight:bold;">RD-Minimum <input type="number" id="cfg-rdfloor" step="1" min="5" max="100" style="width:65px;margin-left:5px;"></label>
+              <div style="color:#888;font-size:10px;margin-top:2px;">Die Rating Deviation (Unsicherheit) sinkt nie unter diesen Wert. Niedrig = auch erfahrene Spieler können noch stark schwanken. <em>Standard: 30 · Aktiv: 15</em></div>
+            </div>
+
+            <div>
+              <label style="font-weight:bold;">Score-Outcome (0.1–1.0) <input type="number" id="cfg-exp" step="0.05" min="0.1" max="1.0" style="width:65px;margin-left:5px;"></label>
+              <div style="color:#888;font-size:10px;margin-top:2px;">Wie stark der Score-Abstand das Duell-Ergebnis beeinflusst. <strong>1.0</strong> = rein proportional (900 vs 400 = 0.69). <strong>0.25</strong> = fast binär (900 vs 400 = 0.89). <em>Empfohlen: 0.3–0.5</em></div>
+            </div>
+
+            <div>
+              <label style="font-weight:bold;">Duel-Gewicht ab Δ Rating <input type="number" id="cfg-dwstart" step="50" min="100" max="9999" style="width:65px;margin-left:5px;"></label>
+              <div style="color:#888;font-size:10px;margin-top:2px;">Ab welchem Rating-Unterschied Duelle weniger stark gewichtet werden. Schützt starke Spieler vor Punktverlust gegen sehr schwache. <strong>9999</strong> = deaktiviert. <em>Empfohlen: 200–400</em></div>
+            </div>
+
+            <div>
+              <label style="font-weight:bold;">Duel-Gewicht Minimum <input type="number" id="cfg-dwmin" step="0.05" min="0.05" max="1.0" style="width:65px;margin-left:5px;"></label>
+              <div style="color:#888;font-size:10px;margin-top:2px;">Wie wenig ein Duell gegen einen sehr viel schwächeren Gegner zählt (Minimalgewicht). <strong>1.0</strong> = alle Duelle gleich. <strong>0.1</strong> = sehr ungleiche Duelle fast ignoriert. <em>Empfohlen: 0.15–0.3</em></div>
+            </div>
+
+            <div>
+              <label style="font-weight:bold;">DNP-Gewichtung <input type="number" id="cfg-dnp" step="0.05" min="0.1" max="1.0" style="width:65px;margin-left:5px;"></label>
+              <div style="color:#888;font-size:10px;margin-top:2px;">Wie stark ein DNP-Tag ins Rating eingeht. DNP-Spieler bekommen den Tagesdurchschnitt als virtuellen Score. <strong>0.5</strong> = halber Einfluss. <strong>1.0</strong> = voller Einfluss wie normale Teilnahme. <em>Empfohlen: 0.4–0.6</em></div>
+            </div>
+
+          </div>
+
+          <div class="row" style="margin-top:10px;align-items:center;">
+            <button onclick="saveCfg()">&#10003; Übernehmen &amp; neu berechnen</button>
+            <span id="cfg-lock-wrap" style="margin-left:8px;">
+              <label style="font-size:11px;cursor:pointer;">
+                <input type="checkbox" id="cfg-lock" onchange="toggleCfgLock()">
+                Einstellungen sperren
+              </label>
+            </span>
+            <span id="cfg-locked-badge" style="display:none;font-size:10px;color:#c00;font-weight:bold;margin-left:8px;">&#128274; GESPERRT</span>
+          </div>
+          <div style="font-size:10px;color:#aaa;margin-top:4px;" id="cfg-status"></div>
+
+        </div>
+      </div>
         <div class="admin-sec-body">
           <div class="row">
             <button class="danger" onclick="undoLastDay()">&larr; Letzten Tag r&uuml;ckg&auml;ngig</button>
@@ -328,11 +393,34 @@ const GH_REPO = 'maptap';
 const GH_FILE = 'data.json';
 // ─────────────────────────────────────────────────────────────────────────────
 
-const G2_R0=1500, G2_RD0=350, G2_VOL0=0.2, G2_TAU=1.8, G2_SCALE=173.7178;
+const G2_R0=1500, G2_RD0=350, G2_SCALE=173.7178;
 const COLORS=['#1e3a5f','#c00','#2a7a2a','#884400','#6644aa','#007788','#886600','#445588','#aa3366','#558800'];
 let loggedIn=false, sortMode='rating', ghSha=null, GH_TOKEN='';
 let STATE={players:[],days:[]};
 const GH_API=`https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/${GH_FILE}`;
+
+// Runtime params – read from STATE.cfg or defaults
+const PROFILES = {
+  standard: { label:'Standard',      vol:0.06, tau:0.5,  rdFloor:30,  outcomeExp:0.5,  duelWeightMin:1.0, duelWeightStart:99999, dnpWeight:0.5 },
+  dynamic:  { label:'Dynamisch',     vol:0.12, tau:1.0,  rdFloor:20,  outcomeExp:0.4,  duelWeightMin:0.3, duelWeightStart:300,   dnpWeight:0.5 },
+  chaotic:  { label:'Chaotisch',     vol:0.2,  tau:1.8,  rdFloor:15,  outcomeExp:0.25, duelWeightMin:0.15,duelWeightStart:300,   dnpWeight:0.5 },
+  flat:     { label:'Flach (fair)',   vol:0.06, tau:0.5,  rdFloor:30,  outcomeExp:1.0,  duelWeightMin:1.0, duelWeightStart:99999, dnpWeight:0.5 },
+};
+function getCfg(){
+  const d=PROFILES.dynamic;
+  const c=STATE.cfg||{};
+  return {
+    vol:           c.vol           ?? d.vol,
+    tau:           c.tau           ?? d.tau,
+    rdFloor:       c.rdFloor       ?? d.rdFloor,
+    outcomeExp:    c.outcomeExp    ?? d.outcomeExp,
+    duelWeightStart: c.duelWeightStart ?? d.duelWeightStart,
+    duelWeightMin: c.duelWeightMin ?? d.duelWeightMin,
+    dnpWeight:     c.dnpWeight     ?? d.dnpWeight,
+  };
+}
+function G2_VOL(){ return getCfg().vol; }
+function G2_TAU(){ return getCfg().tau; }
 
 // ─── GITHUB ───────────────────────────────────────────────────────────────────
 async function ghLoad() {
@@ -367,40 +455,41 @@ async function save(s){STATE=s;return await ghSave(s);}
 function g2g(rd){return 1/Math.sqrt(1+3*rd*rd/(Math.PI*Math.PI));}
 function g2E(r,rj,rdj){return 1/(1+Math.exp(-g2g(rdj)*(r-rj)));}
 function glicko2Update(player,results){
+  const cfg=getCfg();
   const mu=(player.rating-1500)/G2_SCALE,phi=player.rd/G2_SCALE,sigma=player.vol;
   if(!results.length){return{rating:player.rating,rd:Math.min(Math.sqrt(phi*phi+sigma*sigma)*G2_SCALE,G2_RD0),vol:sigma};}
   const opps=results.map(r=>({mu:(r.r-1500)/G2_SCALE,phi:r.rd/G2_SCALE,s:r.s,w:r.w??1}));
   let v=0;opps.forEach(o=>{const gp=g2g(o.phi),ev=g2E(mu,o.mu,o.phi);v+=o.w*gp*gp*ev*(1-ev);});v=1/v;
   let delta=0;opps.forEach(o=>{delta+=o.w*g2g(o.phi)*(o.s-g2E(mu,o.mu,o.phi));});delta*=v;
-  const a=Math.log(sigma*sigma),tau2=G2_TAU*G2_TAU,d2=delta*delta,p2=phi*phi;
+  const tau=cfg.tau, a=Math.log(sigma*sigma),tau2=tau*tau,d2=delta*delta,p2=phi*phi;
   function f(x){const ex=Math.exp(x),dd=p2+v+ex;return(ex*(d2-dd))/(2*dd*dd)-(x-a)/tau2;}
-  let A=a,B=d2>p2+v?Math.log(d2-p2-v):a-G2_TAU;
-  while(f(B)<0)B-=G2_TAU;
+  let A=a,B=d2>p2+v?Math.log(d2-p2-v):a-tau;
+  while(f(B)<0)B-=tau;
   let fA=f(A),fB=f(B);
   for(let i=0;i<100;i++){if(Math.abs(B-A)<1e-6)break;const C=A+(A-B)*fA/(fB-fA),fC=f(C);if(fC*fB<0){A=B;fA=fB;}else fA/=2;B=C;fB=fC;}
   const sN=Math.exp(A/2),pS=Math.sqrt(phi*phi+sN*sN),pN=1/Math.sqrt(1/(pS*pS)+1/v);
   let mN=mu;opps.forEach(o=>{mN+=o.w*pN*pN*g2g(o.phi)*(o.s-g2E(mu,o.mu,o.phi));});
-  return{rating:mN*G2_SCALE+1500,rd:Math.max(pN*G2_SCALE,15),vol:sN};
+  return{rating:mN*G2_SCALE+1500,rd:Math.max(pN*G2_SCALE,cfg.rdFloor),vol:sN};
 }
 
-// Outcome: aggressiv gestreckt – großer Abstand → fast binär
 function scoreToOutcome(scoreA, scoreB){
-  const total = scoreA + scoreB;
-  if(total === 0) return 0.5;
-  const raw = scoreA / total;
-  const sign = raw >= 0.5 ? 1 : -1;
-  const dist = Math.abs(raw - 0.5);
-  // Exponent 0.25 = sehr aggressiv gestreckt
-  return 0.5 + sign * Math.pow(dist * 2, 0.25) * 0.5;
+  const total=scoreA+scoreB;
+  if(total===0) return 0.5;
+  const raw=scoreA/total;
+  const exp=getCfg().outcomeExp;
+  const sign=raw>=0.5?1:-1;
+  const dist=Math.abs(raw-0.5);
+  return 0.5+sign*Math.pow(dist*2,exp)*0.5;
 }
 
-// Duelle gegen sehr schwache Gegner werden weniger gewichtet.
-// Erst ab 300 Punkten Unterschied beginnt die Reduktion
 function duelWeight(ratingA, ratingB){
-  const diff = Math.abs(ratingA - ratingB);
-  if(diff <= 300) return 1.0;
-  if(diff >= 700) return 0.15;
-  return 1.0 - 0.85 * (diff - 300) / 400;
+  const cfg=getCfg();
+  if(cfg.duelWeightMin>=1.0) return 1.0;
+  const diff=Math.abs(ratingA-ratingB);
+  const start=cfg.duelWeightStart, end=start+400;
+  if(diff<=start) return 1.0;
+  if(diff>=end) return cfg.duelWeightMin;
+  return 1.0-(1.0-cfg.duelWeightMin)*(diff-start)/400;
 }
 
 // ─── MIGRATE + RECOMPUTE ──────────────────────────────────────────────────────
@@ -409,7 +498,7 @@ function migrate(data){
   const isOldFormat = data.players.length > 0 && data.players[0].rating === undefined;
   data.players=data.players.map(p=>({
     id:p.id,name:p.name,
-    rating:G2_R0,rd:G2_RD0,vol:G2_VOL0,
+    rating:G2_R0,rd:G2_RD0,vol:getCfg().vol,
     games:0,total:0
   }));
   // Always recompute from scratch using stored scores
@@ -418,7 +507,8 @@ function migrate(data){
 }
 
 function recompute(data){
-  data.players.forEach(p=>{p.rating=G2_R0;p.rd=G2_RD0;p.vol=G2_VOL0;p.games=0;p.total=0;});
+  const cfg=getCfg();
+  data.players.forEach(p=>{p.rating=G2_R0;p.rd=G2_RD0;p.vol=cfg.vol;p.games=0;p.total=0;});
   data.days.forEach(day=>applyDay(data.players,day));
 }
 
@@ -461,8 +551,8 @@ function applyDay(players,day){
     if(e.dnp){
       // use half-strength glicko update with avg score
       const halfResults=results[p.id].map(r=>({...r,rd:r.rd*1.5})); // inflate opp RD = less certainty
-      const u=glicko2Update({...p,vol:p.vol*0.5},halfResults); // half volatility
-      p.rating=u.rating;p.rd=u.rd;p.vol=Math.max(u.vol,G2_VOL0*0.5);
+      const u=glicko2Update({...p,vol:p.vol*getCfg().dnpWeight},halfResults); // half volatility
+      p.rating=u.rating;p.rd=u.rd;p.vol=Math.max(u.vol,getCfg().vol*0.5);
       const after=Math.round(p.rating);
       e.before=before;e.after=after;e.delta=after-before;
       e.rdBefore=rdBefore;e.rdAfter=Math.round(p.rd);e.duels=[];e.avgScore=Math.round(avgScore);
@@ -477,6 +567,31 @@ function applyDay(players,day){
 }
 
 // ─── AUTH ─────────────────────────────────────────────────────────────────────
+// ─── SESSION PERSISTENCE (24h) ────────────────────────────────────────────────
+const SESSION_KEY='maptap_session';
+function saveSession(tok){
+  const exp=Date.now()+24*60*60*1000;
+  localStorage.setItem(SESSION_KEY,JSON.stringify({tok,exp}));
+}
+function loadSession(){
+  try{
+    const d=JSON.parse(localStorage.getItem(SESSION_KEY)||'{}');
+    if(d.tok&&d.exp>Date.now()) return d.tok;
+  }catch(e){}
+  return null;
+}
+function clearSession(){ localStorage.removeItem(SESSION_KEY); }
+
+function activateAdmin(tok){
+  GH_TOKEN=tok; loggedIn=true;
+  document.getElementById('admin-login-form').style.display='none';
+  document.getElementById('admin-token-form').style.display='none';
+  document.getElementById('admin-logout-form').style.display='';
+  document.getElementById('admin-status').innerHTML='&#128275;';
+  document.getElementById('admin-panel').style.display='';
+  renderEntryForm(); renderPlayers(); renderCfgPanel();
+}
+
 function checkPassword(){
   if(document.getElementById('pw-input').value===atob('TWFwdGFwMjAyNg==')){
     document.getElementById('admin-login-form').style.display='none';
@@ -487,15 +602,13 @@ function checkPassword(){
 function tryLogin(){
   const tok=document.getElementById('token-input').value.trim();
   if(!tok){toast('Token fehlt.');return;}
-  GH_TOKEN=tok;loggedIn=true;
-  document.getElementById('admin-token-form').style.display='none';
-  document.getElementById('admin-logout-form').style.display='';
-  document.getElementById('admin-status').innerHTML='&#128275;';
-  document.getElementById('admin-panel').style.display='';
-  renderEntryForm();renderPlayers();toast('Willkommen!');
+  saveSession(tok);
+  activateAdmin(tok);
+  toast('Willkommen! Session für 24h gespeichert.');
 }
 function doLogout(){
   GH_TOKEN='';loggedIn=false;
+  clearSession();
   document.getElementById('admin-login-form').style.display='';
   document.getElementById('admin-token-form').style.display='none';
   document.getElementById('admin-logout-form').style.display='none';
@@ -503,7 +616,7 @@ function doLogout(){
   document.getElementById('admin-panel').style.display='none';
   document.getElementById('pw-input').value='';
   document.getElementById('token-input').value='';
-  toast('Abgemeldet.');
+  toast('Abgemeldet. Session gelöscht.');
 }
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
@@ -779,7 +892,7 @@ async function addPlayer(){
   const name=document.getElementById('new-name').value.trim();if(!name)return;
   const s=load();
   if(s.players.find(p=>p.name.toLowerCase()===name.toLowerCase())){toast('Existiert.');return;}
-  s.players.push({id:'p_'+Date.now(),name,rating:G2_R0,rd:G2_RD0,vol:G2_VOL0,games:0,total:0});
+  s.players.push({id:'p_'+Date.now(),name,rating:G2_R0,rd:G2_RD0,vol:getCfg().vol,games:0,total:0});
   const ok=await save(s);if(ok){document.getElementById('new-name').value='';renderAll();renderPlayers();toast(`${name} hinzugefügt.`);}
 }
 async function removePlayer(id){
@@ -1048,7 +1161,72 @@ function exportImage(){
   toast('Bild gespeichert!');
 }
 
-// ─── INIT ─────────────────────────────────────────────────────────────────────
+// ─── CFG MANAGEMENT ───────────────────────────────────────────────────────────
+function renderCfgPanel(){
+  const cfg=getCfg();
+  const locked=STATE.cfgLocked||false;
+  const fields=['vol','tau','rdfloor','exp','dwstart','dwmin','dnp'];
+  const keys =['vol','tau','rdFloor','outcomeExp','duelWeightStart','duelWeightMin','dnpWeight'];
+  fields.forEach((f,i)=>{
+    const el=document.getElementById('cfg-'+f);
+    if(!el)return;
+    el.value=cfg[keys[i]];
+    el.disabled=locked;
+  });
+  const inputs=document.querySelectorAll('#cfg-fields input, #profile-btns button');
+  inputs.forEach(el=>el.disabled=locked);
+  document.querySelector('[onclick="saveCfg()"]').disabled=locked;
+  const lockEl=document.getElementById('cfg-lock');
+  if(lockEl) lockEl.checked=locked;
+  const badge=document.getElementById('cfg-locked-badge');
+  if(badge) badge.style.display=locked?'':'none';
+  // highlight active profile
+  Object.keys(PROFILES).forEach(k=>{
+    const btn=document.querySelector(`[onclick="applyProfile('${k}')"]`);
+    if(!btn)return;
+    const p=PROFILES[k];
+    const match=Object.keys(p).filter(x=>x!=='label').every(x=>Math.abs((cfg[x]||0)-(p[x]||0))<0.001);
+    btn.style.fontWeight=match?'bold':'normal';
+    btn.style.borderColor=match?'#333':'';
+  });
+}
+
+function applyProfile(name){
+  if(STATE.cfgLocked){toast('Einstellungen gesperrt!');return;}
+  const p=PROFILES[name];
+  if(!p)return;
+  STATE.cfg={...p};
+  renderCfgPanel();
+  toast(`Profil "${p.label}" geladen – noch nicht gespeichert.`);
+}
+
+async function saveCfg(){
+  if(STATE.cfgLocked){toast('Einstellungen gesperrt!');return;}
+  const cfg=getCfg();
+  const parse=(id,fallback)=>{const v=parseFloat(document.getElementById('cfg-'+id)?.value);return isNaN(v)?fallback:v;};
+  STATE.cfg={
+    vol:       Math.min(0.5,  Math.max(0.02, parse('vol',    cfg.vol))),
+    tau:       Math.min(3.0,  Math.max(0.1,  parse('tau',    cfg.tau))),
+    rdFloor:   Math.min(100,  Math.max(5,    parse('rdfloor',cfg.rdFloor))),
+    outcomeExp:Math.min(1.0,  Math.max(0.1,  parse('exp',    cfg.outcomeExp))),
+    duelWeightStart:Math.min(9999,Math.max(100,parse('dwstart',cfg.duelWeightStart))),
+    duelWeightMin: Math.min(1.0, Math.max(0.05, parse('dwmin', cfg.duelWeightMin))),
+    dnpWeight: Math.min(1.0,  Math.max(0.1,  parse('dnp',    cfg.dnpWeight))),
+  };
+  recompute(STATE);
+  const ok=await save(STATE);
+  if(ok){renderAll();renderCfgPanel();toast('Einstellungen gespeichert & Ratings neu berechnet.');}
+}
+
+function toggleCfgLock(){
+  const locked=document.getElementById('cfg-lock').checked;
+  STATE.cfgLocked=locked;
+  save(STATE);
+  renderCfgPanel();
+  toast(locked?'Einstellungen gesperrt.':'Einstellungen entsperrt.');
+}
+
+const _origRenderPlayers=typeof renderPlayers==='function'?renderPlayers:null;
 function renderTicker(){
   const s=load();
   const parts=[];
@@ -1230,7 +1408,16 @@ function toast(msg){const el=document.getElementById('toast');el.textContent=msg
   drawGlobe();
 })();
 
-(async()=>{STATE=await ghLoad();renderAll();})();
+(async()=>{
+  STATE=await ghLoad();
+  renderAll();
+  // auto-login if valid 24h session exists
+  const savedTok=loadSession();
+  if(savedTok){
+    activateAdmin(savedTok);
+    setStatus(STATE.days.length+' Spieltage · Session aktiv');
+  }
+})();
 </script>
 </body>
 </html>
