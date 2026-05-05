@@ -1508,7 +1508,7 @@
     "tau": 1.2,
     "rdFloor": 20,
     "outcomeExp": 0.4,
-    "duelWeightStart": 9999,
+    "duelWeightStart": 100,
     "duelWeightMin": 1,
     "dnpWeight": 0.5,
     "kBase": 40,
