@@ -396,8 +396,8 @@ a:hover { color: #000; }
 
 <script>
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
-const GH_USER = 'herbeauslese';
-const GH_REPO = 'maptap';
+const GH_USER = 'DEIN_GITHUB_USERNAME';
+const GH_REPO = 'maptap-leaderboard';
 const GH_FILE = 'data.json';
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -805,11 +805,11 @@ function renderChart(){
   const firstDay={}; // index of first real appearance
   pids.forEach(id=>{
     hist[id]=[];absent[id]=[];
-    // find first day this player actually has an entry
+    // find first day this player actually PLAYED (not DNP)
     let first=-1;
     s.days.forEach((day,di)=>{
       const e=day.entries.find(x=>x.id===id);
-      if(e&&first===-1) first=di;
+      if(e&&!e.dnp&&first===-1) first=di;
     });
     firstDay[id]=first===-1?nd:first;
   });
@@ -1243,10 +1243,23 @@ function exportImage(){
   const nd=s.days.length;
   if(nd>0){
     const pids=s.players.map(p=>p.id);
-    const hist={};pids.forEach(id=>{hist[id]=[];});
-    s.days.forEach(day=>{pids.forEach(id=>{
+
+    // build hist + absent + firstDay (same logic as live chart)
+    const hist={}, absent={}, firstDay={};
+    pids.forEach(id=>{
+      hist[id]=[]; absent[id]=[];
+      let first=-1;
+      s.days.forEach((day,di)=>{
+        const e=day.entries.find(x=>x.id===id);
+        if(e&&!e.dnp&&first===-1) first=di;
+      });
+      firstDay[id]=first===-1?nd:first;
+    });
+    s.days.forEach((day,di)=>{pids.forEach(id=>{
       const e=day.entries.find(x=>x.id===id);
-      hist[id].push(e?e.after:(hist[id].length>0?hist[id][hist[id].length-1]:1500));
+      const last=hist[id].length>0?hist[id][hist[id].length-1]:1500;
+      hist[id].push(e?e.after:last);
+      absent[id].push(!e||e.dnp||di<firstDay[id]);
     });});
 
     const cP={t:10,r:90,b:22,l:46};
@@ -1266,20 +1279,33 @@ function exportImage(){
       ctx.fillStyle='#aaa'; ctx.font='9px Arial'; ctx.textAlign='right';
       ctx.fillText(Math.round(v), P+cP.l-4, yy+3);
     }
-    // axes
     ctx.strokeStyle='#ccc'; ctx.lineWidth=1;
     ctx.beginPath(); ctx.moveTo(P+cP.l,y+cP.t); ctx.lineTo(P+cP.l,y+cP.t+cH); ctx.lineTo(W-P-cP.r,y+cP.t+cH); ctx.stroke();
-    // x labels
     for(let i=0;i<nd;i++){
       ctx.fillStyle='#aaa'; ctx.font='9px Arial'; ctx.textAlign='center';
       ctx.fillText('T'+s.days[i].tag, toX(i), y+cP.t+cH+14);
     }
 
+    // helper segment drawer
+    function drawSeg(x0,y0,x1,y1,xPrev,yPrev,xNext,yNext,dashed,alpha){
+      ctx.beginPath();
+      ctx.globalAlpha=alpha;
+      if(dashed) ctx.setLineDash([4,4]); else ctx.setLineDash([]);
+      const cpx =x0+(x1-xPrev)*0.25, cpy =y0+(y1-yPrev)*0.25;
+      const cpx2=x1-(xNext-x0)*0.25, cpy2=y1-(yNext-y0)*0.25;
+      ctx.moveTo(x0,y0);
+      ctx.bezierCurveTo(cpx,cpy,cpx2,cpy2,x1,y1);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.globalAlpha=1.0;
+    }
+
     // label collision avoidance
     const lbls=pids.map((id,ci)=>{
-      const pts=hist[id], name=(s.players.find(p=>p.id===id)||{}).name||id;
-      return{id,ci,name,ly:toYc(pts[pts.length-1])};
-    }).sort((a,b)=>a.ly-b.ly);
+      const pts=hist[id],fd=firstDay[id];
+      const name=(s.players.find(p=>p.id===id)||{}).name||id;
+      return{id,ci,name,ly:toYc(pts[pts.length-1]),fd};
+    }).filter(l=>l.fd<nd).sort((a,b)=>a.ly-b.ly);
     for(let iter=0;iter<40;iter++){
       let moved=false;
       for(let i=1;i<lbls.length;i++){
@@ -1289,31 +1315,39 @@ function exportImage(){
       if(!moved) break;
     }
 
-    // draw lines + dots
+    // draw lines
     pids.forEach((id,ci)=>{
-      const color=COLORS[ci%COLORS.length], pts=hist[id];
+      const color=COLORS[ci%COLORS.length], pts=hist[id], ab=absent[id], fd=firstDay[id];
       ctx.strokeStyle=color; ctx.lineWidth=1.5;
-      if(pts.length===1){ctx.beginPath();ctx.arc(toX(0),toYc(pts[0]),2,0,Math.PI*2);ctx.fill();}
-      else if(pts.length===2){ctx.beginPath();ctx.moveTo(toX(0),toYc(pts[0]));ctx.lineTo(toX(1),toYc(pts[1]));ctx.stroke();}
-      else{
-        const xs=pts.map((_,i)=>toX(i));
-        const ys=pts.map(v=>toYc(v));
-        ctx.beginPath();
-        ctx.moveTo(xs[0],ys[0]);
-        for(let i=0;i<pts.length-1;i++){
-          const p3=Math.min(i+2,pts.length-1);
-          ctx.quadraticCurveTo(xs[i+1],ys[i+1],
-            i===pts.length-2?xs[i+1]:(xs[i+1]+xs[p3])/2,
-            i===pts.length-2?ys[i+1]:(ys[i+1]+ys[p3])/2);
-        }
-        ctx.stroke();
+
+      for(let i=1;i<pts.length;i++){
+        if(i<=fd) continue;
+        const x0=toX(i-1),y0=toYc(pts[i-1]);
+        const x1=toX(i),   y1=toYc(pts[i]);
+        const xPrev=i>1?toX(i-2):x0, yPrev=i>1?toYc(pts[i-2]):y0;
+        const xNext=i<pts.length-1?toX(i+1):x1, yNext=i<pts.length-1?toYc(pts[i+1]):y1;
+        const mx=(x0+x1)/2, my=(y0+y1)/2;
+        const pA=ab[i-1], pB=ab[i];
+        if(!pA&&!pB) drawSeg(x0,y0,x1,y1,xPrev,yPrev,xNext,yNext,false,1.0);
+        else if(pA&&pB)  drawSeg(x0,y0,x1,y1,xPrev,yPrev,xNext,yNext,true,0.4);
+        else if(pA&&!pB){drawSeg(x0,y0,mx,my,xPrev,yPrev,x1,y1,true,0.4);drawSeg(mx,my,x1,y1,x0,y0,xNext,yNext,false,1.0);}
+        else             {drawSeg(x0,y0,mx,my,xPrev,yPrev,x1,y1,false,1.0);drawSeg(mx,my,x1,y1,x0,y0,xNext,yNext,true,0.4);}
       }
+
+      // tiny crosses
       pts.forEach((v,i)=>{
-        ctx.strokeStyle=color; ctx.fillStyle='#fff'; ctx.lineWidth=1;
-        ctx.beginPath(); ctx.arc(toX(i),toYc(v),2.5,0,Math.PI*2); ctx.fill(); ctx.stroke();
+        if(i<fd) return;
+        const x=toX(i),yy=toYc(v),r=3;
+        ctx.strokeStyle=color;
+        ctx.globalAlpha=ab[i]?0.25:0.45;
+        ctx.lineWidth=1;
+        ctx.beginPath();ctx.moveTo(x-r,yy);ctx.lineTo(x+r,yy);ctx.stroke();
+        ctx.beginPath();ctx.moveTo(x,yy-r);ctx.lineTo(x,yy+r);ctx.stroke();
+        ctx.globalAlpha=1.0;
       });
     });
-    // draw labels
+
+    // labels
     lbls.forEach(({ci,name,ly})=>{
       const color=COLORS[ci%COLORS.length];
       ctx.fillStyle=color; ctx.font='bold 9px Arial'; ctx.textAlign='left';
