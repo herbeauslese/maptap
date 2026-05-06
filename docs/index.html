@@ -314,6 +314,7 @@ a:hover { color: #000; }
               <button onclick="applyProfile('chaotic')">Chaotisch</button>
               <button onclick="applyProfile('flat')">Flach</button>
               <button onclick="applyProfile('ranking')" style="border-color:#1e3a5f;font-weight:bold;">&#9733; Ranking-Elo</button>
+              <button onclick="applyProfile('balanced')" style="border-color:#2a9d2a;font-weight:bold;">&#9670; Ausgewogen</button>
             </div>
           </div>
 
@@ -401,7 +402,7 @@ const GH_FILE = 'data.json';
 // ─────────────────────────────────────────────────────────────────────────────
 
 const G2_R0=1500, G2_RD0=350, G2_SCALE=173.7178;
-const COLORS=['#1e3a5f','#c00','#2a9d2a','#e07b00','#9933cc','#00999a','#cc6600','#0066cc','#cc0066','#666600'];
+const COLORS=['#1e3a5f','#c00','#2a9d2a','#e07b00','#9933cc','#00999a','#7B3F00','#0066cc','#cc0066','#888800'];
 let loggedIn=false, sortMode='rating', ghSha=null, GH_TOKEN='';
 let STATE={players:[],days:[]};
 const GH_API=`https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/${GH_FILE}`;
@@ -413,6 +414,7 @@ const PROFILES = {
   chaotic:  { label:'Chaotisch',     vol:0.2,  tau:1.8,  rdFloor:15,  outcomeExp:0.25, duelWeightMin:0.15,duelWeightStart:300,   dnpWeight:0.5, mode:'glicko2' },
   flat:     { label:'Flach (fair)',   vol:0.06, tau:0.5,  rdFloor:30,  outcomeExp:1.0,  duelWeightMin:1.0, duelWeightStart:99999, dnpWeight:0.5, mode:'glicko2' },
   ranking:  { label:'Ranking-Elo',   vol:0.15, tau:1.2,  rdFloor:20,  outcomeExp:0.4,  duelWeightMin:1.0, duelWeightStart:99999, dnpWeight:0.5, mode:'ranking', kBase:80 },
+  balanced: { label:'Ausgewogen',    vol:0.10, tau:1.1,  rdFloor:60,  outcomeExp:0.35, duelWeightMin:0.25,duelWeightStart:250,   dnpWeight:0.45,mode:'ranking', kBase:60 },
 };
 function getCfg(){
   const d=PROFILES.dynamic;
@@ -798,11 +800,14 @@ function renderChart(){
     document.getElementById('chart-legend').innerHTML='';return;
   }
 
-  const hist={};pids.forEach(id=>{hist[id]=[];});
+  const hist={};    // rating values per player per day
+  const absent={};  // true if player was DNP or not yet in game at that day index
+  pids.forEach(id=>{hist[id]=[];absent[id]=[];});
   s.days.forEach(day=>{pids.forEach(id=>{
     const e=day.entries.find(x=>x.id===id);
     const last=hist[id].length>0?hist[id][hist[id].length-1]:G2_R0;
     hist[id].push(e?e.after:last);
+    absent[id].push(!e||e.dnp); // absent if not in entries or DNP
   });});
 
   const PAD={t:12,r:60,b:22,l:46};
@@ -816,9 +821,8 @@ function renderChart(){
 
   ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
 
-  // light grey gridlines
-  ctx.strokeStyle='#e8e8e8';ctx.lineWidth=1;
-  ctx.setLineDash([2,3]);
+  // gridlines
+  ctx.strokeStyle='#e8e8e8';ctx.lineWidth=1;ctx.setLineDash([2,3]);
   for(let i=0;i<=yTicks;i++){
     const v=minV+(maxV-minV)*i/yTicks,y=toY(v);
     ctx.beginPath();ctx.moveTo(PAD.l,y);ctx.lineTo(W-PAD.r,y);ctx.stroke();
@@ -829,11 +833,9 @@ function renderChart(){
   }
   ctx.setLineDash([]);
 
-  // axis lines
+  // axes
   ctx.strokeStyle='#bbb';ctx.lineWidth=1;
   ctx.beginPath();ctx.moveTo(PAD.l,PAD.t);ctx.lineTo(PAD.l,H-PAD.b);ctx.lineTo(W-PAD.r,H-PAD.b);ctx.stroke();
-
-  // x labels
   for(let i=0;i<nd;i++){
     const x=toX(i);
     ctx.strokeStyle='#bbb';ctx.lineWidth=1;
@@ -843,34 +845,46 @@ function renderChart(){
   }
 
   pids.forEach((id,ci)=>{
-    const color=COLORS[ci%COLORS.length],pts=hist[id];
-    ctx.strokeStyle=color;ctx.lineWidth=1.5;
-    // Cubic B-spline – smooth, doesn't pass through control points
-    if(pts.length===1){ctx.beginPath();ctx.arc(toX(0),toY(pts[0]),2,0,Math.PI*2);ctx.fill();}
-    else if(pts.length===2){ctx.beginPath();ctx.moveTo(toX(0),toY(pts[0]));ctx.lineTo(toX(1),toY(pts[1]));ctx.stroke();}
-    else{
-      // Build extended control point array (repeat first and last)
-      const xs=pts.map((_,i)=>toX(i));
-      const ys=pts.map((v)=>toY(v));
-      ctx.beginPath();
-      ctx.moveTo(xs[0],ys[0]);
-      for(let i=0;i<pts.length-1;i++){
-        const p0=Math.max(i-1,0), p1=i, p2=i+1, p3=Math.min(i+2,pts.length-1);
-        // Chaikin-style: subdivide each segment for smooth B-spline approximation
-        const x1=xs[p1]*0.75+xs[p2]*0.25;
-        const y1=ys[p1]*0.75+ys[p2]*0.25;
-        const x2=xs[p1]*0.25+xs[p2]*0.75;
-        const y2=ys[p1]*0.25+ys[p2]*0.75;
-        const mx=xs[p2];const my=ys[p2];
-        ctx.quadraticCurveTo(xs[p2] ,ys[p2],
-          i===pts.length-2?xs[p2]:(xs[p2]+xs[p3])/2,
-          i===pts.length-2?ys[p2]:(ys[p2]+ys[p3])/2);
+    const color=COLORS[ci%COLORS.length],pts=hist[id],ab=absent[id];
+
+    // Draw line segment by segment, dashed when absent
+    if(pts.length>=2){
+      // Split into solid and dashed runs
+      for(let i=1;i<pts.length;i++){
+        const isDashed=ab[i-1]||ab[i];
+        ctx.beginPath();
+        ctx.strokeStyle=color;
+        ctx.lineWidth=1.5;
+        ctx.globalAlpha=isDashed?0.45:1.0;
+        if(isDashed) ctx.setLineDash([4,4]);
+        else ctx.setLineDash([]);
+        // For smooth curves within each segment, use simple quadratic to midpoint
+        const x0=toX(i-1),y0=toY(pts[i-1]);
+        const x1=toX(i),y1=toY(pts[i]);
+        // B-spline: if we have neighbors, use them for control point
+        const xPrev=i>1?toX(i-2):x0, yPrev=i>1?toY(pts[i-2]):y0;
+        const xNext=i<pts.length-1?toX(i+1):x1, yNext=i<pts.length-1?toY(pts[i+1]):y1;
+        const cpx=x0+(x1-xPrev)*0.25;
+        const cpy=y0+(y1-yPrev)*0.25;
+        const cpx2=x1-(xNext-x0)*0.25;
+        const cpy2=y1-(yNext-y0)*0.25;
+        ctx.moveTo(x0,y0);
+        ctx.bezierCurveTo(cpx,cpy,cpx2,cpy2,x1,y1);
+        ctx.stroke();
       }
-      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.globalAlpha=1.0;
     }
+
+    // Tiny cross markers at each data point
     pts.forEach((v,i)=>{
-      ctx.strokeStyle=color;ctx.fillStyle='#fff';ctx.lineWidth=1;
-      ctx.beginPath();ctx.arc(toX(i),toY(v),2.5,0,Math.PI*2);ctx.fill();ctx.stroke();
+      const x=toX(i),y=toY(v),r=3;
+      ctx.strokeStyle=color;
+      ctx.globalAlpha=ab[i]?0.25:0.45;
+      ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(x-r,y);ctx.lineTo(x+r,y);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(x,y-r);ctx.lineTo(x,y+r);ctx.stroke();
+      ctx.globalAlpha=1.0;
     });
   });
 
