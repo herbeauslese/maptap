@@ -5351,5 +5351,5 @@
     "kBase": 40,
     "mode": "glicko2"
   },
-  "cfgLocked": false
+  "cfgLocked": true
 }
