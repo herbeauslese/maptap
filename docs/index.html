@@ -228,6 +228,9 @@ a:hover { color: #000; }
       <a href="#" id="filter-reset" onclick="resetFilter();return false;" style="display:none;">Alle anzeigen</a>
     </div>
     <canvas id="chart-rating" height="320"></canvas>
+    <div style="font-size:10px;color:#bbb;margin-top:8px;margin-bottom:4px;letter-spacing:0.03em;">
+      ↓ Spieler antippen zum Hervorheben &mdash; mehrere gleichzeitig m&ouml;glich
+    </div>
     <div id="chart-filter"></div>
 
     <div class="slbl">
@@ -831,7 +834,7 @@ function renderChart(){
   const s=load(),canvas=document.getElementById('chart-rating');
   if(!canvas)return;
   const pids=s.players.map(p=>p.id),nd=s.days.length;
-  const DPR=window.devicePixelRatio||1,W=canvas.offsetWidth||420,H=150;
+  const DPR=window.devicePixelRatio||1,W=canvas.offsetWidth||420,H=360;
   canvas.width=W*DPR;canvas.height=H*DPR;canvas.style.width=W+'px';canvas.style.height=H+'px';
   const ctx=canvas.getContext('2d');ctx.scale(DPR,DPR);ctx.clearRect(0,0,W,H);
 
@@ -865,7 +868,7 @@ function renderChart(){
   const cW=W-PAD.l-PAD.r,cH=H-PAD.t-PAD.b;
   const all=Object.values(hist).flat();
   let minV=Math.min(...all),maxV=Math.max(...all);
-  const range=maxV-minV||60;minV-=range*.04;maxV+=range*.04;
+  const range=maxV-minV||100;minV-=range*.25;maxV+=range*.25;
   const toX=i=>PAD.l+(nd>1?i*cW/(nd-1):cW/2);
   const toY=v=>PAD.t+cH-((v-minV)/(maxV-minV))*cH;
   const yTicks=4;
@@ -926,8 +929,8 @@ function renderChart(){
       const mx=(x0+x1)/2, my=(y0+y1)/2; // midpoint
 
       const prevAbsent=ab[i-1], currAbsent=ab[i];
-      const solidA = isHi ? 1.0 : 0.04;
-      const dashA  = isHi ? 0.35 : 0.02;
+      const solidA = isHi ? 1.0 : 0.12;
+      const dashA  = isHi ? 0.35 : 0.06;
 
       if(!prevAbsent && !currAbsent){
         drawSeg(x0,y0,x1,y1,xPrev,yPrev,xNext,yNext,false,solidA);
@@ -947,7 +950,7 @@ function renderChart(){
       if(i<fd) return;
       const x=toX(i),y=toY(v),r=3;
       ctx.strokeStyle=color;
-      ctx.globalAlpha=isHi?(ab[i]?0.22:0.42):(ab[i]?0.02:0.03);
+      ctx.globalAlpha=isHi?(ab[i]?0.22:0.42):(ab[i]?0.05:0.08);
       ctx.lineWidth=1;
       ctx.beginPath();ctx.moveTo(x-r,y);ctx.lineTo(x+r,y);ctx.stroke();
       ctx.beginPath();ctx.moveTo(x,y-r);ctx.lineTo(x,y+r);ctx.stroke();
