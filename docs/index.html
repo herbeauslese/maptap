@@ -450,10 +450,11 @@ function G2_VOL(){ return getCfg().vol; }
 function G2_TAU(){ return getCfg().tau; }
 
 // ─── GITHUB ───────────────────────────────────────────────────────────────────
-async async function ghLoad() {
+async function ghLoad() {
   setStatus('Lade…');
+  const timeout=new Promise((_,reject)=>setTimeout(()=>reject(new Error('Timeout – kein GitHub-Zugriff')),5000));
   try {
-    const res=await fetch(GH_API,{headers:{'Accept':'application/vnd.github.v3+json'}});
+    const res=await Promise.race([fetch(GH_API,{headers:{'Accept':'application/vnd.github.v3+json'}}),timeout]);
     if(res.status===404){ghSha=null;setStatus('Bereit');return{players:[],days:[]};}
     if(!res.ok) throw new Error(res.status);
     const json=await res.json(); ghSha=json.sha;
@@ -768,18 +769,14 @@ function resetFilter(){
   if(reset) reset.style.display='none';
 }
 function renderFilterPills(){
-  const s=load();
-  const el=document.getElementById('chart-filter');
-  if(!el) return;
-  const pids=s.players.map(p=>p.id);
-  el.innerHTML=pids.map((id,ci)=>{
-    const name=(s.players.find(p=>p.id===id)||{}).name||id;
+  const s=load(), el=document.getElementById('chart-filter'); if(!el) return;
+  el.innerHTML=s.players.map((p,ci)=>{
     const color=COLORS[ci%COLORS.length];
-    const isActive=activeFilter.size===0||activeFilter.has(id);
-    return `<span class="filter-pill ${isActive?'active':'inactive'}" onclick="toggleFilter('${id}')" style="border-color:${color}20;background:${color}10;">
-      <span class="pill-dot" style="background:${color};"></span>${name}
+    const on=activeFilter.size===0||activeFilter.has(p.id);
+    return `<span class="f-pill ${on?'on':'off'}" onclick="toggleFilter('${p.id}')" style="border-color:${color};color:${color};background:${color}10;">
+      <span class="dot" style="background:${color};"></span>${p.name}
     </span>`;
-  }).join('');
+  }).join('')+(activeFilter.size>0?' <a href="#" onclick="resetFilter();return false;" style="font-size:10px;color:#bbb;text-decoration:none;margin-left:4px;">Alle anzeigen</a>':'');
 }
 function sortBy(m){sortMode=m;renderLb();}
 function renderLb(){
@@ -841,7 +838,7 @@ function renderChart(){
   if(!pids.length||!nd){
     ctx.fillStyle='#888888';ctx.font='12px Arial';ctx.textAlign='center';
     ctx.fillText('Noch keine Daten.',W/2,H/2);
-    document.getElementById('chart-legend').innerHTML='';return;
+    renderFilterPills();return;
   }
 
   const hist={};
@@ -990,11 +987,7 @@ function renderChart(){
     ctx.fillStyle=color; ctx.font='bold 9px Arial'; ctx.textAlign='left';
     ctx.fillText(name, toX(nd-1)+5, y+3);
   });
-
-  document.getElementById('chart-legend').innerHTML=pids.map((id,ci)=>{
-    const color=COLORS[ci%COLORS.length],name=(s.players.find(p=>p.id===id)||{}).name||id;
-    return`<span style="color:${color};font-family:'Courier New',monospace;font-size:11px;">&#9632; ${name}</span>`;
-  }).join(' &nbsp; ');
+  renderFilterPills();
 }
 
 // ─── VERLAUF ──────────────────────────────────────────────────────────────────
