@@ -321,81 +321,6 @@ a:hover { color: #000; }
           <textarea id="mm-out" readonly></textarea>
         </div>
       </div>
-      <div class="admin-sec">
-        <div class="admin-sec-hdr" onclick="toggleAdminSec(this)">&#9658; Rating-System Einstellungen</div>
-        <div class="admin-sec-body">
-
-          <div style="margin-bottom:8px;">
-            <span style="font-size:9px;font-weight:bold;text-transform:uppercase;letter-spacing:0.1em;color:#999;">Profile</span>
-            <div class="row" style="margin-top:4px;" id="profile-btns">
-              <button onclick="applyProfile('standard')">Standard</button>
-              <button onclick="applyProfile('dynamic')">Dynamisch</button>
-              <button onclick="applyProfile('chaotic')">Chaotisch</button>
-              <button onclick="applyProfile('flat')">Flach</button>
-              <button onclick="applyProfile('ranking')" style="border-color:#1e3a5f;font-weight:bold;">&#9733; Ranking-Elo</button>
-              <button onclick="applyProfile('balanced')" style="border-color:#2a9d2a;font-weight:bold;">&#9670; Ausgewogen</button>
-            </div>
-          </div>
-
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;font-size:11px;" id="cfg-fields">
-
-            <div>
-              <label style="font-weight:bold;">Volatility (Start) <input type="number" id="cfg-vol" step="0.01" min="0.02" max="0.5" style="width:65px;margin-left:5px;"></label>
-              <div style="color:#888;font-size:10px;margin-top:2px;">Wie unbeständig ein Spieler zu Beginn gilt. Höher = stärkere Ausschläge in den ersten Spieltagen. <em>Standard: 0.06 · Dynamisch: 0.12 · Chaotisch: 0.20</em></div>
-            </div>
-
-            <div>
-              <label style="font-weight:bold;">Tau (Systemdynamik) <input type="number" id="cfg-tau" step="0.1" min="0.1" max="3.0" style="width:65px;margin-left:5px;"></label>
-              <div style="color:#888;font-size:10px;margin-top:2px;">Steuert wie schnell das System auf Überraschungen reagiert. Höher = stärkere Schwankungen nach unerwarteten Ergebnissen. <em>Standard: 0.5 · Empfohlen: 0.5–1.5</em></div>
-            </div>
-
-            <div>
-              <label style="font-weight:bold;">RD-Minimum <input type="number" id="cfg-rdfloor" step="1" min="5" max="100" style="width:65px;margin-left:5px;"></label>
-              <div style="color:#888;font-size:10px;margin-top:2px;">Die Rating Deviation (Unsicherheit) sinkt nie unter diesen Wert. Niedrig = auch erfahrene Spieler können noch stark schwanken. <em>Standard: 30 · Aktiv: 15</em></div>
-            </div>
-
-            <div>
-              <label style="font-weight:bold;">Score-Outcome (0.1–1.0) <input type="number" id="cfg-exp" step="0.05" min="0.1" max="1.0" style="width:65px;margin-left:5px;"></label>
-              <div style="color:#888;font-size:10px;margin-top:2px;">Wie stark der Score-Abstand das Duell-Ergebnis beeinflusst. <strong>1.0</strong> = rein proportional (900 vs 400 = 0.69). <strong>0.25</strong> = fast binär (900 vs 400 = 0.89). <em>Empfohlen: 0.3–0.5</em></div>
-            </div>
-
-            <div>
-              <label style="font-weight:bold;">Duel-Gewicht ab Δ Rating <input type="number" id="cfg-dwstart" step="50" min="100" max="9999" style="width:65px;margin-left:5px;"></label>
-              <div style="color:#888;font-size:10px;margin-top:2px;">Ab welchem Rating-Unterschied Duelle weniger stark gewichtet werden. Schützt starke Spieler vor Punktverlust gegen sehr schwache. <strong>9999</strong> = deaktiviert. <em>Empfohlen: 200–400</em></div>
-            </div>
-
-            <div>
-              <label style="font-weight:bold;">Duel-Gewicht Minimum <input type="number" id="cfg-dwmin" step="0.05" min="0.05" max="1.0" style="width:65px;margin-left:5px;"></label>
-              <div style="color:#888;font-size:10px;margin-top:2px;">Wie wenig ein Duell gegen einen sehr viel schwächeren Gegner zählt (Minimalgewicht). <strong>1.0</strong> = alle Duelle gleich. <strong>0.1</strong> = sehr ungleiche Duelle fast ignoriert. <em>Empfohlen: 0.15–0.3</em></div>
-            </div>
-
-            <div>
-              <label style="font-weight:bold;">DNP-Gewichtung <input type="number" id="cfg-dnp" step="0.05" min="0.1" max="1.0" style="width:65px;margin-left:5px;"></label>
-              <div style="color:#888;font-size:10px;margin-top:2px;">Wie stark ein DNP-Tag ins Rating eingeht. DNP-Spieler bekommen den Tagesdurchschnitt als virtuellen Score. <strong>0.5</strong> = halber Einfluss. <strong>1.0</strong> = voller Einfluss wie normale Teilnahme. <em>Empfohlen: 0.4–0.6</em></div>
-            </div>
-
-            <div>
-              <label style="font-weight:bold;">K-Faktor (nur Ranking-Elo) <input type="number" id="cfg-kbase" step="5" min="10" max="200" style="width:65px;margin-left:5px;"></label>
-              <div style="color:#888;font-size:10px;margin-top:2px;">Maximale Punktänderung pro Tag im Ranking-Elo Modus. Höher = mehr Dramatik. <em>Empfohlen: 32–64. Standard Elo: 32</em></div>
-            </div>
-
-          </div>
-
-          <div class="row" style="margin-top:10px;align-items:center;">
-            <button onclick="saveCfg()">&#10003; Übernehmen &amp; neu berechnen</button>
-            <span id="cfg-lock-wrap" style="margin-left:8px;">
-              <label style="font-size:11px;cursor:pointer;">
-                <input type="checkbox" id="cfg-lock" onchange="toggleCfgLock()">
-                Einstellungen sperren
-              </label>
-            </span>
-            <span id="cfg-locked-badge" style="display:none;font-size:10px;color:#c00;font-weight:bold;margin-left:8px;">&#128274; GESPERRT</span>
-            <span id="cfg-mode-badge" style="font-size:10px;font-weight:bold;margin-left:auto;"></span>
-          </div>
-          <div style="font-size:10px;color:#aaa;margin-top:4px;" id="cfg-status"></div>
-
-        </div>
-      </div>
         <div class="admin-sec-body">
           <div class="row">
             <button class="danger" onclick="undoLastDay()">&larr; Letzten Tag r&uuml;ckg&auml;ngig</button>
@@ -426,31 +351,15 @@ let STATE={players:[],days:[]};
 const GH_API=`https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/${GH_FILE}`;
 
 // Runtime params – read from STATE.cfg or defaults
-const PROFILES = {
-  standard: { label:'Standard',      vol:0.06, tau:0.5,  rdFloor:30,  outcomeExp:0.5,  duelWeightMin:1.0, duelWeightStart:99999, dnpWeight:0.5, mode:'glicko2' },
-  dynamic:  { label:'Dynamisch',     vol:0.12, tau:1.0,  rdFloor:20,  outcomeExp:0.4,  duelWeightMin:0.3, duelWeightStart:300,   dnpWeight:0.5, mode:'glicko2' },
-  chaotic:  { label:'Chaotisch',     vol:0.2,  tau:1.8,  rdFloor:15,  outcomeExp:0.25, duelWeightMin:0.15,duelWeightStart:300,   dnpWeight:0.5, mode:'glicko2' },
-  flat:     { label:'Flach (fair)',   vol:0.06, tau:0.5,  rdFloor:30,  outcomeExp:1.0,  duelWeightMin:1.0, duelWeightStart:99999, dnpWeight:0.5, mode:'glicko2' },
-  ranking:  { label:'Ranking-Elo',   vol:0.15, tau:1.2,  rdFloor:20,  outcomeExp:0.4,  duelWeightMin:1.0, duelWeightStart:99999, dnpWeight:0.5, mode:'ranking', kBase:80 },
-  balanced: { label:'Ausgewogen',    vol:0.10, tau:1.1,  rdFloor:60,  outcomeExp:0.35, duelWeightMin:0.25,duelWeightStart:250,   dnpWeight:0.45,mode:'ranking', kBase:60 },
+// ─── FIXED CONFIG (hardcoded current settings) ────────────────────────────────
+const FIXED_CFG = {
+  vol:0.3, tau:1.8, rdFloor:30, outcomeExp:0.25,
+  duelWeightStart:300, duelWeightMin:0.15, dnpWeight:0.5,
+  mode:'glicko2', kBase:40,
 };
-function getCfg(){
-  const d=PROFILES.dynamic;
-  const c=STATE.cfg||{};
-  return {
-    vol:           c.vol           ?? d.vol,
-    tau:           c.tau           ?? d.tau,
-    rdFloor:       c.rdFloor       ?? d.rdFloor,
-    outcomeExp:    c.outcomeExp    ?? d.outcomeExp,
-    duelWeightStart: c.duelWeightStart ?? d.duelWeightStart,
-    duelWeightMin: c.duelWeightMin ?? d.duelWeightMin,
-    dnpWeight:     c.dnpWeight     ?? d.dnpWeight,
-    mode:          c.mode          ?? 'glicko2',
-    kBase:         c.kBase         ?? 40,
-  };
-}
-function G2_VOL(){ return getCfg().vol; }
-function G2_TAU(){ return getCfg().tau; }
+function getCfg(){ return FIXED_CFG; }
+function G2_VOL(){ return FIXED_CFG.vol; }
+function G2_TAU(){ return FIXED_CFG.tau; }
 
 // ─── GITHUB ───────────────────────────────────────────────────────────────────
 async function ghLoad() {
@@ -711,7 +620,7 @@ function activateAdmin(tok){
   document.getElementById('admin-logout-form').style.display='';
   document.getElementById('admin-status').innerHTML='&#128275;';
   document.getElementById('admin-panel').style.display='';
-  renderEntryForm(); renderPlayers(); renderCfgPanel(); renderPatchDays();
+  renderEntryForm(); renderPlayers(); renderPatchDays();
 }
 
 function checkPassword(){
@@ -1462,79 +1371,8 @@ async function patchScore(){
     toast(`Score für ${pname} nachgetragen.`);
   }
 }
-function renderCfgPanel(){
-  const cfg=getCfg();
-  const locked=STATE.cfgLocked||false;
-  const fields=['vol','tau','rdfloor','exp','dwstart','dwmin','dnp','kbase'];
-  const keys =['vol','tau','rdFloor','outcomeExp','duelWeightStart','duelWeightMin','dnpWeight','kBase'];
-  fields.forEach((f,i)=>{
-    const el=document.getElementById('cfg-'+f);
-    if(!el)return;
-    el.value=cfg[keys[i]];
-    el.disabled=locked;
-  });
-  const inputs=document.querySelectorAll('#cfg-fields input, #profile-btns button');
-  inputs.forEach(el=>el.disabled=locked);
-  document.querySelector('[onclick="saveCfg()"]').disabled=locked;
-  const lockEl=document.getElementById('cfg-lock');
-  if(lockEl) lockEl.checked=locked;
-  const badge=document.getElementById('cfg-locked-badge');
-  if(badge) badge.style.display=locked?'':'none';
-  const modeEl=document.getElementById('cfg-mode-badge');
-  if(modeEl){
-    const cfg2=getCfg();
-    modeEl.textContent=cfg2.mode==='ranking'?'★ RANKING-ELO AKTIV':'GLICKO-2 AKTIV';
-    modeEl.style.color=cfg2.mode==='ranking'?'#1e3a5f':'#666';
-  }
-  // highlight active profile
-  Object.keys(PROFILES).forEach(k=>{
-    const btn=document.querySelector(`[onclick="applyProfile('${k}')"]`);
-    if(!btn)return;
-    const p=PROFILES[k];
-    const match=Object.keys(p).filter(x=>x!=='label').every(x=>Math.abs((cfg[x]||0)-(p[x]||0))<0.001);
-    btn.style.fontWeight=match?'bold':'normal';
-    btn.style.borderColor=match?'#333':'';
-  });
-}
+function renderCfgPanel(){} // removed
 
-function applyProfile(name){
-  if(STATE.cfgLocked){toast('Einstellungen gesperrt!');return;}
-  const p=PROFILES[name];
-  if(!p)return;
-  STATE.cfg={...p};
-  renderCfgPanel();
-  toast(`Profil "${p.label}" geladen – noch nicht gespeichert.`);
-}
-
-async function saveCfg(){
-  if(STATE.cfgLocked){toast('Einstellungen gesperrt!');return;}
-  const cfg=getCfg();
-  const parse=(id,fallback)=>{const v=parseFloat(document.getElementById('cfg-'+id)?.value);return isNaN(v)?fallback:v;};
-  STATE.cfg={
-    vol:       Math.min(0.5,  Math.max(0.02, parse('vol',    cfg.vol))),
-    tau:       Math.min(3.0,  Math.max(0.1,  parse('tau',    cfg.tau))),
-    rdFloor:   Math.min(100,  Math.max(5,    parse('rdfloor',cfg.rdFloor))),
-    outcomeExp:Math.min(1.0,  Math.max(0.1,  parse('exp',    cfg.outcomeExp))),
-    duelWeightStart:Math.min(9999,Math.max(100,parse('dwstart',cfg.duelWeightStart))),
-    duelWeightMin: Math.min(1.0, Math.max(0.05, parse('dwmin', cfg.duelWeightMin))),
-    dnpWeight: Math.min(1.0,  Math.max(0.1,  parse('dnp',    cfg.dnpWeight))),
-    kBase:     Math.min(200,  Math.max(10,   parse('kbase',  cfg.kBase))),
-    mode:      cfg.mode || 'glicko2',
-  };
-  recompute(STATE);
-  const ok=await save(STATE);
-  if(ok){renderAll();renderCfgPanel();toast('Einstellungen gespeichert & Ratings neu berechnet.');}
-}
-
-function toggleCfgLock(){
-  const locked=document.getElementById('cfg-lock').checked;
-  STATE.cfgLocked=locked;
-  save(STATE);
-  renderCfgPanel();
-  toast(locked?'Einstellungen gesperrt.':'Einstellungen entsperrt.');
-}
-
-const _origRenderPlayers=typeof renderPlayers==='function'?renderPlayers:null;
 function renderTicker(){
   const s=load();
   const parts=[];
