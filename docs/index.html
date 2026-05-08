@@ -281,7 +281,28 @@ a:hover { color: #000; }
         </div>
       </div>
       <div class="admin-sec">
-        <div class="admin-sec-hdr" onclick="toggleAdminSec(this)">&#9658; Spieler verwalten</div>
+        <div class="admin-sec-hdr" onclick="toggleAdminSec(this)">&#9658; Einzelnen Score nachtragen</div>
+        <div class="admin-sec-body">
+          <div class="row">
+            <label>Tag:
+              <select id="patch-day" style="font-size:11px;" onchange="renderPatchPlayers()">
+                <option value="">– Tag wählen –</option>
+              </select>
+            </label>
+            <label>Spieler:
+              <select id="patch-player" style="font-size:11px;">
+                <option value="">– Spieler wählen –</option>
+              </select>
+            </label>
+            <label>Score: <input type="number" id="patch-score" min="0" max="1000" style="width:65px;"></label>
+            <label><input type="checkbox" id="patch-dnp"> DNP</label>
+          </div>
+          <div class="row" style="margin-top:5px;">
+            <button onclick="patchScore()">&#10003; Nachtragen &amp; neu berechnen</button>
+          </div>
+          <div id="patch-info" style="font-size:10px;color:#888;margin-top:4px;"></div>
+        </div>
+      </div>
         <div class="admin-sec-body">
           <div class="row">
             <input type="text" id="new-name" placeholder="Name" style="width:150px" onkeydown="if(event.key==='Enter')addPlayer()">
@@ -396,8 +417,8 @@ a:hover { color: #000; }
 
 <script>
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
-const GH_USER = 'herbeauslese';
-const GH_REPO = 'maptap';
+const GH_USER = 'DEIN_GITHUB_USERNAME';
+const GH_REPO = 'maptap-leaderboard';
 const GH_FILE = 'data.json';
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -692,7 +713,7 @@ function activateAdmin(tok){
   document.getElementById('admin-logout-form').style.display='';
   document.getElementById('admin-status').innerHTML='&#128275;';
   document.getElementById('admin-panel').style.display='';
-  renderEntryForm(); renderPlayers(); renderCfgPanel();
+  renderEntryForm(); renderPlayers(); renderCfgPanel(); renderPatchDays();
 }
 
 function checkPassword(){
@@ -1372,7 +1393,57 @@ function exportImage(){
   toast('Bild gespeichert!');
 }
 
-// ─── CFG MANAGEMENT ───────────────────────────────────────────────────────────
+// ─── PATCH SINGLE SCORE ───────────────────────────────────────────────────────
+function renderPatchDays(){
+  const s=load();
+  const sel=document.getElementById('patch-day');
+  if(!sel) return;
+  sel.innerHTML='<option value="">– Tag wählen –</option>'+
+    [...s.days].reverse().map(d=>`<option value="${d.tag}">Tag ${d.tag} – ${d.date}</option>`).join('');
+  renderPatchPlayers();
+}
+function renderPatchPlayers(){
+  const s=load();
+  const tagVal=parseInt(document.getElementById('patch-day')?.value);
+  const day=s.days.find(d=>d.tag===tagVal);
+  const sel=document.getElementById('patch-player');
+  if(!sel) return;
+  if(!day){sel.innerHTML='<option value="">– Spieler wählen –</option>';return;}
+  sel.innerHTML='<option value="">– Spieler wählen –</option>'+
+    s.players.map(p=>{
+      const e=day.entries.find(x=>x.id===p.id);
+      const status=e?e.dnp?'DNP':`Score: ${e.score}`:'nicht eingetragen';
+      return `<option value="${p.id}">${p.name} (${status})</option>`;
+    }).join('');
+  document.getElementById('patch-info').textContent='';
+}
+async function patchScore(){
+  const s=load();
+  const tagVal=parseInt(document.getElementById('patch-day')?.value);
+  const playerId=document.getElementById('patch-player')?.value;
+  const scoreVal=parseInt(document.getElementById('patch-score')?.value);
+  const isDnp=document.getElementById('patch-dnp')?.checked||false;
+  if(!tagVal||!playerId){toast('Tag und Spieler auswählen!');return;}
+  if(!isDnp&&isNaN(scoreVal)){toast('Score eingeben!');return;}
+  const day=s.days.find(d=>d.tag===tagVal);
+  if(!day){toast('Tag nicht gefunden!');return;}
+  const existing=day.entries.find(e=>e.id===playerId);
+  const newEntry={id:playerId,dnp:isDnp,score:isDnp?null:Math.min(1000,Math.max(0,scoreVal))};
+  if(existing){
+    Object.assign(existing,newEntry);
+  } else {
+    day.entries.push(newEntry);
+  }
+  recompute(s);
+  const ok=await save(s);
+  if(ok){
+    const pname=s.players.find(p=>p.id===playerId)?.name||playerId;
+    document.getElementById('patch-info').textContent=`✓ ${pname} in Tag ${tagVal} eingetragen – Ratings neu berechnet.`;
+    renderAll();
+    renderPatchDays();
+    toast(`Score für ${pname} nachgetragen.`);
+  }
+}
 function renderCfgPanel(){
   const cfg=getCfg();
   const locked=STATE.cfgLocked||false;
