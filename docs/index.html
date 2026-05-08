@@ -227,7 +227,7 @@ a:hover { color: #000; }
       Rating-Verlauf
       <a href="#" id="filter-reset" onclick="resetFilter();return false;" style="display:none;">Alle anzeigen</a>
     </div>
-    <canvas id="chart-rating" height="240"></canvas>
+    <canvas id="chart-rating" height="320"></canvas>
     <div id="chart-filter"></div>
 
     <div class="slbl">
@@ -410,8 +410,8 @@ a:hover { color: #000; }
 
 <script>
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
-const GH_USER = 'herbeauslese';
-const GH_REPO = 'maptap';
+const GH_USER = 'DEIN_GITHUB_USERNAME';
+const GH_REPO = 'maptap-leaderboard';
 const GH_FILE = 'data.json';
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -865,7 +865,7 @@ function renderChart(){
   const cW=W-PAD.l-PAD.r,cH=H-PAD.t-PAD.b;
   const all=Object.values(hist).flat();
   let minV=Math.min(...all),maxV=Math.max(...all);
-  const range=maxV-minV||60;minV-=range*.12;maxV+=range*.12;
+  const range=maxV-minV||60;minV-=range*.04;maxV+=range*.04;
   const toX=i=>PAD.l+(nd>1?i*cW/(nd-1):cW/2);
   const toY=v=>PAD.t+cH-((v-minV)/(maxV-minV))*cH;
   const yTicks=4;
@@ -926,21 +926,19 @@ function renderChart(){
       const mx=(x0+x1)/2, my=(y0+y1)/2; // midpoint
 
       const prevAbsent=ab[i-1], currAbsent=ab[i];
+      const solidA = isHi ? 1.0 : 0.04;
+      const dashA  = isHi ? 0.35 : 0.02;
 
       if(!prevAbsent && !currAbsent){
-        // Fully solid
-        drawSeg(x0,y0,x1,y1,xPrev,yPrev,xNext,yNext,false,1.0);
+        drawSeg(x0,y0,x1,y1,xPrev,yPrev,xNext,yNext,false,solidA);
       } else if(prevAbsent && currAbsent){
-        // Both absent – fully dashed
-        drawSeg(x0,y0,x1,y1,xPrev,yPrev,xNext,yNext,true,0.4);
+        drawSeg(x0,y0,x1,y1,xPrev,yPrev,xNext,yNext,true,dashA);
       } else if(prevAbsent && !currAbsent){
-        // Prev was DNP: first half dashed, second half solid
-        drawSeg(x0,y0,mx,my,xPrev,yPrev,x1,y1,true,0.4);
-        drawSeg(mx,my,x1,y1,x0,y0,xNext,yNext,false,1.0);
+        drawSeg(x0,y0,mx,my,xPrev,yPrev,x1,y1,true,dashA);
+        drawSeg(mx,my,x1,y1,x0,y0,xNext,yNext,false,solidA);
       } else {
-        // Curr is DNP: first half solid, second half dashed
-        drawSeg(x0,y0,mx,my,xPrev,yPrev,x1,y1,false,1.0);
-        drawSeg(mx,my,x1,y1,x0,y0,xNext,yNext,true,0.4);
+        drawSeg(x0,y0,mx,my,xPrev,yPrev,x1,y1,false,solidA);
+        drawSeg(mx,my,x1,y1,x0,y0,xNext,yNext,true,dashA);
       }
     }
 
@@ -949,7 +947,7 @@ function renderChart(){
       if(i<fd) return;
       const x=toX(i),y=toY(v),r=3;
       ctx.strokeStyle=color;
-      ctx.globalAlpha=ab[i]?0.25:0.45;
+      ctx.globalAlpha=isHi?(ab[i]?0.22:0.42):(ab[i]?0.02:0.03);
       ctx.lineWidth=1;
       ctx.beginPath();ctx.moveTo(x-r,y);ctx.lineTo(x+r,y);ctx.stroke();
       ctx.beginPath();ctx.moveTo(x,y-r);ctx.lineTo(x,y+r);ctx.stroke();
