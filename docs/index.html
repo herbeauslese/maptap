@@ -5,192 +5,182 @@
 <title>Maptap Leaderboard</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-
 body {
-  font-family: Arial, sans-serif;
-  font-size: 12px;
-  background: #fff;
-  color: #111;
-  margin: 0 auto;
-  width: 80%;
-  max-width: 1000px;
+  font-family: Arial, sans-serif; font-size: 13px;
+  background: #fff; color: #111;
+  margin: 0 auto; width: 84%; max-width: 1120px;
 }
 
-/* HEADER */
+/* ── HEADER ── */
 .hdr {
-  padding: 8px 0 6px;
-  border-bottom: 2px solid #000;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 0;
+  padding: 18px 0 12px;
+  border-bottom: 2px solid #111;
+  display: flex; align-items: center; gap: 14px; margin-bottom: 0;
 }
-.hdr h1 { font-size: 17px; font-weight: bold; color: #000; }
-.hdr-sub { font-size: 10px; color: #666; margin-top: 1px; }
-#statusbar { color: #999; font-style: italic; }
+.hdr h1 { font-size: 22px; font-weight: bold; color: #000; letter-spacing: -0.01em; }
+.hdr-sub { font-size: 11px; color: #888; margin-top: 2px; }
+#statusbar { color: #aaa; font-style: italic; }
 #statusbar.err { color: #c00; font-style: normal; }
 
-/* TICKER */
+/* ── TICKER ── */
 .ticker {
-  border-bottom: 1px solid #ccc;
-  color: #333;
-  font-size: 11px;
-  padding: 2px 0;
-  overflow: hidden;
-  white-space: nowrap;
-  margin-bottom: 8px;
+  border-bottom: 1px solid #f0f0f0; color: #555;
+  font-size: 11px; padding: 5px 0;
+  overflow: hidden; white-space: nowrap; margin-bottom: 24px;
 }
-.ticker-inner {
-  display: inline-block;
-  padding-left: 100%;
-  animation: scroll 40s linear infinite;
-}
-@keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-100%); } }
+.ticker-inner { display: inline-block; padding-left: 100%; animation: scroll 44s linear infinite; }
+@keyframes scroll { from { transform:translateX(0); } to { transform:translateX(-100%); } }
 
-/* LAYOUT */
-.wrap { display: flex; gap: 16px; }
+/* ── LAYOUT ── */
+.wrap { display: flex; gap: 32px; }
 
-/* SIDEBAR */
-.sb {
-  width: 150px;
-  min-width: 150px;
-  padding-top: 2px;
-}
+/* ── SIDEBAR ── */
+.sb { width: 165px; min-width: 165px; flex-shrink: 0; padding-top: 2px; }
 .sb-lbl {
-  font-size: 9px; font-weight: bold;
-  text-transform: uppercase; letter-spacing: 0.12em;
-  color: #999;
-  margin: 10px 0 3px;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 1px;
+  font-size: 9px; font-weight: bold; text-transform: uppercase;
+  letter-spacing: 0.15em; color: #ccc;
+  border-bottom: 1px solid #f0f0f0; padding-bottom: 3px; margin: 18px 0 6px;
 }
 .sb-lbl:first-child { margin-top: 0; }
 .sb-row {
   display: flex; justify-content: space-between;
-  font-size: 11px; padding: 1px 0;
-  color: #333;
+  font-size: 12px; padding: 4px 0; color: #555;
+  border-bottom: 1px solid #f8f8f8;
 }
-.sb-row span:last-child { font-family: 'Courier New', monospace; font-weight: bold; }
+.sb-row:last-child { border-bottom: none; }
+.sb-row span:last-child { font-family: 'Courier New', monospace; font-weight: bold; color: #111; }
 
-/* MAIN */
+/* ── MAIN ── */
 .main { flex: 1; min-width: 0; }
 
-/* SECTION LABELS */
+/* ── SECTION LABELS ── */
 .slbl {
-  font-size: 9px; font-weight: bold;
-  text-transform: uppercase; letter-spacing: 0.12em;
-  color: #999;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 1px;
-  margin: 14px 0 5px;
-  display: flex; justify-content: space-between;
+  font-size: 9px; font-weight: bold; text-transform: uppercase;
+  letter-spacing: 0.15em; color: #ccc;
+  border-bottom: 1px solid #f0f0f0; padding-bottom: 3px;
+  margin: 32px 0 14px;
+  display: flex; justify-content: space-between; align-items: center;
 }
 .slbl:first-child { margin-top: 0; }
-.slbl a { font-size: 9px; text-transform: none; letter-spacing: 0; color: #666; cursor: pointer; font-weight: normal; }
+.slbl a { font-size: 9px; text-transform: none; letter-spacing: 0; color: #aaa; cursor: pointer; font-weight: normal; text-decoration: none; }
 .slbl a:hover { color: #000; }
 
-/* TABLE */
-table.t { border-collapse: collapse; width: 100%; font-size: 12px; }
+/* ── TABLE ── */
+table.t { border-collapse: collapse; width: 100%; font-size: 13px; }
 table.t th {
-  font-size: 9px; font-weight: bold;
-  text-transform: uppercase; letter-spacing: 0.1em;
-  color: #999; border-bottom: 2px solid #000;
-  padding: 7px 10px; text-align: right;
-  background: none;
+  font-size: 9px; font-weight: bold; text-transform: uppercase;
+  letter-spacing: 0.1em; color: #bbb; border-bottom: 2px solid #111;
+  padding: 10px 14px; text-align: right; background: none;
 }
 table.t th:first-child, table.t th.l { text-align: left; }
-table.t th a { color: #666; cursor: pointer; font-weight: normal; margin-left: 2px; }
+table.t th a { color: #aaa; cursor: pointer; font-weight: normal; margin-left: 3px; text-decoration: none; }
 table.t td {
-  padding: 7px 10px; text-align: right;
-  border-bottom: 1px solid #eee;
-  font-family: 'Courier New', monospace; font-size: 12px;
+  padding: 12px 14px; text-align: right;
+  border-bottom: 1px solid #f0f0f0;
+  font-family: 'Courier New', monospace; font-size: 13px;
 }
-table.t td:first-child, table.t td.l { text-align: left; font-family: Arial, sans-serif; font-weight: bold; }
-table.t tr:hover td { background: #f8f8f8; }
+table.t td:first-child, table.t td.l {
+  text-align: left; font-family: Arial, sans-serif; font-weight: bold;
+}
+table.t tr:hover td { background: #fafafa; }
 table.t tr:first-child td { font-weight: bold; }
 
-/* CHART */
+/* ── CHART ── */
 canvas { display: block; width: 100%; }
-#chart-legend { margin-top: 4px; font-size: 10px; display: flex; flex-wrap: wrap; gap: 10px; color: #555; font-family: 'Courier New', monospace; }
 
-/* VERLAUF */
+/* ── FILTER PILLS ── */
+#chart-filter { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+.f-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 12px; border-radius: 20px;
+  font-size: 12px; cursor: pointer; user-select: none;
+  font-family: 'Courier New', monospace;
+  border: 1.5px solid; transition: opacity 0.12s;
+}
+.f-pill.on  { opacity: 1; }
+.f-pill.off { opacity: 0.22; }
+.f-pill .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+#filter-reset {
+  font-size: 10px; color: #bbb; cursor: pointer;
+  text-decoration: none; margin-left: 2px; align-self: center;
+}
+#filter-reset:hover { color: #333; }
+
+/* ── VERLAUF ── */
 .day-block { margin: 2px 0; }
 .day-hdr {
-  padding: 3px 0; cursor: pointer;
+  padding: 8px 0; cursor: pointer; user-select: none;
   display: flex; justify-content: space-between;
-  border-bottom: 1px solid #ddd;
-  font-size: 11px; font-weight: bold; color: #333;
-  user-select: none;
+  border-bottom: 1px solid #eee;
+  font-size: 12px; font-weight: bold; color: #555;
 }
 .day-hdr:hover { color: #000; }
 .day-body { display: none; }
 .day-body.open { display: block; }
 .psummary {
   display: flex; gap: 10px; align-items: center;
-  padding: 2px 8px; cursor: pointer;
-  border-bottom: 1px solid #f0f0f0;
-  font-size: 11px; font-family: 'Courier New', monospace;
+  padding: 5px 12px; cursor: pointer;
+  border-bottom: 1px solid #f5f5f5;
+  font-size: 12px; font-family: 'Courier New', monospace;
 }
-.psummary .pn { font-family: Arial, sans-serif; font-weight: bold; min-width: 70px; color: #111; }
+.psummary .pn { font-family: Arial, sans-serif; font-weight: bold; min-width: 80px; color: #111; }
 .psummary:last-child { border-bottom: none; }
-.psummary:hover { background: #f8f8f8; }
-.pdetail { display: none; padding: 4px 8px 6px; font-size: 10px; color: #666; border-bottom: 1px solid #eee; }
+.psummary:hover { background: #fafafa; }
+.pdetail { display: none; padding: 7px 12px 9px; font-size: 11px; color: #777; border-bottom: 1px solid #eee; }
 .pdetail.open { display: block; }
-.duel-table { width: 100%; border-collapse: collapse; font-size: 10px; margin-top: 3px; }
-.duel-table th { font-size: 9px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.08em; padding: 2px 5px; border-bottom: 1px solid #ccc; color: #999; }
-.duel-table td { padding: 2px 5px; border-bottom: 1px solid #eee; font-family: 'Courier New', monospace; color: #444; }
+.duel-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 4px; }
+.duel-table th { font-size: 9px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.08em; padding: 3px 6px; border-bottom: 1px solid #ddd; color: #bbb; }
+.duel-table td { padding: 3px 6px; border-bottom: 1px solid #f5f5f5; font-family: 'Courier New', monospace; color: #555; }
 
-/* ADMIN */
+/* ── ADMIN ── */
 .admin-sec { margin-top: 6px; }
 .admin-sec-hdr {
-  font-size: 9px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.1em;
-  color: #999; cursor: pointer; user-select: none; margin-top: 6px;
-  border-bottom: 1px solid #eee; padding-bottom: 1px;
-  display: block;
+  font-size: 9px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.12em;
+  color: #ccc; cursor: pointer; user-select: none;
+  border-bottom: 1px solid #f0f0f0; padding-bottom: 2px; margin-top: 10px; display: block;
 }
 .admin-sec-hdr:hover { color: #000; }
-.admin-sec-body { display: none; padding: 5px 0; }
+.admin-sec-body { display: none; padding: 7px 0; }
 .admin-sec-body.open { display: block; }
 
-input[type=text], input[type=number], input[type=date], input[type=password] {
-  border: 1px solid #ccc; padding: 2px 5px;
-  font-size: 11px; font-family: Arial, sans-serif; background: #fff;
+input[type=text], input[type=number], input[type=date], input[type=password], select {
+  border: 1px solid #ddd; padding: 4px 7px;
+  font-size: 12px; font-family: Arial, sans-serif; background: #fff;
 }
-input:focus { outline: none; border-color: #999; }
+input:focus, select:focus { outline: none; border-color: #888; }
 button {
-  border: 1px solid #ccc; background: #f5f5f5;
-  padding: 2px 8px; cursor: pointer;
-  font-size: 11px; font-family: Arial, sans-serif; color: #333;
+  border: 1px solid #ddd; background: #f8f8f8;
+  padding: 4px 11px; cursor: pointer;
+  font-size: 12px; font-family: Arial, sans-serif; color: #333;
 }
-button:hover { background: #eee; border-color: #999; }
+button:hover { background: #eee; border-color: #aaa; }
 button.danger { color: #900; }
 button.danger:hover { background: #fee; }
 textarea {
-  border: 1px solid #ccc; padding: 4px; width: 100%; height: 70px;
-  font-family: 'Courier New', monospace; font-size: 10px; margin-top: 4px;
+  border: 1px solid #ddd; padding: 6px; width: 100%; height: 75px;
+  font-family: 'Courier New', monospace; font-size: 11px; margin-top: 5px;
   display: block; background: #fafafa;
 }
-
 .pos { color: #060; font-weight: bold; }
 .neg { color: #900; font-weight: bold; }
-.dim { color: #999; font-size: 10px; }
-.chip { display: inline-block; border: 1px solid #ddd; padding: 1px 5px; margin: 2px; font-size: 11px; }
-.chip button { padding: 0 3px; font-size: 10px; border: 1px solid #ddd; cursor: pointer; margin-left: 2px; background: #fee; color: #900; }
-.row { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; margin: 4px 0; }
-.lockrow { padding: 4px 0; margin-bottom: 4px; border-bottom: 1px solid #eee; font-size: 11px; }
-.prow { display: flex; align-items: center; gap: 10px; padding: 2px 0; border-bottom: 1px solid #f0f0f0; font-size: 11px; }
+.dim { color: #ccc; font-size: 11px; }
+.chip { display: inline-block; border: 1px solid #eee; padding: 2px 8px; margin: 2px; font-size: 12px; }
+.chip button { padding: 0 4px; font-size: 10px; border: 1px solid #eee; cursor: pointer; margin-left: 3px; background: #fee; color: #900; }
+.row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin: 5px 0; }
+.lockrow { padding: 6px 0; margin-bottom: 5px; border-bottom: 1px solid #eee; font-size: 12px; }
+.prow { display: flex; align-items: center; gap: 10px; padding: 4px 0; border-bottom: 1px solid #f5f5f5; font-size: 12px; }
 .prow:last-child { border-bottom: none; }
 .prow b { min-width: 80px; }
-.glicko-note { font-size: 11px; color: #555; line-height: 1.6; padding: 4px 0; }
-a { color: #333; text-decoration: underline; }
+.glicko-note { font-size: 12px; color: #666; line-height: 1.75; padding: 7px 0; }
+a { color: #555; text-decoration: underline; }
 a:hover { color: #000; }
-#toast { position: fixed; bottom: 10px; right: 10px; background: #111; color: #fff; padding: 4px 12px; font-size: 11px; display: none; z-index: 999; }
+#toast { position: fixed; bottom: 12px; right: 12px; background: #111; color: #fff; padding: 6px 16px; font-size: 12px; display: none; z-index: 999; }
 </style>
 </head>
 <body>
 
 <div class="hdr">
-  <canvas id="globe" width="40" height="40" style="display:block;width:28px;height:28px;border:1px solid #ccc;flex-shrink:0;"></canvas>
+  <canvas id="globe" width="40" height="40" style="display:block;width:32px;height:32px;border:1px solid #eee;flex-shrink:0;"></canvas>
   <div>
     <h1>Maptap Leaderboard</h1>
     <div class="hdr-sub">Geografie-Quiz &middot; Glicko-2 &middot; <span id="statusbar">Lade&hellip;</span></div>
@@ -201,23 +191,23 @@ a:hover { color: #000; }
 
 <div class="wrap">
 
+  <!-- SIDEBAR -->
   <div class="sb">
     <div class="sb-lbl">Top 3</div>
     <div id="sidebar-top3"><span class="dim">–</span></div>
-
     <div class="sb-lbl">Saison</div>
     <div class="sb-row"><span>Spieltage</span><span id="ss-days">–</span></div>
     <div class="sb-row"><span>Spieler</span><span id="ss-players">–</span></div>
     <div class="sb-row"><span>&Oslash; Score</span><span id="ss-avgscore">–</span></div>
     <div class="sb-row"><span>Best Score</span><span id="ss-best">–</span></div>
     <div class="sb-row"><span>Top Rating</span><span id="ss-toprating">–</span></div>
-
     <div class="sb-lbl">System</div>
     <div class="sb-row"><span>Methode</span><span>Glicko-2</span></div>
     <div class="sb-row"><span>Start</span><span>1500</span></div>
     <div class="sb-row"><span>DNP</span><span>kein &minus;</span></div>
   </div>
 
+  <!-- MAIN -->
   <div class="main">
 
     <div class="slbl">
@@ -226,25 +216,30 @@ a:hover { color: #000; }
     </div>
     <table class="t">
       <thead><tr>
-        <th class="l" style="width:24px;">#</th>
+        <th class="l" style="width:26px;">#</th>
         <th class="l">Name</th>
         <th>Rating</th><th>RD</th><th>&Oslash;&nbsp;Score</th><th>Spiele</th>
       </tr></thead>
       <tbody id="lb-body"></tbody>
     </table>
 
-    <div class="slbl">Rating-Verlauf</div>
-    <canvas id="chart-rating" height="150" style="border:1px solid #eee;"></canvas>
-    <div id="chart-legend"></div>
+    <div class="slbl">
+      Rating-Verlauf
+      <a href="#" id="filter-reset" onclick="resetFilter();return false;" style="display:none;">Alle anzeigen</a>
+    </div>
+    <canvas id="chart-rating" height="240"></canvas>
+    <div id="chart-filter"></div>
 
     <div class="slbl">
       Spieltag-Verlauf
       <a href="#" onclick="toggleInfo();return false;" id="info-toggle">&#9658; Glicko-2 erkl&auml;rt</a>
     </div>
     <div id="info-box" style="display:none;" class="glicko-note">
-      <b>Rating</b> (Start 1500), <b>RD</b> (Unsicherheit, Start 350), <b>Volatility</b>. Jeder gegen jeden pro Tag. H&ouml;herer Score = Sieg. Wer gegen Starke gewinnt, steigt mehr. <b>DNP</b> = Rating bleibt, RD steigt leicht.
+      Jeder Spieler hat drei Werte: <b>Rating</b> (Startwert 1500 &ndash; h&ouml;her ist besser), <b>RD</b> (Rating Deviation, Startwert 350 &ndash; gibt an, in welchem Unsicherheitsbereich das Rating liegt; ein RD von 50 bedeutet, das echte St&auml;rkeniveau liegt mit hoher Wahrscheinlichkeit zwischen Rating &minus;50 und Rating +50; sinkt je mehr man spielt) und <b>Volatility</b> (wie unbest&auml;ndig jemand spielt).<br><br>
+      Nach jedem Spieltag wird jeder gegen jeden verglichen: wer einen h&ouml;heren Score hat, gewinnt das Duell. Wer gegen einen starken Gegner gewinnt, steigt mehr als gegen einen schwachen &ndash; und umgekehrt.<br><br>
+      <b>DNP</b> (Did Not Play) = nicht gespielt. Rating bleibt, RD steigt leicht.
     </div>
-    <div id="verlauf-body" style="margin-top:4px;max-height:260px;overflow-y:auto;">
+    <div id="verlauf-body" style="margin-top:8px;max-height:340px;overflow-y:auto;">
       <span class="dim">Noch keine Spieltage.</span>
     </div>
 
@@ -408,12 +403,10 @@ a:hover { color: #000; }
       </div>
     </div>
 
+
   </div><!-- /main -->
 </div><!-- /wrap -->
-
 <div id="toast"></div>
-
-
 
 <script>
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
@@ -425,7 +418,9 @@ const GH_FILE = 'data.json';
 const G2_R0=1500, G2_RD0=350, G2_SCALE=173.7178;
 const COLORS=['#1e3a5f','#c00','#2a9d2a','#e07b00','#9933cc','#00999a','#7B3F00','#0066cc','#cc0066','#888800'];
 let loggedIn=false, sortMode='rating', ghSha=null, GH_TOKEN='';
+let activeFilter=new Set();
 let STATE={players:[],days:[]};
+let activeFilter=new Set(); // empty = all shown
 const GH_API=`https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/${GH_FILE}`;
 
 // Runtime params – read from STATE.cfg or defaults
@@ -757,7 +752,36 @@ function toggleInfo(){
   tog.innerHTML=(open?'&#9660;':'&#9658;')+' Glicko-2 erkl&auml;rt';
 }
 
-// ─── RANGLISTE ────────────────────────────────────────────────────────────────
+// ─── CHART FILTER ─────────────────────────────────────────────────────────────
+function toggleFilter(id){
+  if(activeFilter.has(id)) activeFilter.delete(id);
+  else activeFilter.add(id);
+  renderChart();
+  renderFilterPills();
+  const reset=document.getElementById('filter-reset');
+  if(reset) reset.style.display=activeFilter.size>0?'':'none';
+}
+function resetFilter(){
+  activeFilter.clear();
+  renderChart();
+  renderFilterPills();
+  const reset=document.getElementById('filter-reset');
+  if(reset) reset.style.display='none';
+}
+function renderFilterPills(){
+  const s=load();
+  const el=document.getElementById('chart-filter');
+  if(!el) return;
+  const pids=s.players.map(p=>p.id);
+  el.innerHTML=pids.map((id,ci)=>{
+    const name=(s.players.find(p=>p.id===id)||{}).name||id;
+    const color=COLORS[ci%COLORS.length];
+    const isActive=activeFilter.size===0||activeFilter.has(id);
+    return `<span class="filter-pill ${isActive?'active':'inactive'}" onclick="toggleFilter('${id}')" style="border-color:${color}20;background:${color}10;">
+      <span class="pill-dot" style="background:${color};"></span>${name}
+    </span>`;
+  }).join('');
+}
 function sortBy(m){sortMode=m;renderLb();}
 function renderLb(){
   const s=load();
@@ -892,7 +916,8 @@ function renderChart(){
   pids.forEach((id,ci)=>{
     const color=COLORS[ci%COLORS.length],pts=hist[id],ab=absent[id];
     const fd=firstDay[id];
-    ctx.strokeStyle=color; ctx.lineWidth=1.5;
+    const isHi=activeFilter.size===0||activeFilter.has(id);
+    ctx.strokeStyle=color; ctx.lineWidth=isHi?2:1;
 
     for(let i=1;i<pts.length;i++){
       // Skip entirely before first appearance
