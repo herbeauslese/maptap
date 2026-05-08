@@ -420,7 +420,6 @@ const COLORS=['#1e3a5f','#c00','#2a9d2a','#e07b00','#9933cc','#00999a','#7B3F00'
 let loggedIn=false, sortMode='rating', ghSha=null, GH_TOKEN='';
 let activeFilter=new Set();
 let STATE={players:[],days:[]};
-let activeFilter=new Set(); // empty = all shown
 const GH_API=`https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/${GH_FILE}`;
 
 // Runtime params – read from STATE.cfg or defaults
@@ -451,7 +450,7 @@ function G2_VOL(){ return getCfg().vol; }
 function G2_TAU(){ return getCfg().tau; }
 
 // ─── GITHUB ───────────────────────────────────────────────────────────────────
-async function ghLoad() {
+async async function ghLoad() {
   setStatus('Lade…');
   try {
     const res=await fetch(GH_API,{headers:{'Accept':'application/vnd.github.v3+json'}});
