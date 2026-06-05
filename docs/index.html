@@ -224,8 +224,15 @@ a:hover { color: #000; }
     </table>
 
     <div class="slbl">
-      Rating-Verlauf
-      <a href="#" id="filter-reset" onclick="resetFilter();return false;" style="display:none;">Alle anzeigen</a>
+      <span id="chart-title">Rating-Verlauf</span>
+      <span style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:10px;color:#bbb;text-transform:none;letter-spacing:0;font-weight:normal;">Ansicht:</span>
+        <a href="#" id="btn-rating" onclick="setChartMode('rating');return false;" style="font-weight:bold;color:#111;text-decoration:none;">Rating</a>
+        <span style="color:#ddd;">|</span>
+        <a href="#" id="btn-rank" onclick="setChartMode('rank');return false;" style="color:#bbb;text-decoration:none;">Platzierung</a>
+        &nbsp;
+        <a href="#" id="filter-reset" onclick="resetFilter();return false;" style="display:none;">Alle anzeigen</a>
+      </span>
     </div>
     <canvas id="chart-rating" height="320"></canvas>
     <div style="font-size:10px;color:#bbb;margin-top:8px;margin-bottom:4px;letter-spacing:0.03em;">
@@ -321,6 +328,8 @@ a:hover { color: #000; }
           <textarea id="mm-out" readonly></textarea>
         </div>
       </div>
+      <div class="admin-sec">
+        <div class="admin-sec-hdr" onclick="toggleAdminSec(this)">&#9658; Gef&auml;hrliche Zone</div>
         <div class="admin-sec-body">
           <div class="row">
             <button class="danger" onclick="undoLastDay()">&larr; Letzten Tag r&uuml;ckg&auml;ngig</button>
@@ -338,8 +347,8 @@ a:hover { color: #000; }
 
 <script>
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
-const GH_USER = 'herbeauslese';
-const GH_REPO = 'maptap';
+const GH_USER = 'DEIN_GITHUB_USERNAME';
+const GH_REPO = 'maptap-leaderboard';
 const GH_FILE = 'data.json';
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -347,6 +356,16 @@ const G2_R0=1500, G2_RD0=350, G2_SCALE=173.7178;
 const COLORS=['#1e3a5f','#c00','#2a9d2a','#e07b00','#9933cc','#00999a','#7B3F00','#0066cc','#cc0066','#888800'];
 let loggedIn=false, sortMode='rating', ghSha=null, GH_TOKEN='';
 let activeFilter=new Set();
+let chartMode='rating'; // 'rating' or 'rank'
+let chartMode='rating'; // 'rating' or 'rank'
+
+function setChartMode(mode){
+  chartMode=mode;
+  document.getElementById('chart-title').textContent=mode==='rank'?'Platzierungs-Verlauf':'Rating-Verlauf';
+  document.getElementById('btn-rating').style.cssText=mode==='rating'?'font-weight:bold;color:#111;text-decoration:none;':'color:#bbb;text-decoration:none;';
+  document.getElementById('btn-rank').style.cssText=mode==='rank'?'font-weight:bold;color:#111;text-decoration:none;':'color:#bbb;text-decoration:none;';
+  renderChart();
+}
 let STATE={players:[],days:[]};
 const GH_API=`https://api.github.com/repos/${GH_USER}/${GH_REPO}/contents/${GH_FILE}`;
 
@@ -664,6 +683,17 @@ function toggleInfo(){
   tog.innerHTML=(open?'&#9660;':'&#9658;')+' Glicko-2 erkl&auml;rt';
 }
 
+function setChartMode(mode){
+  chartMode=mode;
+  const r=document.getElementById('btn-rating');
+  const p=document.getElementById('btn-rank');
+  if(r){r.style.fontWeight=mode==='rating'?'bold':'normal';r.style.color=mode==='rating'?'#111':'#bbb';}
+  if(p){p.style.fontWeight=mode==='rank'?'bold':'normal';p.style.color=mode==='rank'?'#111':'#bbb';}
+  const t=document.getElementById('chart-title');
+  if(t) t.textContent=mode==='rating'?'Rating-Verlauf':'Platzierungs-Verlauf';
+  renderChart();
+}
+
 // ─── CHART FILTER ─────────────────────────────────────────────────────────────
 function toggleFilter(id){
   if(activeFilter.has(id)) activeFilter.delete(id);
@@ -773,25 +803,59 @@ function renderChart(){
     absent[id].push(!e||e.dnp||di<firstDay[id]);
   });});
 
+  // In rank mode: convert ratings per day to actual rank (1=best)
+  const displayHist={};
+  pids.forEach(id=>{displayHist[id]=[...hist[id]];});
+  if(chartMode==='rank'){
+    s.days.forEach((day,di)=>{
+      const active=pids.filter(id=>!absent[id][di]);
+      // Sort active players by rating at this day, descending
+      const sorted=[...active].sort((a,b)=>hist[b][di]-hist[a][di]);
+      // Assign rank 1..n to active, DNP/absent get null
+      pids.forEach(id=>{
+        if(absent[id][di]){
+          // keep last rank or middle
+          const lastRank=displayHist[id].slice(0,di).filter((_,j)=>!absent[id][j]);
+          displayHist[id][di]=lastRank.length>0?lastRank[lastRank.length-1]:pids.length/2+0.5;
+        } else {
+          displayHist[id][di]=sorted.indexOf(id)+1;
+        }
+      });
+    });
+  }
+
   const PAD={t:12,r:60,b:22,l:46};
   const cW=W-PAD.l-PAD.r,cH=H-PAD.t-PAD.b;
-  const all=Object.values(hist).flat();
-  let minV=Math.min(...all),maxV=Math.max(...all);
-  const range=maxV-minV||100;minV-=range*.25;maxV+=range*.25;
+  const all=Object.values(displayHist).flat().filter(v=>v!=null);
+  let minV,maxV;
+  if(chartMode==='rank'){
+    // Y: 1 at top, n at bottom
+    minV=0.5; maxV=pids.length+0.5;
+  } else {
+    const range2=Math.max(...all)-Math.min(...all)||100;
+    minV=Math.min(...all)-range2*.25;
+    maxV=Math.max(...all)+range2*.25;
+  }
   const toX=i=>PAD.l+(nd>1?i*cW/(nd-1):cW/2);
-  const toY=v=>PAD.t+cH-((v-minV)/(maxV-minV))*cH;
-  const yTicks=4;
+  // For rank mode: rank 1 = top of chart (minV maps to top)
+  const toY=chartMode==='rank'
+    ? v=>PAD.t+(v-minV)/(maxV-minV)*cH   // rank 1 → top
+    : v=>PAD.t+cH-((v-minV)/(maxV-minV))*cH;
+  const yTicks=chartMode==='rank'?pids.length:4;
 
   ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
 
   // gridlines
   ctx.strokeStyle='#e8e8e8';ctx.lineWidth=1;ctx.setLineDash([2,3]);
   for(let i=0;i<=yTicks;i++){
-    const v=minV+(maxV-minV)*i/yTicks,y=toY(v);
+    const v=chartMode==='rank'
+      ? i+1  // ranks 1..n
+      : minV+(maxV-minV)*i/yTicks;
+    const y=toY(v);
     ctx.beginPath();ctx.moveTo(PAD.l,y);ctx.lineTo(W-PAD.r,y);ctx.stroke();
     ctx.setLineDash([]);
     ctx.fillStyle='#888';ctx.font='9px Arial';ctx.textAlign='right';
-    ctx.fillText(Math.round(v),PAD.l-3,y+3);
+    ctx.fillText(chartMode==='rank'?`#${Math.round(v)}`:Math.round(v),PAD.l-3,y+3);
     ctx.setLineDash([2,3]);
   }
   ctx.setLineDash([]);
@@ -822,7 +886,7 @@ function renderChart(){
   }
 
   pids.forEach((id,ci)=>{
-    const color=COLORS[ci%COLORS.length],pts=hist[id],ab=absent[id];
+    const color=COLORS[ci%COLORS.length],pts=displayHist[id],ab=absent[id];
     const fd=firstDay[id];
     const isHi=activeFilter.size===0||activeFilter.has(id);
     ctx.strokeStyle=color; ctx.lineWidth=isHi?2:1;
@@ -869,10 +933,13 @@ function renderChart(){
 
   // collect raw label positions
   const labels = pids.map((id,ci)=>{
-    const pts=hist[id];
+    const pts=displayHist[id];
     const name=(s.players.find(p=>p.id===id)||{}).name||id;
-    return { id, ci, name, y: toY(pts[pts.length-1]) };
-  });
+    const isHi=activeFilter.size===0||activeFilter.has(id);
+    const fd=firstDay[id];
+    if(fd>=nd) return null;
+    return { id, ci, name, y: toY(pts[pts.length-1]), isHi };
+  }).filter(Boolean);
 
   // sort by y, then push apart any that are closer than 11px
   labels.sort((a,b)=>a.y-b.y);
@@ -892,10 +959,14 @@ function renderChart(){
   }
 
   // draw labels
-  labels.forEach(({ci, name, y})=>{
+  labels.forEach(({ci, name, y, isHi})=>{
     const color=COLORS[ci%COLORS.length];
-    ctx.fillStyle=color; ctx.font='bold 9px Arial'; ctx.textAlign='left';
+    ctx.fillStyle=color;
+    ctx.globalAlpha=isHi?1.0:0.18;
+    ctx.font=isHi?'bold 9px Arial':'9px Arial';
+    ctx.textAlign='left';
     ctx.fillText(name, toX(nd-1)+5, y+3);
+    ctx.globalAlpha=1.0;
   });
   renderFilterPills();
 }
