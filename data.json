@@ -98,6 +98,15 @@
       "vol": 0.15,
       "games": 12,
       "total": 9478
+    },
+    {
+      "id": "p_1780658838162",
+      "name": "Stefan",
+      "rating": 1500,
+      "rd": 350,
+      "vol": 0.3,
+      "games": 0,
+      "total": 0
     }
   ],
   "days": [
