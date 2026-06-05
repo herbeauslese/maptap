@@ -286,6 +286,16 @@ a:hover { color: #000; }
         </div>
       </div>
       <div class="admin-sec">
+        <div class="admin-sec-hdr" onclick="toggleAdminSec(this)">&#9658; Spieler verwalten</div>
+        <div class="admin-sec-body">
+          <div class="row">
+            <input type="text" id="new-name" placeholder="Name" style="width:150px" onkeydown="if(event.key==='Enter')addPlayer()">
+            <button onclick="addPlayer()">+ Hinzuf&uuml;gen</button>
+          </div>
+          <div id="player-list" style="margin-top:5px;"></div>
+        </div>
+      </div>
+      <div class="admin-sec">
         <div class="admin-sec-hdr" onclick="toggleAdminSec(this)">&#9658; Einzelnen Score nachtragen</div>
         <div class="admin-sec-body">
           <div class="row">
