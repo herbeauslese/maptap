@@ -399,7 +399,10 @@ async function ghLoad() {
     if(res.status===404){ghSha=null;setStatus('Bereit');return{players:[],days:[]};}
     if(!res.ok) throw new Error(res.status);
     const json=await res.json(); ghSha=json.sha;
-    const data=JSON.parse(atob(json.content.replace(/\n/g,'')));
+    // Contents API only inlines base64 content for files <1MB; fetch raw content otherwise.
+    const rawRes=await fetch(json.download_url);
+    if(!rawRes.ok) throw new Error(rawRes.status);
+    const data=JSON.parse(await rawRes.text());
     setStatus(`${data.days.length} Spieltage`);
     return migrate(data);
   } catch(e){setStatus('Fehler: '+e.message,true);return{players:[],days:[]};}
